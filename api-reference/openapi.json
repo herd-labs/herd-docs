@@ -5,6 +5,12 @@
     "description": "Trails API for the Herd platform",
     "version": "1.0.0"
   },
+  "servers": [
+    {
+      "url": "https://trails-api.herd.eco",
+      "description": "Production server"
+    }
+  ],
   "security": [
     {
       "BearerAuth": []
@@ -44,7 +50,41 @@
         ],
         "responses": {
           "200": {
-
+            "description": "Trail guidebook data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "trailId": {
+                      "type": "string",
+                      "format": "uuid",
+                      "description": "Trail identifier"
+                    },
+                    "versionId": {
+                      "type": "string", 
+                      "format": "uuid",
+                      "description": "Version identifier"
+                    },
+                    "title": {
+                      "type": "string",
+                      "description": "Trail title"
+                    },
+                    "description": {
+                      "type": "string",
+                      "description": "Trail description"
+                    },
+                    "steps": {
+                      "type": "array",
+                      "description": "Array of trail steps",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
