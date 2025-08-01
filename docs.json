@@ -11,38 +11,26 @@
   "navigation": {
     "tabs": [
       {
-        "tab": "Guides",
+        "tab": "Explorer",
         "groups": [
           {
             "group": "Getting started",
             "pages": [
               "index",
-              "quickstart",
-              "development"
+              "herd-trails/explorer-sage-chat"
             ]
           },
           {
-            "group": "Customization",
+            "group": "Creating Trails",
             "pages": [
-              "essentials/settings",
-              "essentials/navigation"
+              "herd-trails/canvas-creating-trails"
             ]
           },
           {
-            "group": "Writing content",
+            "group": "Sharing & Using Trails",
             "pages": [
-              "essentials/markdown",
-              "essentials/code",
-              "essentials/images",
-              "essentials/reusable-snippets"
-            ]
-          },
-          {
-            "group": "AI tools",
-            "pages": [
-              "ai-tools/cursor",
-              "ai-tools/claude-code",
-              "ai-tools/windsurf"
+              "herd-trails/overlook-sharing-trails",
+              "herd-trails/guidebook-llm-api"
             ]
           }
         ]
