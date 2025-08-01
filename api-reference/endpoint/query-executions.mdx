@@ -1,0 +1,70 @@
+---
+title: 'Query Execution History'
+openapi: 'POST /v1/trails/{trailId}/versions/{versionId}/executions/query'
+---
+
+Retrieves execution history for a trail, grouped by wallet address. Use this to display user progress, transaction feeds, and leaderboards.
+
+## Overview
+
+This endpoint returns comprehensive execution data including:
+- **totals**: Aggregate statistics across all filtered wallets
+- **walletExecutions**: Detailed execution data per wallet address
+- **stepStats**: Transaction counts and recent transactions per step
+- **farcasterData**: Social profile information for each wallet
+
+## Request Body
+
+```json
+{
+  "walletAddresses": ["0x...", "0x..."] // filter by specific wallet addresses
+}
+```
+
+## Response Structure
+
+### Totals Object
+- **transactions**: Total transactions across filtered wallets (excluding step 0)
+- **wallets**: Total wallets that completed more than step 0  
+- **stepStats**: Per-step statistics with recent transaction hashes
+
+### Wallet Executions Array
+Each wallet contains:
+- **walletAddress**: Always lowercase
+- **executions**: Array of separate execution instances (don't merge these)
+- **farcasterData**: Social profile info (username, pfp_url, display_name, etc.)
+- **txnsPerStep**: Transactions organized by step number
+
+## Farcaster Integration
+
+Profile data includes:
+- **username**: Link to profile with `https://farcaster.xyz/{username}`
+- **pfp_url**: Profile picture URL
+- **display_name**: User's display name
+- **fid**: Farcaster ID
+- **bio**: User bio
+- **followers/following**: Social metrics
+
+Profile data can be `null` if user doesn't have a Farcaster account.
+
+## Use Cases
+
+- **User Progress**: Show current step and transaction history for connected wallet
+- **Transaction Feeds**: Display recent activity across all users
+- **Leaderboards**: Rank users by completion or participation
+- **Social Features**: Show profile pictures and usernames
+
+## Important Notes
+
+- **Don't merge executions**: Each execution is independent and should be used separately
+- **Filter step 0**: All executions have a step 0 with nil hash - exclude from user-facing displays  
+- **Lowercase addresses**: All wallet addresses are returned in lowercase
+- **Execution selection**: Users can select specific executions via `latestExecutionId`
+
+## Recommended Implementation
+
+1. Query with connected wallet address in `walletAddresses`
+2. Build step components using `walletExecutions[].txnsPerStep`
+3. Show social profiles using `farcasterData` 
+4. Display aggregate stats from `totals.stepStats`
+5. Allow users to select executions for continuation 

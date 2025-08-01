@@ -1,0 +1,26 @@
+---
+title: 'Guidebook (By Version)'
+openapi: 'GET /v1/trails/{trailId}/versions/{versionId}/guidebook'
+---
+
+Retrieves the guidebook for a specific version of a trail. This is useful when you need to work with a particular version rather than the latest.
+
+## Overview
+
+This endpoint fetches the complete trail configuration for a specific version including:
+- Trail metadata and description  
+- Step-by-step execution flow
+- Required inputs for each step
+- Node definitions and relationships
+- Input validation schemas
+
+## Use Cases
+
+- Loading a specific trail version for consistent execution
+- Comparing different versions of the same trail
+- Ensuring compatibility with existing executions
+
+## Related Endpoints
+
+- Use `GET /v1/trails/{trailId}/guidebook` for the latest version
+- Use the evaluations and executions endpoints to execute the trail steps 

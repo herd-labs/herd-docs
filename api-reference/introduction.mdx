@@ -1,33 +1,50 @@
 ---
-title: 'Introduction'
-description: 'Example section for showcasing API endpoints'
+title: "Introduction"
+description: "Welcome to the Herd Trails API documentation"
 ---
 
-<Note>
-  If you're not looking to build API reference documentation, you can delete
-  this section by removing the api-reference folder.
-</Note>
+The Herd Trails API enables developers to integrate blockchain trail execution and management into their applications. This RESTful API provides endpoints for retrieving trail configurations, managing user executions, and interacting with smart contracts.
 
-## Welcome
+## Base URL
 
-There are two ways to build API documentation: [OpenAPI](https://mintlify.com/docs/api-playground/openapi/setup) and [MDX components](https://mintlify.com/docs/api-playground/mdx/configuration). For the starter kit, we are using the following OpenAPI specification.
-
-<Card
-  title="Plant Store Endpoints"
-  icon="leaf"
-  href="https://github.com/mintlify/starter/blob/main/api-reference/openapi.json"
->
-  View the OpenAPI specification file
-</Card>
+```
+https://trails-api.herd.eco
+```
 
 ## Authentication
 
-All API endpoints are authenticated using Bearer tokens and picked up from the specification file.
+All API requests do not require an API key at the moment. There is a rate limit in place, if you require higher limits please reach out to andrew@herd.eco.
 
-```json
-"security": [
-  {
-    "bearerAuth": []
-  }
-]
-```
+## Core Concepts
+
+### Trails
+Trails are multi-step blockchain workflows that guide users through complex DeFi operations, NFT interactions, or other smart contract activities.
+
+Each trail comes with a guidebook (a [txt file](https://trails-api.herd.eco/v1/trails/0197604c-f761-7ade-8a5c-5e50c2d834d4/versions/0197604c-f76a-779a-8f2e-e3ba236da2c6/guidebook.txt?promptObject=farcaster_miniapp)) that explains how to build/integrate it into an app, automation, chatbot, etc. This can be found in the trail overlook (like [this one](https://herd.eco/trails/0197604c-f761-7ade-8a5c-5e50c2d834d4/overlook)).
+
+### Versions
+Each trail can have multiple versions, allowing for updates and improvements while maintaining backward compatibility.
+
+### Executions
+Executions track a user's progress through a trail, recording transaction hashes and step completion status.
+
+### Nodes
+Nodes represent individual operations within a trail step - reading from contracts, executing transactions, or processing data.
+
+## Getting Started
+
+1. **Retrieve a trail**: Use the guidebook endpoints to get trail configuration
+2. **Collect user inputs**: Gather required information for each step
+3. **Get transaction data**: Use the evaluations endpoint to generate calldata
+4. **Execute transaction**: Have users sign and submit the transaction
+5. **Save progress**: Record the transaction hash via the executions endpoint
+
+## Rate Limiting
+
+- Avoid high-frequency polling of endpoints
+- Cache guidebook data when possible
+- Use execution queries efficiently
+
+## Support
+
+For questions about the API or trail creation, contact the Herd team.

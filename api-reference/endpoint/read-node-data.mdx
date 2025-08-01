@@ -1,0 +1,117 @@
+---
+title: 'Read Node'
+openapi: 'POST /v1/trails/{trailId}/versions/{versionId}/nodes/{nodeId}/read'
+---
+
+Retrieves data outputs from any node (read functions, events, code execution, etc.) for a specific execution.
+
+## Overview
+
+This endpoint allows you to read data from any node in a trail, providing:
+- **inputs**: The input values used for the node
+- **outputs**: The resulting data from the node execution
+- Support for different node types with varying response formats
+
+## Node Types Supported
+
+- **read_function**: Smart contract read-only functions
+- **write_function**: Smart contract state-changing functions  
+- **event**: Blockchain event data
+- **code**: TypeScript code execution results
+
+## Request Body
+
+Same format as evaluations endpoint:
+
+```json
+{
+  "walletAddress": "0x...", // use 0x0000... if no wallet connected
+  "userInputs": {
+    "nodeId": {
+      "input.path": { "value": "inputValue" }
+    }
+  },
+  "execution": {
+    "type": "latest" | "new" | "manual",
+    "executionId": "uuid" // required for specific execution data
+  }
+}
+```
+
+## Response Formats
+
+### Code Nodes
+```json
+{
+  "inputs": { "input.path": "value" },  // flattened_dot_path format
+  "outputs": { "output.path": "result" } // flattened_dot_path format  
+}
+```
+
+### Contract Nodes (read_function, write_function, event)
+```json
+{
+  "inputs": {
+    "arg_0": {
+      "name": "amount",
+      "type": "uint256", 
+      "value": "1000000000000000000"
+    }
+  },
+  "outputs": {
+    "arg_0": {
+      "name": "result",
+      "type": "tuple",
+      "value": [
+        {
+          "name": "base",
+          "type": "uint256", 
+          "value": "31680878000"
+        },
+        {
+          "name": "premium", 
+          "type": "uint256",
+          "value": "0"
+        }
+      ]
+    }
+  }
+}
+```
+
+## Nested JSON Format
+
+For contract nodes, complex types are nested:
+- **Tuples**: `value` contains array of objects with `name`, `type`, `value`
+- **Arrays**: `value` contains array of the array elements
+- **Simple types**: `value` contains the direct value
+- **Unnamed args**: Use `arg_{index}` as the key
+
+## Use Cases
+
+- **Pre-execution validation**: Check if step is still valid (funds available, NFTs in stock)
+- **Post-execution data**: Display results after transaction completion  
+- **Dynamic UI updates**: Show real-time contract state
+- **Execution context**: Get data specific to user's execution path
+
+## Important Notes
+
+- **Execution ID required**: Must specify execution for context-specific data
+- **Read after execution**: Some nodes require the step to be executed first (`readAfterExecution = true`)
+- **Raw onchain data**: Contract outputs need decimal adjustments - check step data for correct decimals
+- **Output schema**: Find variable names in `outputSchema` field of readNodes array
+
+## Decimal Handling
+
+Contract function outputs are "raw" from blockchain:
+- Check `outputSchema` in step data for decimal places
+- Apply appropriate decimal conversion for display
+- Ask user for clarification on expected decimal precision
+
+## Best Practices
+
+1. **Check node requirements**: Verify if step execution is required first
+2. **Handle decimal conversion**: Apply proper decimal places to raw values  
+3. **Cache wisely**: Don't spam this endpoint - avoid high-frequency polling
+4. **Error handling**: Handle cases where node data isn't available yet
+5. **Execution context**: Always provide correct execution ID for user-specific data 

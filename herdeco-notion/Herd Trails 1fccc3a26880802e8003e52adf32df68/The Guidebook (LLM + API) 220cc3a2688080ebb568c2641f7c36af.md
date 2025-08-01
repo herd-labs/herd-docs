@@ -1,0 +1,13 @@
+# The Guidebook (LLM + API)
+
+After publishing a trail, you will be able to access the guidebook. This is an API for using a trail outside of Herd (getting execution calldata from user inputs to each step, managing execution history).
+
+Go to the trail canvas and click the purple button above the start of trail node, or the overlook description node. The rest is simple - select what you want to build (farcaster miniapp, web app, or a script) and then copy the prompt/link and paste it into your AI tool of choice. Here [is an example generated in v0](https://v0.dev/chat/trail-api-implementation-Ipk7PqiYLXy) using the trail [split, deploy, collect](https://herd.eco/trails/019798af-793b-77e3-9e3f-afc3bcb06da8/overlook).
+
+We highly recommend starting your app in v0, then creating a repo that you can take to cursor or any other tool for more granular edits. That’s because v0 already sets up a lot of scaffolding for you in terms of package management, frameworks, and deployments - things that other tools may easily mess up if you’re unlucky with the LLM.
+
+You can use this same prompt/link to generate automations, chatbots, or anything else too 🙂
+
+## Debugging the Trail API
+
+If the AI tool you are working with runs into errors or gets stuck, try pasting the link/prompt again. Or go the trail overlook, and the test the read node/transaction step that the AI is getting stuck on - there will be an example you can then copy ”LLM prompt” to give the AI a concrete example of how to work with the API.

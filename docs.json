@@ -1,13 +1,13 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
-  "name": "Mint Starter Kit",
+  "name": "Herd",
   "colors": {
-    "primary": "#16A34A",
-    "light": "#07C983",
-    "dark": "#15803D"
+    "primary": "#FF003C",
+    "light": "#FF003C",
+    "dark": "#FF003C"
   },
-  "favicon": "/favicon.svg",
+  "favicon": "/favicon.ico",
   "navigation": {
     "tabs": [
       {
@@ -57,12 +57,25 @@
             ]
           },
           {
-            "group": "Endpoint examples",
+            "group": "Trail Guidebook",
             "pages": [
-              "api-reference/endpoint/get",
-              "api-reference/endpoint/create",
-              "api-reference/endpoint/delete",
-              "api-reference/endpoint/webhook"
+              "api-reference/endpoint/get-trail-guidebook",
+              "api-reference/endpoint/get-trail-version-guidebook"
+            ]
+          },
+          {
+            "group": "Step Evaluation & Read Nodes",
+            "pages": [
+              "api-reference/endpoint/evaluate-step",
+              "api-reference/endpoint/read-node-data"
+            ]
+          },
+          {
+            "group": "Executions",
+            "pages": [
+              "api-reference/endpoint/get-execution",
+              "api-reference/endpoint/create-execution-step",
+              "api-reference/endpoint/query-executions"
             ]
           }
         ]
@@ -71,38 +84,33 @@
     "global": {
       "anchors": [
         {
-          "anchor": "Documentation",
-          "href": "https://mintlify.com/docs",
-          "icon": "book-open-cover"
-        },
-        {
-          "anchor": "Community",
-          "href": "https://mintlify.com/community",
-          "icon": "slack"
+          "anchor": "Discord",
+          "href": "https://discord.gg/NsfPWZZuKU",
+          "icon": "discord"
         },
         {
           "anchor": "Blog",
-          "href": "https://mintlify.com/blog",
+          "href": "https://herd.eco/blog",
           "icon": "newspaper"
         }
       ]
     }
   },
   "logo": {
-    "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg"
+    "light": "/logo/light.png",
+    "dark": "/logo/dark.png"
   },
   "navbar": {
     "links": [
       {
         "label": "Support",
-        "href": "mailto:hi@mintlify.com"
+        "href": "mailto:andrew@herd.eco"
       }
     ],
     "primary": {
       "type": "button",
-      "label": "Dashboard",
-      "href": "https://dashboard.mintlify.com"
+      "label": "Herd App",
+      "href": "https://herd.eco"
     }
   },
   "contextual": {
@@ -119,9 +127,10 @@
   },
   "footer": {
     "socials": {
-      "x": "https://x.com/mintlify",
-      "github": "https://github.com/mintlify",
-      "linkedin": "https://linkedin.com/company/mintlify"
+      "discord": "https://discord.gg/NsfPWZZuKU",
+      "x": "https://x.com/herd_eco",
+      "github": "https://github.com/herd-labs",
+      "linkedin": "https://www.linkedin.com/company/herd-labs"
     }
   }
 }

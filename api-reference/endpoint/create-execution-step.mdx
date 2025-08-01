@@ -1,0 +1,56 @@
+---
+title: 'Save Step Transaction'
+openapi: 'POST /v1/trails/{trailId}/versions/{versionId}/executions/'
+---
+
+**⚠️ MANDATORY**: This endpoint must be called after every transaction submission to save the transaction hash to an execution.
+
+## Overview
+
+After a consumer submits a transaction using calldata from the evaluations endpoint, you must save the transaction hash here. This creates or updates an execution to track the user's progress through the trail.
+
+## Execution Types
+
+- **"latest"** (default): Adds to the most recent execution, or creates one if none exists
+- **"new"**: Always creates a new execution 
+- **"manual"**: Adds to a specific execution by ID
+
+## Execution Behavior
+
+When submitting a transaction:
+- **"new"**: Creates a new execution and adds the transaction as step 1
+- **"latest"**: Adds to existing "latest" execution, or creates one if none exists
+- If a transaction already exists for this step in the latest execution, it "forks" to create a new execution
+- **"manual"**: Adds to the specified execution ID
+
+## Request Body
+
+```json
+{
+  "nodeId": "uuid-of-primary-node-for-step",
+  "transactionHash": "0x...",
+  "walletAddress": "0x...",
+  "execution": { 
+    "type": "latest" | "new" | "manual",
+    "executionId": "uuid" // only required for "manual" type
+  }
+}
+```
+
+## Important Notes
+
+- **Do NOT** create executions beforehand - let this endpoint handle creation
+- Usually use "latest" execution type unless user selects a different execution
+- API will return an error if the transaction hash is invalid or failed
+- You can skip a step by sending a nil transaction hash: `0x0000000000000000000000000000000000000000000000000000000000000000`
+
+## Error Handling
+
+If this endpoint fails, the transaction itself likely failed. Always return a transaction error to the consumer with the hash for investigation.
+
+## Workflow
+
+1. Get transaction calldata from evaluations endpoint
+2. User signs and submits transaction 
+3. **Immediately call this endpoint** with the transaction hash
+4. Handle any errors appropriately 

@@ -1,216 +1,2733 @@
 {
-  "openapi": "3.1.0",
+  "openapi": "3.0.3",
   "info": {
-    "title": "OpenAPI Plant Store",
-    "description": "A sample API that uses a plant store as an example to demonstrate features in the OpenAPI specification",
-    "license": {
-      "name": "MIT"
-    },
+    "title": "Herd Trails API",
+    "description": "Trails API for the Herd platform",
     "version": "1.0.0"
   },
-  "servers": [
-    {
-      "url": "http://sandbox.mintlify.com"
-    }
-  ],
   "security": [
     {
-      "bearerAuth": []
+      "BearerAuth": []
     }
   ],
-  "paths": {
-    "/plants": {
-      "get": {
-        "description": "Returns all plants from the system that the user has access to",
-        "parameters": [
-          {
-            "name": "limit",
-            "in": "query",
-            "description": "The maximum number of results to return",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Plant response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Plant"
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Unexpected error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "description": "Creates a new plant in the store",
-        "requestBody": {
-          "description": "Plant to add to the store",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/NewPlant"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "plant response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Plant"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "unexpected error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/plants/{id}": {
-      "delete": {
-        "description": "Deletes a single plant based on the ID supplied",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID of plant to delete",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "Plant deleted",
-            "content": {}
-          },
-          "400": {
-            "description": "unexpected error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  },
-  "webhooks": {
-    "/plant/webhook": {
-      "post": {
-        "description": "Information about a new plant added to the store",
-        "requestBody": {
-          "description": "Plant added to the store",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/NewPlant"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Return a 200 status to indicate that the data was received successfully"
-          }
-        }
-      }
-    }
-  },
   "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "apiKey",
+        "name": "Authorization",
+        "in": "header",
+        "description": "Enter your bearer token in the format **Bearer \u003Ctoken\u003E**"
+      }
+    },
     "schemas": {
-      "Plant": {
-        "required": [
-          "name"
-        ],
-        "type": "object",
-        "properties": {
-          "name": {
-            "description": "The name of the plant",
-            "type": "string"
-          },
-          "tag": {
-            "description": "Tag to specify the type",
-            "type": "string"
-          }
-        }
-      },
-      "NewPlant": {
-        "allOf": [
+
+    }
+  },
+  "paths": {
+    "/v1/trails/{trailId}/guidebook": {
+      "get": {
+        "parameters": [
           {
-            "$ref": "#/components/schemas/Plant"
-          },
-          {
-            "required": [
-              "id"
-            ],
-            "type": "object",
-            "properties": {
-              "id": {
-                "description": "Identification number of the plant",
-                "type": "integer",
-                "format": "int64"
-              }
-            }
+            "description": "UUIDv7 string",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "in": "path",
+            "name": "trailId",
+            "required": true
           }
-        ]
-      },
-      "Error": {
-        "required": [
-          "error",
-          "message"
         ],
-        "type": "object",
-        "properties": {
-          "error": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "message": {
-            "type": "string"
+        "operationId": "getV1TrailsByTrailIdGuidebook",
+        "tags": [
+          "Trails"
+        ],
+        "responses": {
+          "200": {
+
           }
         }
       }
     },
-    "securitySchemes": {
-      "bearerAuth": {
-        "type": "http",
-        "scheme": "bearer"
+    "/v1/trails/{trailId}/versions/{versionId}/guidebook": {
+      "get": {
+        "parameters": [
+          {
+            "description": "UUIDv7 string",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "in": "path",
+            "name": "trailId",
+            "required": true
+          },
+          {
+            "description": "UUIDv7 string",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "in": "path",
+            "name": "versionId",
+            "required": true
+          }
+        ],
+        "operationId": "getV1TrailsByTrailIdVersionsByVersionIdGuidebook",
+        "tags": [
+          "Trails"
+        ],
+        "responses": {
+          "200": {
+
+          }
+        }
+      }
+    },
+    "/v1/trails/{trailId}/versions/{versionId}/executions/{executionId}": {
+      "get": {
+        "parameters": [
+          {
+            "description": "UUIDv7 string",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "in": "path",
+            "name": "trailId",
+            "required": true
+          },
+          {
+            "description": "UUIDv7 string",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "in": "path",
+            "name": "versionId",
+            "required": true
+          },
+          {
+            "description": "UUIDv7 string",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "in": "path",
+            "name": "executionId",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "description": "UUIDv7 string",
+                      "format": "uuid",
+                      "type": "string"
+                    },
+                    "createdAt": {
+                      "type": "string"
+                    },
+                    "updatedAt": {
+                      "type": "string"
+                    },
+                    "steps": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "stepNumber": {
+                            "type": "number"
+                          },
+                          "nodeId": {
+                            "anyOf": [
+                              {
+                                "description": "UUIDv7 string",
+                                "format": "uuid",
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "txHash": {
+                            "pattern": "^0x[a-fA-F0-9]{64}$",
+                            "type": "string"
+                          },
+                          "txBlockTimestamp": {
+                            "anyOf": [
+                              {
+                                "type": "number"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "txBlockNumber": {
+                            "anyOf": [
+                              {
+                                "type": "number"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "createdAt": {
+                            "type": "string"
+                          },
+                          "evaluation": {
+                            "anyOf": [
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "finalInputValues": {
+                                    "type": "object",
+                                    "patternProperties": {
+                                      "^(.*)$": {
+                                        "type": "string"
+                                      }
+                                    }
+                                  },
+                                  "contractAddress": {
+                                    "pattern": "^0x[a-fA-F0-9]{40}$",
+                                    "type": "string"
+                                  }
+                                },
+                                "required": [
+                                  "finalInputValues",
+                                  "contractAddress"
+                                ]
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          }
+                        },
+                        "required": [
+                          "stepNumber",
+                          "nodeId",
+                          "txHash",
+                          "txBlockTimestamp",
+                          "txBlockNumber",
+                          "createdAt",
+                          "evaluation"
+                        ]
+                      }
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "createdAt",
+                    "updatedAt",
+                    "steps"
+                  ]
+                }
+              },
+              "multipart/form-data": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "description": "UUIDv7 string",
+                      "format": "uuid",
+                      "type": "string"
+                    },
+                    "createdAt": {
+                      "type": "string"
+                    },
+                    "updatedAt": {
+                      "type": "string"
+                    },
+                    "steps": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "stepNumber": {
+                            "type": "number"
+                          },
+                          "nodeId": {
+                            "anyOf": [
+                              {
+                                "description": "UUIDv7 string",
+                                "format": "uuid",
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "txHash": {
+                            "pattern": "^0x[a-fA-F0-9]{64}$",
+                            "type": "string"
+                          },
+                          "txBlockTimestamp": {
+                            "anyOf": [
+                              {
+                                "type": "number"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "txBlockNumber": {
+                            "anyOf": [
+                              {
+                                "type": "number"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "createdAt": {
+                            "type": "string"
+                          },
+                          "evaluation": {
+                            "anyOf": [
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "finalInputValues": {
+                                    "type": "object",
+                                    "patternProperties": {
+                                      "^(.*)$": {
+                                        "type": "string"
+                                      }
+                                    }
+                                  },
+                                  "contractAddress": {
+                                    "pattern": "^0x[a-fA-F0-9]{40}$",
+                                    "type": "string"
+                                  }
+                                },
+                                "required": [
+                                  "finalInputValues",
+                                  "contractAddress"
+                                ]
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          }
+                        },
+                        "required": [
+                          "stepNumber",
+                          "nodeId",
+                          "txHash",
+                          "txBlockTimestamp",
+                          "txBlockNumber",
+                          "createdAt",
+                          "evaluation"
+                        ]
+                      }
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "createdAt",
+                    "updatedAt",
+                    "steps"
+                  ]
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "description": "UUIDv7 string",
+                      "format": "uuid",
+                      "type": "string"
+                    },
+                    "createdAt": {
+                      "type": "string"
+                    },
+                    "updatedAt": {
+                      "type": "string"
+                    },
+                    "steps": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "stepNumber": {
+                            "type": "number"
+                          },
+                          "nodeId": {
+                            "anyOf": [
+                              {
+                                "description": "UUIDv7 string",
+                                "format": "uuid",
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "txHash": {
+                            "pattern": "^0x[a-fA-F0-9]{64}$",
+                            "type": "string"
+                          },
+                          "txBlockTimestamp": {
+                            "anyOf": [
+                              {
+                                "type": "number"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "txBlockNumber": {
+                            "anyOf": [
+                              {
+                                "type": "number"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "createdAt": {
+                            "type": "string"
+                          },
+                          "evaluation": {
+                            "anyOf": [
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "finalInputValues": {
+                                    "type": "object",
+                                    "patternProperties": {
+                                      "^(.*)$": {
+                                        "type": "string"
+                                      }
+                                    }
+                                  },
+                                  "contractAddress": {
+                                    "pattern": "^0x[a-fA-F0-9]{40}$",
+                                    "type": "string"
+                                  }
+                                },
+                                "required": [
+                                  "finalInputValues",
+                                  "contractAddress"
+                                ]
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          }
+                        },
+                        "required": [
+                          "stepNumber",
+                          "nodeId",
+                          "txHash",
+                          "txBlockTimestamp",
+                          "txBlockNumber",
+                          "createdAt",
+                          "evaluation"
+                        ]
+                      }
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "createdAt",
+                    "updatedAt",
+                    "steps"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "operationId": "getV1TrailsByTrailIdVersionsByVersionIdExecutionsByExecutionId",
+        "tags": [
+          "Trails"
+        ]
+      }
+    },
+    "/v1/trails/{trailId}/versions/{versionId}/executions/": {
+      "post": {
+        "parameters": [
+          {
+            "description": "UUIDv7 string",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "in": "path",
+            "name": "trailId",
+            "required": true
+          },
+          {
+            "description": "UUIDv7 string",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "in": "path",
+            "name": "versionId",
+            "required": true
+          }
+        ],
+        "operationId": "postV1TrailsByTrailIdVersionsByVersionIdExecutions",
+        "tags": [
+          "Trails"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "nodeId": {
+                    "description": "UUIDv7 string",
+                    "format": "uuid",
+                    "type": "string"
+                  },
+                  "transactionHash": {
+                    "pattern": "^0x[a-fA-F0-9]{64}$",
+                    "type": "string"
+                  },
+                  "walletAddress": {
+                    "pattern": "^0x[a-fA-F0-9]{40}$",
+                    "type": "string"
+                  },
+                  "execution": {
+                    "default": {
+                      "type": "latest"
+                    },
+                    "anyOf": [
+                      {
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "const": "new",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "type"
+                        ]
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "const": "latest",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "type"
+                        ]
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "const": "manual",
+                            "type": "string"
+                          },
+                          "executionId": {
+                            "description": "UUIDv7 string",
+                            "format": "uuid",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "executionId"
+                        ]
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "nodeId",
+                  "transactionHash",
+                  "walletAddress",
+                  "execution"
+                ]
+              }
+            },
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "nodeId": {
+                    "description": "UUIDv7 string",
+                    "format": "uuid",
+                    "type": "string"
+                  },
+                  "transactionHash": {
+                    "pattern": "^0x[a-fA-F0-9]{64}$",
+                    "type": "string"
+                  },
+                  "walletAddress": {
+                    "pattern": "^0x[a-fA-F0-9]{40}$",
+                    "type": "string"
+                  },
+                  "execution": {
+                    "default": {
+                      "type": "latest"
+                    },
+                    "anyOf": [
+                      {
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "const": "new",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "type"
+                        ]
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "const": "latest",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "type"
+                        ]
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "const": "manual",
+                            "type": "string"
+                          },
+                          "executionId": {
+                            "description": "UUIDv7 string",
+                            "format": "uuid",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "executionId"
+                        ]
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "nodeId",
+                  "transactionHash",
+                  "walletAddress",
+                  "execution"
+                ]
+              }
+            },
+            "text/plain": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "nodeId": {
+                    "description": "UUIDv7 string",
+                    "format": "uuid",
+                    "type": "string"
+                  },
+                  "transactionHash": {
+                    "pattern": "^0x[a-fA-F0-9]{64}$",
+                    "type": "string"
+                  },
+                  "walletAddress": {
+                    "pattern": "^0x[a-fA-F0-9]{40}$",
+                    "type": "string"
+                  },
+                  "execution": {
+                    "default": {
+                      "type": "latest"
+                    },
+                    "anyOf": [
+                      {
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "const": "new",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "type"
+                        ]
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "const": "latest",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "type"
+                        ]
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "const": "manual",
+                            "type": "string"
+                          },
+                          "executionId": {
+                            "description": "UUIDv7 string",
+                            "format": "uuid",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "executionId"
+                        ]
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "nodeId",
+                  "transactionHash",
+                  "walletAddress",
+                  "execution"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+
+          }
+        }
+      }
+    },
+    "/v1/trails/{trailId}/versions/{versionId}/executions/query": {
+      "post": {
+        "parameters": [
+          {
+            "description": "UUIDv7 string",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "in": "path",
+            "name": "trailId",
+            "required": true
+          },
+          {
+            "description": "UUIDv7 string",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "in": "path",
+            "name": "versionId",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "totals": {
+                      "type": "object",
+                      "properties": {
+                        "transactions": {
+                          "type": "number"
+                        },
+                        "wallets": {
+                          "type": "number"
+                        },
+                        "stepStats": {
+                          "type": "object",
+                          "patternProperties": {
+                            "^(0|[1-9][0-9]*)$": {
+                              "type": "object",
+                              "properties": {
+                                "wallets": {
+                                  "type": "number"
+                                },
+                                "transactions": {
+                                  "type": "number"
+                                },
+                                "transactionHashes": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "farcasterData": {
+                                        "anyOf": [
+                                          {
+                                            "type": "object",
+                                            "properties": {
+                                              "username": {
+                                                "type": "string"
+                                              },
+                                              "pfp_url": {
+                                                "anyOf": [
+                                                  {
+                                                    "type": "string"
+                                                  },
+                                                  {
+                                                    "type": "null"
+                                                  }
+                                                ]
+                                              },
+                                              "display_name": {
+                                                "type": "string"
+                                              },
+                                              "fid": {
+                                                "type": "number"
+                                              },
+                                              "bio": {
+                                                "anyOf": [
+                                                  {
+                                                    "type": "string"
+                                                  },
+                                                  {
+                                                    "type": "null"
+                                                  }
+                                                ]
+                                              },
+                                              "followers": {
+                                                "type": "number"
+                                              },
+                                              "following": {
+                                                "type": "number"
+                                              }
+                                            },
+                                            "required": [
+                                              "username",
+                                              "pfp_url",
+                                              "display_name",
+                                              "fid",
+                                              "bio",
+                                              "followers",
+                                              "following"
+                                            ]
+                                          },
+                                          {
+                                            "type": "null"
+                                          }
+                                        ]
+                                      },
+                                      "walletAddress": {
+                                        "pattern": "^0x[a-fA-F0-9]{40}$",
+                                        "type": "string"
+                                      },
+                                      "txHash": {
+                                        "pattern": "^0x[a-fA-F0-9]{64}$",
+                                        "type": "string"
+                                      },
+                                      "blockTimestamp": {
+                                        "type": "number"
+                                      },
+                                      "blockNumber": {
+                                        "type": "number"
+                                      },
+                                      "latestExecutionId": {
+                                        "description": "UUIDv7 string",
+                                        "format": "uuid",
+                                        "type": "string"
+                                      },
+                                      "evaluation": {
+                                        "anyOf": [
+                                          {
+                                            "type": "object",
+                                            "properties": {
+                                              "finalInputValues": {
+                                                "type": "object",
+                                                "patternProperties": {
+                                                  "^(.*)$": {
+                                                    "type": "string"
+                                                  }
+                                                }
+                                              },
+                                              "contractAddress": {
+                                                "pattern": "^0x[a-fA-F0-9]{40}$",
+                                                "type": "string"
+                                              }
+                                            },
+                                            "required": [
+                                              "finalInputValues",
+                                              "contractAddress"
+                                            ]
+                                          },
+                                          {
+                                            "type": "null"
+                                          }
+                                        ]
+                                      }
+                                    },
+                                    "required": [
+                                      "farcasterData",
+                                      "walletAddress",
+                                      "txHash",
+                                      "blockTimestamp",
+                                      "blockNumber",
+                                      "latestExecutionId",
+                                      "evaluation"
+                                    ]
+                                  }
+                                }
+                              },
+                              "required": [
+                                "wallets",
+                                "transactions",
+                                "transactionHashes"
+                              ]
+                            }
+                          }
+                        }
+                      },
+                      "required": [
+                        "transactions",
+                        "wallets",
+                        "stepStats"
+                      ]
+                    },
+                    "walletExecutions": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "walletAddress": {
+                            "pattern": "^0x[a-fA-F0-9]{40}$",
+                            "type": "string"
+                          },
+                          "farcasterData": {
+                            "anyOf": [
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "username": {
+                                    "type": "string"
+                                  },
+                                  "pfp_url": {
+                                    "anyOf": [
+                                      {
+                                        "type": "string"
+                                      },
+                                      {
+                                        "type": "null"
+                                      }
+                                    ]
+                                  },
+                                  "display_name": {
+                                    "type": "string"
+                                  },
+                                  "fid": {
+                                    "type": "number"
+                                  },
+                                  "bio": {
+                                    "anyOf": [
+                                      {
+                                        "type": "string"
+                                      },
+                                      {
+                                        "type": "null"
+                                      }
+                                    ]
+                                  },
+                                  "followers": {
+                                    "type": "number"
+                                  },
+                                  "following": {
+                                    "type": "number"
+                                  }
+                                },
+                                "required": [
+                                  "username",
+                                  "pfp_url",
+                                  "display_name",
+                                  "fid",
+                                  "bio",
+                                  "followers",
+                                  "following"
+                                ]
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "executions": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "description": "UUIDv7 string",
+                                  "format": "uuid",
+                                  "type": "string"
+                                },
+                                "createdAt": {
+                                  "type": "string"
+                                },
+                                "updatedAt": {
+                                  "type": "string"
+                                },
+                                "steps": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "stepNumber": {
+                                        "type": "number"
+                                      },
+                                      "nodeId": {
+                                        "anyOf": [
+                                          {
+                                            "description": "UUIDv7 string",
+                                            "format": "uuid",
+                                            "type": "string"
+                                          },
+                                          {
+                                            "type": "null"
+                                          }
+                                        ]
+                                      },
+                                      "txHash": {
+                                        "pattern": "^0x[a-fA-F0-9]{64}$",
+                                        "type": "string"
+                                      },
+                                      "txBlockTimestamp": {
+                                        "anyOf": [
+                                          {
+                                            "type": "number"
+                                          },
+                                          {
+                                            "type": "null"
+                                          }
+                                        ]
+                                      },
+                                      "txBlockNumber": {
+                                        "anyOf": [
+                                          {
+                                            "type": "number"
+                                          },
+                                          {
+                                            "type": "null"
+                                          }
+                                        ]
+                                      },
+                                      "createdAt": {
+                                        "type": "string"
+                                      },
+                                      "evaluation": {
+                                        "anyOf": [
+                                          {
+                                            "type": "object",
+                                            "properties": {
+                                              "finalInputValues": {
+                                                "type": "object",
+                                                "patternProperties": {
+                                                  "^(.*)$": {
+                                                    "type": "string"
+                                                  }
+                                                }
+                                              },
+                                              "contractAddress": {
+                                                "pattern": "^0x[a-fA-F0-9]{40}$",
+                                                "type": "string"
+                                              }
+                                            },
+                                            "required": [
+                                              "finalInputValues",
+                                              "contractAddress"
+                                            ]
+                                          },
+                                          {
+                                            "type": "null"
+                                          }
+                                        ]
+                                      }
+                                    },
+                                    "required": [
+                                      "stepNumber",
+                                      "nodeId",
+                                      "txHash",
+                                      "txBlockTimestamp",
+                                      "txBlockNumber",
+                                      "createdAt",
+                                      "evaluation"
+                                    ]
+                                  }
+                                }
+                              },
+                              "required": [
+                                "id",
+                                "createdAt",
+                                "updatedAt",
+                                "steps"
+                              ]
+                            }
+                          },
+                          "txnsPerStep": {
+                            "type": "object",
+                            "patternProperties": {
+                              "^(0|[1-9][0-9]*)$": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "txHash": {
+                                      "pattern": "^0x[a-fA-F0-9]{64}$",
+                                      "type": "string"
+                                    },
+                                    "blockTimestamp": {
+                                      "type": "number"
+                                    },
+                                    "blockNumber": {
+                                      "type": "number"
+                                    },
+                                    "latestExecutionId": {
+                                      "description": "UUIDv7 string",
+                                      "format": "uuid",
+                                      "type": "string"
+                                    },
+                                    "evaluation": {
+                                      "anyOf": [
+                                        {
+                                          "type": "object",
+                                          "properties": {
+                                            "finalInputValues": {
+                                              "type": "object",
+                                              "patternProperties": {
+                                                "^(.*)$": {
+                                                  "type": "string"
+                                                }
+                                              }
+                                            },
+                                            "contractAddress": {
+                                              "pattern": "^0x[a-fA-F0-9]{40}$",
+                                              "type": "string"
+                                            }
+                                          },
+                                          "required": [
+                                            "finalInputValues",
+                                            "contractAddress"
+                                          ]
+                                        },
+                                        {
+                                          "type": "null"
+                                        }
+                                      ]
+                                    }
+                                  },
+                                  "required": [
+                                    "txHash",
+                                    "blockTimestamp",
+                                    "blockNumber",
+                                    "latestExecutionId",
+                                    "evaluation"
+                                  ]
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "required": [
+                          "walletAddress",
+                          "farcasterData",
+                          "executions",
+                          "txnsPerStep"
+                        ]
+                      }
+                    }
+                  },
+                  "required": [
+                    "totals",
+                    "walletExecutions"
+                  ]
+                }
+              },
+              "multipart/form-data": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "totals": {
+                      "type": "object",
+                      "properties": {
+                        "transactions": {
+                          "type": "number"
+                        },
+                        "wallets": {
+                          "type": "number"
+                        },
+                        "stepStats": {
+                          "type": "object",
+                          "patternProperties": {
+                            "^(0|[1-9][0-9]*)$": {
+                              "type": "object",
+                              "properties": {
+                                "wallets": {
+                                  "type": "number"
+                                },
+                                "transactions": {
+                                  "type": "number"
+                                },
+                                "transactionHashes": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "farcasterData": {
+                                        "anyOf": [
+                                          {
+                                            "type": "object",
+                                            "properties": {
+                                              "username": {
+                                                "type": "string"
+                                              },
+                                              "pfp_url": {
+                                                "anyOf": [
+                                                  {
+                                                    "type": "string"
+                                                  },
+                                                  {
+                                                    "type": "null"
+                                                  }
+                                                ]
+                                              },
+                                              "display_name": {
+                                                "type": "string"
+                                              },
+                                              "fid": {
+                                                "type": "number"
+                                              },
+                                              "bio": {
+                                                "anyOf": [
+                                                  {
+                                                    "type": "string"
+                                                  },
+                                                  {
+                                                    "type": "null"
+                                                  }
+                                                ]
+                                              },
+                                              "followers": {
+                                                "type": "number"
+                                              },
+                                              "following": {
+                                                "type": "number"
+                                              }
+                                            },
+                                            "required": [
+                                              "username",
+                                              "pfp_url",
+                                              "display_name",
+                                              "fid",
+                                              "bio",
+                                              "followers",
+                                              "following"
+                                            ]
+                                          },
+                                          {
+                                            "type": "null"
+                                          }
+                                        ]
+                                      },
+                                      "walletAddress": {
+                                        "pattern": "^0x[a-fA-F0-9]{40}$",
+                                        "type": "string"
+                                      },
+                                      "txHash": {
+                                        "pattern": "^0x[a-fA-F0-9]{64}$",
+                                        "type": "string"
+                                      },
+                                      "blockTimestamp": {
+                                        "type": "number"
+                                      },
+                                      "blockNumber": {
+                                        "type": "number"
+                                      },
+                                      "latestExecutionId": {
+                                        "description": "UUIDv7 string",
+                                        "format": "uuid",
+                                        "type": "string"
+                                      },
+                                      "evaluation": {
+                                        "anyOf": [
+                                          {
+                                            "type": "object",
+                                            "properties": {
+                                              "finalInputValues": {
+                                                "type": "object",
+                                                "patternProperties": {
+                                                  "^(.*)$": {
+                                                    "type": "string"
+                                                  }
+                                                }
+                                              },
+                                              "contractAddress": {
+                                                "pattern": "^0x[a-fA-F0-9]{40}$",
+                                                "type": "string"
+                                              }
+                                            },
+                                            "required": [
+                                              "finalInputValues",
+                                              "contractAddress"
+                                            ]
+                                          },
+                                          {
+                                            "type": "null"
+                                          }
+                                        ]
+                                      }
+                                    },
+                                    "required": [
+                                      "farcasterData",
+                                      "walletAddress",
+                                      "txHash",
+                                      "blockTimestamp",
+                                      "blockNumber",
+                                      "latestExecutionId",
+                                      "evaluation"
+                                    ]
+                                  }
+                                }
+                              },
+                              "required": [
+                                "wallets",
+                                "transactions",
+                                "transactionHashes"
+                              ]
+                            }
+                          }
+                        }
+                      },
+                      "required": [
+                        "transactions",
+                        "wallets",
+                        "stepStats"
+                      ]
+                    },
+                    "walletExecutions": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "walletAddress": {
+                            "pattern": "^0x[a-fA-F0-9]{40}$",
+                            "type": "string"
+                          },
+                          "farcasterData": {
+                            "anyOf": [
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "username": {
+                                    "type": "string"
+                                  },
+                                  "pfp_url": {
+                                    "anyOf": [
+                                      {
+                                        "type": "string"
+                                      },
+                                      {
+                                        "type": "null"
+                                      }
+                                    ]
+                                  },
+                                  "display_name": {
+                                    "type": "string"
+                                  },
+                                  "fid": {
+                                    "type": "number"
+                                  },
+                                  "bio": {
+                                    "anyOf": [
+                                      {
+                                        "type": "string"
+                                      },
+                                      {
+                                        "type": "null"
+                                      }
+                                    ]
+                                  },
+                                  "followers": {
+                                    "type": "number"
+                                  },
+                                  "following": {
+                                    "type": "number"
+                                  }
+                                },
+                                "required": [
+                                  "username",
+                                  "pfp_url",
+                                  "display_name",
+                                  "fid",
+                                  "bio",
+                                  "followers",
+                                  "following"
+                                ]
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "executions": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "description": "UUIDv7 string",
+                                  "format": "uuid",
+                                  "type": "string"
+                                },
+                                "createdAt": {
+                                  "type": "string"
+                                },
+                                "updatedAt": {
+                                  "type": "string"
+                                },
+                                "steps": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "stepNumber": {
+                                        "type": "number"
+                                      },
+                                      "nodeId": {
+                                        "anyOf": [
+                                          {
+                                            "description": "UUIDv7 string",
+                                            "format": "uuid",
+                                            "type": "string"
+                                          },
+                                          {
+                                            "type": "null"
+                                          }
+                                        ]
+                                      },
+                                      "txHash": {
+                                        "pattern": "^0x[a-fA-F0-9]{64}$",
+                                        "type": "string"
+                                      },
+                                      "txBlockTimestamp": {
+                                        "anyOf": [
+                                          {
+                                            "type": "number"
+                                          },
+                                          {
+                                            "type": "null"
+                                          }
+                                        ]
+                                      },
+                                      "txBlockNumber": {
+                                        "anyOf": [
+                                          {
+                                            "type": "number"
+                                          },
+                                          {
+                                            "type": "null"
+                                          }
+                                        ]
+                                      },
+                                      "createdAt": {
+                                        "type": "string"
+                                      },
+                                      "evaluation": {
+                                        "anyOf": [
+                                          {
+                                            "type": "object",
+                                            "properties": {
+                                              "finalInputValues": {
+                                                "type": "object",
+                                                "patternProperties": {
+                                                  "^(.*)$": {
+                                                    "type": "string"
+                                                  }
+                                                }
+                                              },
+                                              "contractAddress": {
+                                                "pattern": "^0x[a-fA-F0-9]{40}$",
+                                                "type": "string"
+                                              }
+                                            },
+                                            "required": [
+                                              "finalInputValues",
+                                              "contractAddress"
+                                            ]
+                                          },
+                                          {
+                                            "type": "null"
+                                          }
+                                        ]
+                                      }
+                                    },
+                                    "required": [
+                                      "stepNumber",
+                                      "nodeId",
+                                      "txHash",
+                                      "txBlockTimestamp",
+                                      "txBlockNumber",
+                                      "createdAt",
+                                      "evaluation"
+                                    ]
+                                  }
+                                }
+                              },
+                              "required": [
+                                "id",
+                                "createdAt",
+                                "updatedAt",
+                                "steps"
+                              ]
+                            }
+                          },
+                          "txnsPerStep": {
+                            "type": "object",
+                            "patternProperties": {
+                              "^(0|[1-9][0-9]*)$": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "txHash": {
+                                      "pattern": "^0x[a-fA-F0-9]{64}$",
+                                      "type": "string"
+                                    },
+                                    "blockTimestamp": {
+                                      "type": "number"
+                                    },
+                                    "blockNumber": {
+                                      "type": "number"
+                                    },
+                                    "latestExecutionId": {
+                                      "description": "UUIDv7 string",
+                                      "format": "uuid",
+                                      "type": "string"
+                                    },
+                                    "evaluation": {
+                                      "anyOf": [
+                                        {
+                                          "type": "object",
+                                          "properties": {
+                                            "finalInputValues": {
+                                              "type": "object",
+                                              "patternProperties": {
+                                                "^(.*)$": {
+                                                  "type": "string"
+                                                }
+                                              }
+                                            },
+                                            "contractAddress": {
+                                              "pattern": "^0x[a-fA-F0-9]{40}$",
+                                              "type": "string"
+                                            }
+                                          },
+                                          "required": [
+                                            "finalInputValues",
+                                            "contractAddress"
+                                          ]
+                                        },
+                                        {
+                                          "type": "null"
+                                        }
+                                      ]
+                                    }
+                                  },
+                                  "required": [
+                                    "txHash",
+                                    "blockTimestamp",
+                                    "blockNumber",
+                                    "latestExecutionId",
+                                    "evaluation"
+                                  ]
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "required": [
+                          "walletAddress",
+                          "farcasterData",
+                          "executions",
+                          "txnsPerStep"
+                        ]
+                      }
+                    }
+                  },
+                  "required": [
+                    "totals",
+                    "walletExecutions"
+                  ]
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "totals": {
+                      "type": "object",
+                      "properties": {
+                        "transactions": {
+                          "type": "number"
+                        },
+                        "wallets": {
+                          "type": "number"
+                        },
+                        "stepStats": {
+                          "type": "object",
+                          "patternProperties": {
+                            "^(0|[1-9][0-9]*)$": {
+                              "type": "object",
+                              "properties": {
+                                "wallets": {
+                                  "type": "number"
+                                },
+                                "transactions": {
+                                  "type": "number"
+                                },
+                                "transactionHashes": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "farcasterData": {
+                                        "anyOf": [
+                                          {
+                                            "type": "object",
+                                            "properties": {
+                                              "username": {
+                                                "type": "string"
+                                              },
+                                              "pfp_url": {
+                                                "anyOf": [
+                                                  {
+                                                    "type": "string"
+                                                  },
+                                                  {
+                                                    "type": "null"
+                                                  }
+                                                ]
+                                              },
+                                              "display_name": {
+                                                "type": "string"
+                                              },
+                                              "fid": {
+                                                "type": "number"
+                                              },
+                                              "bio": {
+                                                "anyOf": [
+                                                  {
+                                                    "type": "string"
+                                                  },
+                                                  {
+                                                    "type": "null"
+                                                  }
+                                                ]
+                                              },
+                                              "followers": {
+                                                "type": "number"
+                                              },
+                                              "following": {
+                                                "type": "number"
+                                              }
+                                            },
+                                            "required": [
+                                              "username",
+                                              "pfp_url",
+                                              "display_name",
+                                              "fid",
+                                              "bio",
+                                              "followers",
+                                              "following"
+                                            ]
+                                          },
+                                          {
+                                            "type": "null"
+                                          }
+                                        ]
+                                      },
+                                      "walletAddress": {
+                                        "pattern": "^0x[a-fA-F0-9]{40}$",
+                                        "type": "string"
+                                      },
+                                      "txHash": {
+                                        "pattern": "^0x[a-fA-F0-9]{64}$",
+                                        "type": "string"
+                                      },
+                                      "blockTimestamp": {
+                                        "type": "number"
+                                      },
+                                      "blockNumber": {
+                                        "type": "number"
+                                      },
+                                      "latestExecutionId": {
+                                        "description": "UUIDv7 string",
+                                        "format": "uuid",
+                                        "type": "string"
+                                      },
+                                      "evaluation": {
+                                        "anyOf": [
+                                          {
+                                            "type": "object",
+                                            "properties": {
+                                              "finalInputValues": {
+                                                "type": "object",
+                                                "patternProperties": {
+                                                  "^(.*)$": {
+                                                    "type": "string"
+                                                  }
+                                                }
+                                              },
+                                              "contractAddress": {
+                                                "pattern": "^0x[a-fA-F0-9]{40}$",
+                                                "type": "string"
+                                              }
+                                            },
+                                            "required": [
+                                              "finalInputValues",
+                                              "contractAddress"
+                                            ]
+                                          },
+                                          {
+                                            "type": "null"
+                                          }
+                                        ]
+                                      }
+                                    },
+                                    "required": [
+                                      "farcasterData",
+                                      "walletAddress",
+                                      "txHash",
+                                      "blockTimestamp",
+                                      "blockNumber",
+                                      "latestExecutionId",
+                                      "evaluation"
+                                    ]
+                                  }
+                                }
+                              },
+                              "required": [
+                                "wallets",
+                                "transactions",
+                                "transactionHashes"
+                              ]
+                            }
+                          }
+                        }
+                      },
+                      "required": [
+                        "transactions",
+                        "wallets",
+                        "stepStats"
+                      ]
+                    },
+                    "walletExecutions": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "walletAddress": {
+                            "pattern": "^0x[a-fA-F0-9]{40}$",
+                            "type": "string"
+                          },
+                          "farcasterData": {
+                            "anyOf": [
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "username": {
+                                    "type": "string"
+                                  },
+                                  "pfp_url": {
+                                    "anyOf": [
+                                      {
+                                        "type": "string"
+                                      },
+                                      {
+                                        "type": "null"
+                                      }
+                                    ]
+                                  },
+                                  "display_name": {
+                                    "type": "string"
+                                  },
+                                  "fid": {
+                                    "type": "number"
+                                  },
+                                  "bio": {
+                                    "anyOf": [
+                                      {
+                                        "type": "string"
+                                      },
+                                      {
+                                        "type": "null"
+                                      }
+                                    ]
+                                  },
+                                  "followers": {
+                                    "type": "number"
+                                  },
+                                  "following": {
+                                    "type": "number"
+                                  }
+                                },
+                                "required": [
+                                  "username",
+                                  "pfp_url",
+                                  "display_name",
+                                  "fid",
+                                  "bio",
+                                  "followers",
+                                  "following"
+                                ]
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "executions": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "description": "UUIDv7 string",
+                                  "format": "uuid",
+                                  "type": "string"
+                                },
+                                "createdAt": {
+                                  "type": "string"
+                                },
+                                "updatedAt": {
+                                  "type": "string"
+                                },
+                                "steps": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "stepNumber": {
+                                        "type": "number"
+                                      },
+                                      "nodeId": {
+                                        "anyOf": [
+                                          {
+                                            "description": "UUIDv7 string",
+                                            "format": "uuid",
+                                            "type": "string"
+                                          },
+                                          {
+                                            "type": "null"
+                                          }
+                                        ]
+                                      },
+                                      "txHash": {
+                                        "pattern": "^0x[a-fA-F0-9]{64}$",
+                                        "type": "string"
+                                      },
+                                      "txBlockTimestamp": {
+                                        "anyOf": [
+                                          {
+                                            "type": "number"
+                                          },
+                                          {
+                                            "type": "null"
+                                          }
+                                        ]
+                                      },
+                                      "txBlockNumber": {
+                                        "anyOf": [
+                                          {
+                                            "type": "number"
+                                          },
+                                          {
+                                            "type": "null"
+                                          }
+                                        ]
+                                      },
+                                      "createdAt": {
+                                        "type": "string"
+                                      },
+                                      "evaluation": {
+                                        "anyOf": [
+                                          {
+                                            "type": "object",
+                                            "properties": {
+                                              "finalInputValues": {
+                                                "type": "object",
+                                                "patternProperties": {
+                                                  "^(.*)$": {
+                                                    "type": "string"
+                                                  }
+                                                }
+                                              },
+                                              "contractAddress": {
+                                                "pattern": "^0x[a-fA-F0-9]{40}$",
+                                                "type": "string"
+                                              }
+                                            },
+                                            "required": [
+                                              "finalInputValues",
+                                              "contractAddress"
+                                            ]
+                                          },
+                                          {
+                                            "type": "null"
+                                          }
+                                        ]
+                                      }
+                                    },
+                                    "required": [
+                                      "stepNumber",
+                                      "nodeId",
+                                      "txHash",
+                                      "txBlockTimestamp",
+                                      "txBlockNumber",
+                                      "createdAt",
+                                      "evaluation"
+                                    ]
+                                  }
+                                }
+                              },
+                              "required": [
+                                "id",
+                                "createdAt",
+                                "updatedAt",
+                                "steps"
+                              ]
+                            }
+                          },
+                          "txnsPerStep": {
+                            "type": "object",
+                            "patternProperties": {
+                              "^(0|[1-9][0-9]*)$": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "txHash": {
+                                      "pattern": "^0x[a-fA-F0-9]{64}$",
+                                      "type": "string"
+                                    },
+                                    "blockTimestamp": {
+                                      "type": "number"
+                                    },
+                                    "blockNumber": {
+                                      "type": "number"
+                                    },
+                                    "latestExecutionId": {
+                                      "description": "UUIDv7 string",
+                                      "format": "uuid",
+                                      "type": "string"
+                                    },
+                                    "evaluation": {
+                                      "anyOf": [
+                                        {
+                                          "type": "object",
+                                          "properties": {
+                                            "finalInputValues": {
+                                              "type": "object",
+                                              "patternProperties": {
+                                                "^(.*)$": {
+                                                  "type": "string"
+                                                }
+                                              }
+                                            },
+                                            "contractAddress": {
+                                              "pattern": "^0x[a-fA-F0-9]{40}$",
+                                              "type": "string"
+                                            }
+                                          },
+                                          "required": [
+                                            "finalInputValues",
+                                            "contractAddress"
+                                          ]
+                                        },
+                                        {
+                                          "type": "null"
+                                        }
+                                      ]
+                                    }
+                                  },
+                                  "required": [
+                                    "txHash",
+                                    "blockTimestamp",
+                                    "blockNumber",
+                                    "latestExecutionId",
+                                    "evaluation"
+                                  ]
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "required": [
+                          "walletAddress",
+                          "farcasterData",
+                          "executions",
+                          "txnsPerStep"
+                        ]
+                      }
+                    }
+                  },
+                  "required": [
+                    "totals",
+                    "walletExecutions"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "operationId": "postV1TrailsByTrailIdVersionsByVersionIdExecutionsQuery",
+        "tags": [
+          "Trails"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "walletAddresses": {
+                    "type": "array",
+                    "items": {
+                      "pattern": "^0x[a-fA-F0-9]{40}$",
+                      "type": "string"
+                    }
+                  }
+                },
+                "required": [
+                  "walletAddresses"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "walletAddresses": {
+                    "type": "array",
+                    "items": {
+                      "pattern": "^0x[a-fA-F0-9]{40}$",
+                      "type": "string"
+                    }
+                  }
+                },
+                "required": [
+                  "walletAddresses"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "text/plain": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "walletAddresses": {
+                    "type": "array",
+                    "items": {
+                      "pattern": "^0x[a-fA-F0-9]{40}$",
+                      "type": "string"
+                    }
+                  }
+                },
+                "required": [
+                  "walletAddresses"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/trails/{trailId}/versions/{versionId}/steps/{stepNumber}/evaluations/": {
+      "post": {
+        "parameters": [
+          {
+            "description": "UUIDv7 string",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "in": "path",
+            "name": "trailId",
+            "required": true
+          },
+          {
+            "description": "UUIDv7 string",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "in": "path",
+            "name": "versionId",
+            "required": true
+          },
+          {
+            "schema": {
+              "type": "number"
+            },
+            "in": "path",
+            "name": "stepNumber",
+            "required": true
+          }
+        ],
+        "operationId": "postV1TrailsByTrailIdVersionsByVersionIdStepsByStepNumberEvaluations",
+        "tags": [
+          "Trails"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "execution": {
+                    "default": {
+                      "type": "latest"
+                    },
+                    "anyOf": [
+                      {
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "const": "new",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "type"
+                        ]
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "const": "latest",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "type"
+                        ]
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "const": "manual",
+                            "type": "string"
+                          },
+                          "executionId": {
+                            "description": "UUIDv7 string",
+                            "format": "uuid",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "executionId"
+                        ]
+                      }
+                    ]
+                  },
+                  "walletAddress": {
+                    "pattern": "^0x[a-fA-F0-9]{40}$",
+                    "type": "string"
+                  },
+                  "userInputs": {
+                    "type": "object",
+                    "patternProperties": {
+                      "^(.*)$": {
+                        "type": "object",
+                        "patternProperties": {
+                          "^(.*)$": {
+                            "type": "object",
+                            "properties": {
+                              "value": {
+                                "anyOf": [
+                                  {
+                                    "type": "string"
+                                  },
+                                  {
+                                    "type": "null"
+                                  }
+                                ]
+                              }
+                            },
+                            "required": [
+                              "value"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "required": [
+                  "execution",
+                  "walletAddress",
+                  "userInputs"
+                ]
+              }
+            },
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "execution": {
+                    "default": {
+                      "type": "latest"
+                    },
+                    "anyOf": [
+                      {
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "const": "new",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "type"
+                        ]
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "const": "latest",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "type"
+                        ]
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "const": "manual",
+                            "type": "string"
+                          },
+                          "executionId": {
+                            "description": "UUIDv7 string",
+                            "format": "uuid",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "executionId"
+                        ]
+                      }
+                    ]
+                  },
+                  "walletAddress": {
+                    "pattern": "^0x[a-fA-F0-9]{40}$",
+                    "type": "string"
+                  },
+                  "userInputs": {
+                    "type": "object",
+                    "patternProperties": {
+                      "^(.*)$": {
+                        "type": "object",
+                        "patternProperties": {
+                          "^(.*)$": {
+                            "type": "object",
+                            "properties": {
+                              "value": {
+                                "anyOf": [
+                                  {
+                                    "type": "string"
+                                  },
+                                  {
+                                    "type": "null"
+                                  }
+                                ]
+                              }
+                            },
+                            "required": [
+                              "value"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "required": [
+                  "execution",
+                  "walletAddress",
+                  "userInputs"
+                ]
+              }
+            },
+            "text/plain": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "execution": {
+                    "default": {
+                      "type": "latest"
+                    },
+                    "anyOf": [
+                      {
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "const": "new",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "type"
+                        ]
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "const": "latest",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "type"
+                        ]
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "const": "manual",
+                            "type": "string"
+                          },
+                          "executionId": {
+                            "description": "UUIDv7 string",
+                            "format": "uuid",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "executionId"
+                        ]
+                      }
+                    ]
+                  },
+                  "walletAddress": {
+                    "pattern": "^0x[a-fA-F0-9]{40}$",
+                    "type": "string"
+                  },
+                  "userInputs": {
+                    "type": "object",
+                    "patternProperties": {
+                      "^(.*)$": {
+                        "type": "object",
+                        "patternProperties": {
+                          "^(.*)$": {
+                            "type": "object",
+                            "properties": {
+                              "value": {
+                                "anyOf": [
+                                  {
+                                    "type": "string"
+                                  },
+                                  {
+                                    "type": "null"
+                                  }
+                                ]
+                              }
+                            },
+                            "required": [
+                              "value"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "required": [
+                  "execution",
+                  "walletAddress",
+                  "userInputs"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+
+          }
+        }
+      }
+    },
+    "/v1/trails/{trailId}/versions/{versionId}/nodes/{nodeId}/read": {
+      "post": {
+        "parameters": [
+          {
+            "description": "UUIDv7 string",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "in": "path",
+            "name": "trailId",
+            "required": true
+          },
+          {
+            "description": "UUIDv7 string",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "in": "path",
+            "name": "versionId",
+            "required": true
+          },
+          {
+            "description": "UUIDv7 string",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "in": "path",
+            "name": "nodeId",
+            "required": true
+          }
+        ],
+        "operationId": "postV1TrailsByTrailIdVersionsByVersionIdNodesByNodeIdRead",
+        "tags": [
+          "Trails"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "execution": {
+                    "default": {
+                      "type": "latest"
+                    },
+                    "anyOf": [
+                      {
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "const": "new",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "type"
+                        ]
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "const": "latest",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "type"
+                        ]
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "const": "manual",
+                            "type": "string"
+                          },
+                          "executionId": {
+                            "description": "UUIDv7 string",
+                            "format": "uuid",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "executionId"
+                        ]
+                      }
+                    ]
+                  },
+                  "walletAddress": {
+                    "pattern": "^0x[a-fA-F0-9]{40}$",
+                    "type": "string"
+                  },
+                  "userInputs": {
+                    "type": "object",
+                    "patternProperties": {
+                      "^(.*)$": {
+                        "type": "object",
+                        "patternProperties": {
+                          "^(.*)$": {
+                            "type": "object",
+                            "properties": {
+                              "value": {
+                                "anyOf": [
+                                  {
+                                    "type": "string"
+                                  },
+                                  {
+                                    "type": "null"
+                                  }
+                                ]
+                              }
+                            },
+                            "required": [
+                              "value"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "required": [
+                  "execution",
+                  "walletAddress",
+                  "userInputs"
+                ]
+              }
+            },
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "execution": {
+                    "default": {
+                      "type": "latest"
+                    },
+                    "anyOf": [
+                      {
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "const": "new",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "type"
+                        ]
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "const": "latest",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "type"
+                        ]
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "const": "manual",
+                            "type": "string"
+                          },
+                          "executionId": {
+                            "description": "UUIDv7 string",
+                            "format": "uuid",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "executionId"
+                        ]
+                      }
+                    ]
+                  },
+                  "walletAddress": {
+                    "pattern": "^0x[a-fA-F0-9]{40}$",
+                    "type": "string"
+                  },
+                  "userInputs": {
+                    "type": "object",
+                    "patternProperties": {
+                      "^(.*)$": {
+                        "type": "object",
+                        "patternProperties": {
+                          "^(.*)$": {
+                            "type": "object",
+                            "properties": {
+                              "value": {
+                                "anyOf": [
+                                  {
+                                    "type": "string"
+                                  },
+                                  {
+                                    "type": "null"
+                                  }
+                                ]
+                              }
+                            },
+                            "required": [
+                              "value"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "required": [
+                  "execution",
+                  "walletAddress",
+                  "userInputs"
+                ]
+              }
+            },
+            "text/plain": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "execution": {
+                    "default": {
+                      "type": "latest"
+                    },
+                    "anyOf": [
+                      {
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "const": "new",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "type"
+                        ]
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "const": "latest",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "type"
+                        ]
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "const": "manual",
+                            "type": "string"
+                          },
+                          "executionId": {
+                            "description": "UUIDv7 string",
+                            "format": "uuid",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "executionId"
+                        ]
+                      }
+                    ]
+                  },
+                  "walletAddress": {
+                    "pattern": "^0x[a-fA-F0-9]{40}$",
+                    "type": "string"
+                  },
+                  "userInputs": {
+                    "type": "object",
+                    "patternProperties": {
+                      "^(.*)$": {
+                        "type": "object",
+                        "patternProperties": {
+                          "^(.*)$": {
+                            "type": "object",
+                            "properties": {
+                              "value": {
+                                "anyOf": [
+                                  {
+                                    "type": "string"
+                                  },
+                                  {
+                                    "type": "null"
+                                  }
+                                ]
+                              }
+                            },
+                            "required": [
+                              "value"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "required": [
+                  "execution",
+                  "walletAddress",
+                  "userInputs"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+
+          }
+        }
       }
     }
   }
