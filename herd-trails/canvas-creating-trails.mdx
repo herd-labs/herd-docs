@@ -3,15 +3,15 @@ title: 'The Canvas: Creating Trails'
 description: 'Learn how to create and manage trails in the Canvas'
 ---
 
-# Creating a Trail
-
 <Info>
 Before creating a Trail, I highly recommend you [**reference this example**](https://herd.eco/trails/0197137c-2be8-7c84-a6dd-69a6daa97026/walk) of what the final Trail will look like when shared. We plan to support viewing the underlying Trail as well as forking it in the future.
 </Info>
 
-To get started, your Herd account will need to be allowlisted by the team. Once trail creation has been activated for your account. click the "Trails" button on the sidebar. You may then proceed to create a new trail on Base or Ethereum.
+To get started, you'll have to sign up for a Herd account. Then, you click the "Trails" button on the sidebar. You may then proceed to create a new trail on Base or Ethereum.
 
 <img height="400" src="/images/canvas-start-trail.jpg" />
+
+<Warning>A [Farcaster account](https://farcaster.xyz/) will be required for publishing a trail, this is for both security and social discovery reasons. </Warning>
 
 # Adding a Step
 
@@ -25,8 +25,8 @@ There are three ways to add a node right now:
 
 1. **Write Function:** Directly select a write function from a contract to add by either pasting a contract address or selecting one from Sage's memory.
     1. See [Primer on Herd Explorer/Sage Chat](/explorer-sage-chat) for an intro to Sage.
-2. **Swap**: We use [Relay](https://www.relay.link/bridge) as a component to easily swap between chains/tokens. If using the Trails API, it uses 0x instead. You can specify two tokens, and an amount to be swapped.
-3. **From Transactions:** This adds a write function from the contract called at the start of a transaction. We take the "to" address and all the inputs and create a step node with pre-filled inputs for you. More details on this option in the section below.
+2. **Swap**: We use 0x to easily route and swap between tokens. You can specify two tokens, and an amount to be swapped.
+3. **From Transactions:** This adds a write function from the contract called at the start of a past transaction. We take the "to" address and all the inputs and create a step node with pre-filled inputs for you. More details on this option in the section below.
 
 You can add nodes in between steps by clicking the [+] button on the vertical connecting line. For adding read/source nodes, you can click on the add button to the right of each write node.
 
@@ -55,7 +55,8 @@ All function inputs show up here with an input field and a "derive method" dropd
 3. **`step_execution`**: this means getting the transaction hash from an execution of a specific primary node/step, and is only used in event nodes (to look up event data in that transaction).
 4. **`creator_hardcoded`:** you hardcode a value for the user
 5. **`user_wallet`:** the user's connected wallet address will be used here
-6. **`code`:** write ****arbitrary typescript code to transform inputs and outputs
+6. **`code`:** write arbitrary typescript code to transform inputs and outputs
+7. **`encode_calldata`:** encode a write function to get it's calldata (useful for multicall/batch and 7702 style transactions)
 
 <Warning>
 Before a Trail is considering valid/publishable, all non-**`user_input`** fields will have to have a value. All inputs are **`creator_hardcoded`** by default, meaning you will have to pick a value for the user.

@@ -1,27 +1,41 @@
 ---
 title: 'Herd Explorer & Sage Chat'
-description: 'Learn how to use the Herd explorer and AI agent'
+description: 'Learn how to use the Herd explorer and Sage agent'
 ---
 
-<Info>
-You can watch the video below for an overview of memory and the overall explorer app
+You can watch the video below for an overview of memory and the overall explorer app.
 
-[https://www.youtube.com/watch?v=zUeGxxJOr2g](https://www.youtube.com/watch?v=zUeGxxJOr2g)
-</Info>
+<Frame>
+  <iframe
+    width="600"
+    height="380"
+    src="https://www.youtube.com/embed/zUeGxxJOr2g"
+    title="YouTube video player"
+    frameborder="0"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+    allowfullscreen
+  ></iframe>
+</Frame>
 
 The Herd app is built as an explorer with an agent (Sage) who exists on every page to help you find and understand the chain. In the image below, the top bar is the search bar, which will search for contracts, tokens, and protocols based on your query. 
 
-<img height="200" src="/images/explorer-main.png" />
+<Frame>
+  <img src="/images/explorer-main.png" alt="Herd Explorer main interface" height="200" />
+</Frame>
 
 See below, where we search for "clanker" and the results show a bit about the contract and then have a red plus/minus button. This is used for adding or removing a contract from memory.
 
-<img height="200" src="/images/explorer-search.png" />
+<Frame>
+  <img src="/images/explorer-search.png" alt="Herd Explorer search results" height="200" />
+</Frame>
 
 You can navigate to different pages and the `chatId` should stay in context. **Note that for trails, you will only have ONE conversation tied to the trail and it CANNOT be changed.**
 
 Memory acts as a shortcut for referencing objects in Herd (chat, trails, more in the future). If you've used Cursor, then this will be familiar to you. If not, just think of this as your "shopping cart" of objects while using Herd.
 
-<img height="200" src="/images/explorer-memory.png" />
+<Frame>
+  <img src="/images/explorer-memory.png" alt="Herd Explorer memory panel" height="200" />
+</Frame>
 
 Herd's chat works the same way any other LLM chat app does. It uses OpenAI's `gpt-4o-mini` model so expect succinct responses. Its primary function is to provide contextual answers about contract functions/events/behaviors.
 
