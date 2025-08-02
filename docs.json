@@ -82,12 +82,6 @@
     "dark": "/logo/dark.png"
   },
   "navbar": {
-    "links": [
-      {
-        "label": "Support",
-        "href": "mailto:andrew@herd.eco"
-      }
-    ],
     "primary": {
       "type": "button",
       "label": "Herd App",
