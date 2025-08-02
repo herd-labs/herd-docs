@@ -8,10 +8,8 @@ Retrieves execution history for a trail, grouped by wallet address. Use this to 
 ## Overview
 
 This endpoint returns comprehensive execution data including:
-- **totals**: Aggregate statistics across all filtered wallets
-- **walletExecutions**: Detailed execution data per wallet address
-- **stepStats**: Transaction counts and recent transactions per step
-- **farcasterData**: Social profile information for each wallet
+- **totals**: Aggregate statistics across ALL wallets (does not get filtered). Can be used to build feeds, using read nodes for extra context.
+- **walletExecutions**: Detailed execution data per wallet address. Used to manage the user's execution state (current step number).
 
 ## Request Body
 
@@ -24,8 +22,8 @@ This endpoint returns comprehensive execution data including:
 ## Response Structure
 
 ### Totals Object
-- **transactions**: Total transactions across filtered wallets (excluding step 0)
-- **wallets**: Total wallets that completed more than step 0  
+- **transactions**: Total transactions across wallets
+- **wallets**: Total wallets that have transacted
 - **stepStats**: Per-step statistics with recent transaction hashes
 
 ### Wallet Executions Array
@@ -50,9 +48,8 @@ Profile data can be `null` if user doesn't have a Farcaster account.
 ## Use Cases
 
 - **User Progress**: Show current step and transaction history for connected wallet
-- **Transaction Feeds**: Display recent activity across all users
-- **Leaderboards**: Rank users by completion or participation
-- **Social Features**: Show profile pictures and usernames
+- **Transaction Feeds**: Display recent activity across all users (i.e. X person completed Y step (link to profile, link to transaction))
+- **Leaderboards**: Rank users by completion or participation, combined with read node data.
 
 ## Important Notes
 
@@ -60,6 +57,7 @@ Profile data can be `null` if user doesn't have a Farcaster account.
 - **Filter step 0**: All executions have a step 0 with nil hash - exclude from user-facing displays  
 - **Lowercase addresses**: All wallet addresses are returned in lowercase
 - **Execution selection**: Users can select specific executions via `latestExecutionId`
+- **Linking to an explorer**: You can link transactions to the herd explorer via `https://herd.eco/{blockchain}/tx/hash`
 
 ## Recommended Implementation
 
@@ -67,4 +65,4 @@ Profile data can be `null` if user doesn't have a Farcaster account.
 2. Build step components using `walletExecutions[].txnsPerStep`
 3. Show social profiles using `farcasterData` 
 4. Display aggregate stats from `totals.stepStats`
-5. Allow users to select executions for continuation 
+5. Allow users to select an execution id for continuation, or just always use latest if you want to keep it simple.

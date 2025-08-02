@@ -3,7 +3,7 @@ title: 'Save Step Transaction'
 openapi: 'POST /v1/trails/{trailId}/versions/{versionId}/executions/'
 ---
 
-**⚠️ MANDATORY**: This endpoint must be called after every transaction submission to save the transaction hash to an execution.
+<Warning>This endpoint must be called after every transaction submission to save the transaction hash to an execution. If it fails to save, that likely means the transaction itself has failed.</Warning>
 
 ## Overview
 

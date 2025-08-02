@@ -4,8 +4,8 @@
   "name": "Herd",
   "colors": {
     "primary": "#FF003C",
-    "light": "#FF003C",
-    "dark": "#FF003C"
+    "light": "#bf3959",
+    "dark": "#bf3959"
   },
   "favicon": "/favicon.ico",
   "navigation": {
@@ -42,13 +42,6 @@
             "group": "API documentation",
             "pages": [
               "api-reference/introduction"
-            ]
-          },
-          {
-            "group": "Trail Guidebook",
-            "pages": [
-              "api-reference/endpoint/get-trail-guidebook",
-              "api-reference/endpoint/get-trail-version-guidebook"
             ]
           },
           {

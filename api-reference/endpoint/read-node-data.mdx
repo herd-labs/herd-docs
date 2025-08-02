@@ -3,6 +3,8 @@ title: 'Read Node'
 openapi: 'POST /v1/trails/{trailId}/versions/{versionId}/nodes/{nodeId}/read'
 ---
 
+<Note>Any node can be enabled as a read node by toggling the "read API" checkbox on the Trail canvas</Note>
+
 Retrieves data outputs from any node (read functions, events, code execution, etc.) for a specific execution.
 
 ## Overview
@@ -21,7 +23,7 @@ This endpoint allows you to read data from any node in a trail, providing:
 
 ## Request Body
 
-Same format as evaluations endpoint:
+Same format as the evaluations endpoint:
 
 ```json
 {
@@ -101,7 +103,7 @@ For contract nodes, complex types are nested:
 - **Raw onchain data**: Contract outputs need decimal adjustments - check step data for correct decimals
 - **Output schema**: Find variable names in `outputSchema` field of readNodes array
 
-## Decimal Handling
+## Decimal Handling For Outputs
 
 Contract function outputs are "raw" from blockchain:
 - Check `outputSchema` in step data for decimal places
