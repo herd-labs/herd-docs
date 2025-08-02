@@ -9,7 +9,14 @@ Executing a trail is fairly straightforward (reference an [**example trail here*
 
 The user of a trail will only see **`user_input`** fields, unless they click "Advanced" which will show all inputs that the creator has pre-filled as well.
 
-<img height="400" src="/images/overlook-main.png" />
+<Frame>
+  <img 
+    src="/images/overlook-main.png" 
+    alt="Main Overlook view" 
+    width="400"
+    height="400"
+  />
+</Frame>
 
 Users walking the trail can simulate a step which provides an AI summary as well as Tenderly Simulation results before confirming the transaction.
 
@@ -21,13 +28,27 @@ If there are any read nodes, then there will also be a "read data" section where
 
 When you submit a read node or transaction step, you will see a preview of the results.
 
-<img height="400" src="/images/overlook-results.png" />
+<Frame>
+  <img 
+    src="/images/overlook-results.png" 
+    alt="Overlook results view" 
+    width="400"
+    height="400"
+  />
+</Frame>
 
 You'll notice this comes with a "LLM prompt", which is targeted at helping any AI you are working with integrate a read node/transaction step into your app. You can also copy the curl request for testing out API calls easily.
 
 Clicking confirm on the main transaction form will bring you an overview on the inputs to be sent onchain:
 
-<img height="400" src="/images/overlook-confirm.png" />
+<Frame>
+  <img 
+    src="/images/overlook-confirm.png" 
+    alt="Overlook confirmation view" 
+    width="400"
+    height="400"
+  />
+</Frame>
 
 Clicking "send" will then send the transaction payload to your wallet for signing.
 
