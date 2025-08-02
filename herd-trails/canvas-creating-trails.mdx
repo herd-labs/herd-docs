@@ -3,9 +3,9 @@ title: 'The Canvas: Creating Trails'
 description: 'Learn how to create and manage trails in the Canvas'
 ---
 
-<Info>
+<Note>Creating trails is a fairly technical process. If you are not familiar with smart contracts then go to "herd.eco/trails" -> all trails, and try searching for a trail to build your app off of. Or reach out in [the discord](https://discord.gg/NsfPWZZuKU) to get a Trailblazer to help you.</Note>
+
 Before creating a Trail, I highly recommend you [**reference this example**](https://herd.eco/trails/0197137c-2be8-7c84-a6dd-69a6daa97026/walk) of what the final Trail will look like when shared. We plan to support viewing the underlying Trail as well as forking it in the future.
-</Info>
 
 To get started, you'll have to sign up for a Herd account. Then, you click the "Trails" button on the sidebar. You may then proceed to create a new trail on Base or Ethereum.
 
@@ -13,7 +13,7 @@ To get started, you'll have to sign up for a Herd account. Then, you click the "
 
 <Warning>A [Farcaster account](https://farcaster.xyz/) will be required for publishing a trail, this is for both security and social discovery reasons. </Warning>
 
-# Adding a Step
+# Adding a Primary Node (Step)
 
 Trails are a linear set of write functions to be executed. There is no ability to add branching logic or conditions at this time. As the creator, you are purely prefilling inputs to as many function inputs as you can/want before sharing it with others to execute. Think of it like pre-filling a form.
 
@@ -21,14 +21,14 @@ Initially the Trail creator is dropped into this view after creating a trail:
 
 <Frame>
   <img 
-    src="/images/canvas-initial.png" 
+    src="/images/canvas-add-node.png" 
     alt="Initial Canvas view after creating a trail" 
     width="400"
     height="400"
   />
 </Frame>
 
-There are three ways to add a node right now:
+There are three ways to add a primary step node right now:
 
 1. **Write Function:** Directly select a write function from a contract to add by either pasting a contract address or selecting one from Sage's memory.
     1. See [Primer on Herd Explorer/Sage Chat](./explorer-sage-chat) for an intro to Sage.
@@ -45,9 +45,22 @@ This allows you to reference past transactions for any wallet and select/order m
 
 <img height="400" src="/images/canvas-transactions.png" />
 
-# Editing a Step
+## Adding Source Nodes
 
-Once you have added a step, you can click on the new node to pull up the edit panel. Below is a quick visual overview of the panel:
+Non-primary nodes are called "source" nodes, which provide the data for input values to other nodes. These can be easily added by clicking the "+ Add Source Node" button on the right side of each step.
+
+<Frame>
+  <img 
+    src="/images/canvas-source-nodes.png" 
+    alt="Canvas source nodes" 
+    width="300"
+    height="500"
+  />
+</Frame>
+
+# Editing Node Inputs
+
+Once you have added a node, you can click on the new node to pull up the edit panel. Below is a quick visual overview of the panel:
 
 <img height="600" src="/images/canvas-edit-panel.jpg" />
 
@@ -113,7 +126,7 @@ Arrays also come with a max length param, where you can optionally set a maximum
 
 ## Read Nodes
 
-Any node in the trail can be turned into a "read" node by clicking the read checkbox. This will tell the LLM/user that the data from that node can be useful for informing the next steps by the user. 
+Any node (primary or source) in the trail can be turned into a "read" node by clicking the "read API" checkbox. This will tell the LLM/user that the data from that node can be useful for informing the next steps by the user. 
 
 You'll be able to see and test this in the "read data" section when you go to the trail overlook after publishing.
 
