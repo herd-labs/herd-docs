@@ -1,7 +1,9 @@
 ---
-title: 'The Overlook: Sharing Trails'
+title: 'The Overlook: Trail Sandbox'
 description: 'Learn how to share and execute trails in the Overlook'
 ---
+
+<Note>The overlook is a publicly shareable web app and farcaster miniapp.</Note>
 
 Executing a trail is fairly straightforward (reference an [**example trail here**](https://herd.eco/trails/0197137c-2be8-7c84-a6dd-69a6daa97026/walk)). This can be shared as a web link or as a Farcaster Mini App by pasting the trail link (click the share button in the top left on the canvas after publishing). 
 
@@ -31,15 +33,11 @@ Clicking "send" will then send the transaction payload to your wallet for signin
 
 ### Forking a Trail
 
-You can view and fork a trail by clicking the trail icon on the top left of the trail (the button on the right), and then clicking "fork" at the top left of the screen.
-
-<img height="200" src="/images/overlook-fork.png" />
-
-Note that you must have access to the creator beta to be able to see the button and fork trails. Forking will copy everything from the trail you're looking at into a trail that you own and manage. We keep track of fork history, which will be used for better attribution towards creators in the future.
+You can view and fork a trail by clicking the trail "view" icon on the top left of the trail, and then clicking "fork" at the top of the trail. Forking will copy everything from the trail you're looking at into a trail that you own and manage. We keep track of fork history, which will be used for better attribution towards creators in the future.
 
 ### Execution Management
 
-Once you press "Start Trail" with a connected wallet, an execution instance is saved on our end. You can click the button in the top left to access your executions. Each "execution" stores all steps executed with the transaction data.
+Once you press "Start Trail" with a connected wallet, an execution instance is saved on our end. You can click the "txns" button in the top left to access your executions. Each "execution" stores all steps executed with the transaction data.
 
 Clicking on an execution will pull up the execution details with links to the transactions. You can manually paste transactions into an execution or turn on "Test Mode" to manually set any transaction hashes in the trail for easier testing. Take note that executing in "Test Mode" does not save any executions.
 
@@ -50,3 +48,7 @@ You can "fork" an execution anytime by clicking "re-execute this step" on the to
 ### Skipping Steps
 
 You can skip steps anytime by clicking "skip this step". From the API this is just sending a 0x0000… tx hash to this step number. 
+
+### Viewing Stats
+
+Basic stats such as forks, wallets, transactions are on the description card. You can see more detailed feeds by clicking "txns" -> "step stats".
