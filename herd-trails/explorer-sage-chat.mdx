@@ -3,6 +3,8 @@ title: 'Herd Explorer & Sage Chat'
 description: 'Learn how to use the Herd explorer and Sage agent'
 ---
 
+## Learning the Basics
+
 The Herd app is built as an explorer with an agent (Sage) who exists on every page to help you find and understand the chain. You can watch the video below for an overview of memory and the overall explorer app. 
 
 <Frame>
@@ -20,6 +22,9 @@ The Herd app is built as an explorer with an agent (Sage) who exists on every pa
 If you haven't used an explorer like [Etherscan](https://etherscan.io) before, explorers in crypto are used to investigate smart contracts, wallets, and transactions. Our explorer uses an LLM to interpret each of these objects, to provide richer context alongside all the data. 
 
 <Info>The explorer and chat are NOT made for analytics, do not try and ask it Dune style analytical questions. It's targeted at understanding the logic and relationships between onchain objects.</Info>
+
+
+## Search and Memory
 
 In the image below, the top bar is the search bar, which will search for contracts, tokens, and protocols based on your query. 
 
@@ -57,3 +62,98 @@ Memory acts as a shortcut for referencing objects in Herd (chat, trails, more in
 </Frame>
 
 Herd's chat works the same way any other LLM chat app does. It uses OpenAI's `gpt-4o-mini` model so expect succinct responses. Its primary function is to provide contextual answers about contract functions/events/behaviors.
+
+## Explorer Pages
+
+### Contract Page
+
+The contract page is a bit different from how other explorers work:
+- We start with a summary page, which is an LLM interpretation of all contract functions and events. If it's a token, it will also show top holders.
+- If it's proxy, we show the underlying implementation directly. There is upgrade history in the dropdown in the top left so you can see all past versions
+
+<Frame>
+  <img 
+    src="/images/explorer-contract.png" 
+    alt="Herd contract summary page" 
+  />
+</Frame>
+
+Next up we have a "related contracts" tab, which shows all the top contracts either calling or being called by the current address (as well as which functions are being called). This helps you quickly understand protocol relationships and key transaction drivers.
+
+<Frame>
+  <img 
+    src="/images/explorer-related.png" 
+    alt="Herd contract related tab" 
+  />
+</Frame>
+
+Then we have functions and events tabs, each with LLM summaries of what they handle as well as basic 1 day stats.
+
+<Frame>
+  <img 
+    src="/images/explorer-functions-tab.png" 
+    alt="Herd functions tab page" 
+  />
+</Frame>
+
+Each function/event comes with it's own detailed page. It covers inputs/outputs, linked events, and shows most recent transactions calling this function (directly or indirectly).
+
+<Frame>
+  <img 
+    src="/images/explorer-function-details.png" 
+    alt="Herd functions tab page" 
+  />
+</Frame>
+
+Functions can also be executed directly on the page, which an LLM that helps you prepare inputs and simulate the transactions. You can also paste in a previous transaction calling this function to pre-fill the input values directly.
+
+<Frame>
+  <img 
+    src="/images/explorer-function-execute.png" 
+    alt="Herd function execution page" 
+  />
+</Frame>
+
+### Protocol Page
+
+Many contracts will have protocol labels, such as "Circle", "Zora", "Uniswap", etc. These can be clicked to take you to the protocol page, showing main links to the protocol and also a chronological ordering of their deployed contracts.
+
+<Frame>
+  <img 
+    src="/images/explorer-protocol.png" 
+    alt="Herd function execution page" 
+  />
+</Frame>
+
+If you notice any wrong or missing labels, you can message the team (on Twitter, Telegram, or Discord).
+
+### Transaction Page
+
+We show an in depth summary with traces of each transaction (this works for any simulations you do on Herd as well).
+
+<Frame>
+  <img 
+    src="/images/explorer-transaction.png" 
+    alt="Herd transaction page" 
+  />
+</Frame>
+
+Each trace can be expanded so that you can view the summary, decoded data, and raw information together.
+
+<Frame>
+  <img 
+    src="/images/explorer-transaction-expand.png" 
+    alt="Herd transaction expand page" 
+  />
+</Frame>
+
+### Wallet Page
+
+On the wallet page, we mainly showcase the top contracts they have called as well as top contracts they have deployed.
+
+<Frame>
+  <img 
+    src="/images/explorer-wallet-page.png" 
+    alt="Herd Explorer wallet page" 
+  />
+</Frame>
