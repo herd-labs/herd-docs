@@ -58,6 +58,15 @@ Non-primary nodes are called "source" nodes, which provide the data for input va
   />
 </Frame>
 
+There are four types of source nodes:
+
+- **Read Functions**: these are view functions on any smart contract.
+- **Events**: these are events emitted from any contract in a transaction (derived from a previous step).
+- **Code**: these are typescript code blocks that are individually run at call time.
+- **Encoded Write Functions**: this takes a write function, and returns the encoded calldata for stuff like multicall/execute functions.
+
+You'll learn about how they are used in the derive methods section below.
+
 # Editing Node Inputs
 
 Once you have added a node, you can click on the new node to pull up the edit panel. Below is a quick visual overview of the panel:
