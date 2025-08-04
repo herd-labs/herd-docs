@@ -48,7 +48,9 @@ See below, where we search for "clanker" and the results show a bit about the co
   />
 </Frame>
 
-You can navigate to different pages and the `chatId` should stay in context. **Note that for trails, you will only have ONE conversation tied to the trail and it CANNOT be changed.**
+Search covers contracts, tokens, and protocols in three different result tabs (note for tokens and protocols, the searches must be single word). If you can't find a contract, please ask in the Discord for help.
+
+You can navigate to different pages and the `chatId` should stay in context (or you can select the chat from the box). **Note that for trails, you will only have ONE conversation tied to the trail and it CANNOT be changed.**
 
 Memory acts as a shortcut for referencing objects in Herd (chat, trails, more in the future). If you've used Cursor, then this will be familiar to you. If not, just think of this as your "shopping cart" of objects while using Herd.
 
@@ -61,9 +63,11 @@ Memory acts as a shortcut for referencing objects in Herd (chat, trails, more in
   />
 </Frame>
 
-Herd's chat works the same way any other LLM chat app does. It uses OpenAI's `gpt-4o-mini` model so expect succinct responses. Its primary function is to provide contextual answers about contract functions/events/behaviors.
+Herd's chat works the same way any other LLM chat app does. It uses OpenAI's `gpt-4o-mini` model so expect succinct responses. Its primary function is to provide contextual answers about contract functions/events/behaviors. Chats are not currently publicly shareable.
 
 ## Explorer Pages
+
+There are four main pages on the explorer, each focused on helping you quickly interpret and find onchain relationships. If you have any issues or feature requests, you can bring them up in the Discord.
 
 ### Contract Page
 
@@ -96,7 +100,7 @@ Then we have functions and events tabs, each with LLM summaries of what they han
   />
 </Frame>
 
-Each function/event comes with it's own detailed page. It covers inputs/outputs, linked events, and shows most recent transactions calling this function (directly or indirectly).
+Each function/event comes with it's own detailed page. It covers inputs/outputs, linked events, and shows most recent transactions calling this function (directly or indirectly). You can also copy just the individual function/event abi from here too.
 
 <Frame>
   <img 
@@ -113,6 +117,8 @@ Functions can also be executed directly on the page, which an LLM that helps you
     alt="Herd function execution page" 
   />
 </Frame>
+
+There is a code tab as well, which lets you explore the proxy and contract code together (and search across them). The abi can be copied from here as well.
 
 ### Protocol Page
 
