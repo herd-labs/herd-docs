@@ -11,26 +11,26 @@
   "navigation": {
     "tabs": [
       {
-        "tab": "Explorer",
+        "tab": "Herd App",
         "groups": [
           {
             "group": "Getting started",
             "pages": [
-              "index",
-              "herd-trails/explorer-sage-chat"
+              "herd-app/explorer-sage-chat",
+              "herd-app/explorer-trails"
             ]
           },
           {
             "group": "Creating Trails",
             "pages": [
-              "herd-trails/canvas-creating-trails"
+              "herd-app/canvas-creating-trails"
             ]
           },
           {
             "group": "Sharing & Using Trails",
             "pages": [
-              "herd-trails/overlook-sharing-trails",
-              "herd-trails/guidebook-llm-api"
+              "herd-app/overlook-sharing-trails",
+              "herd-app/guidebook-llm-api"
             ]
           }
         ]
