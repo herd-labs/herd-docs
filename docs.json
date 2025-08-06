@@ -16,8 +16,8 @@
           {
             "group": "Getting started",
             "pages": [
-              "herd-app/explorer-sage-chat",
-              "herd-app/explorer-trails",
+              "herd-app/coterminal-sage-chat",
+              "herd-app/coterminal-trails",
               "herd-app/supported-chains"
             ]
           },

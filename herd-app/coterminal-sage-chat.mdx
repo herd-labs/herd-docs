@@ -1,11 +1,11 @@
 ---
-title: 'Herd Explorer & Sage Chat'
-description: 'Learn how to use the Herd explorer and Sage agent'
+title: 'Herd Coterminal & Sage Chat'
+description: 'Learn how to use the Herd Coterminal and Sage agent'
 ---
 
 ## Learning the Basics
 
-The Herd app is built as an explorer with an agent (Sage) who exists on every page to help you find and understand the chain. You can watch the video below for an overview of memory and the overall explorer app. 
+The Herd app is built as an collaborative terminal (coterminal) with an agent (Sage) who exists on every page to help you find and understand the chain. You can watch the video below for an overview of memory and the overall explorer app. 
 
 <Frame>
   <iframe
@@ -19,9 +19,9 @@ The Herd app is built as an explorer with an agent (Sage) who exists on every pa
   ></iframe>
 </Frame>
 
-If you haven't used an explorer like [Etherscan](https://etherscan.io) before, explorers in crypto are used to investigate smart contracts, wallets, and transactions. Our explorer uses an LLM to interpret each of these objects, to provide richer context alongside all the data. 
+If you haven't used a block explorer like [Etherscan](https://etherscan.io) before, explorers in crypto are used to investigate smart contracts, wallets, and transactions. Our coterminal uses an LLM to interpret each of these objects, to provide richer context alongside all the data. 
 
-<Info>The explorer and chat are NOT made for analytics, do not try and ask it Dune style analytical questions. It's targeted at understanding the logic and relationships between onchain objects.</Info>
+<Info>The coterminal and chat are NOT made for analytics, do not try and ask it Dune style analytical questions. It's targeted at understanding the logic and relationships between onchain objects.</Info>
 
 
 ## Search and Memory
@@ -30,7 +30,7 @@ In the image below, the top bar is the search bar, which will search for contrac
 
 <Frame>
   <img 
-    src="/images/explorer-main.png" 
+    src="/images/coterminal-main.png" 
     alt="Herd Explorer main interface" 
     width="400"
     height="200"
@@ -41,7 +41,7 @@ See below, where we search for "clanker" and the results show a bit about the co
 
 <Frame>
   <img 
-    src="/images/explorer-search.png" 
+    src="/images/coterminal-search.png" 
     alt="Herd Explorer search results" 
     width="400"
     height="200"
@@ -56,7 +56,7 @@ Memory acts as a shortcut for referencing objects in Herd (chat, trails, more in
 
 <Frame>
   <img 
-    src="/images/explorer-memory.png" 
+    src="/images/coterminal-memory.png" 
     alt="Herd Explorer memory panel" 
     width="400"
     height="200"
@@ -65,9 +65,9 @@ Memory acts as a shortcut for referencing objects in Herd (chat, trails, more in
 
 Herd's chat works the same way any other LLM chat app does. It uses OpenAI's `gpt-4o-mini` model so expect succinct responses. Its primary function is to provide contextual answers about contract functions/events/behaviors. Chats are not currently publicly shareable.
 
-## Explorer Pages
+## Coterminal Pages
 
-There are four main pages on the explorer, each focused on helping you quickly interpret and find onchain relationships. If you have any issues or feature requests, you can bring them up in [the Discord](https://discord.gg/NsfPWZZuKU).
+There are four main pages on the coterminal, each focused on helping you quickly interpret and find onchain relationships. If you have any issues or feature requests, you can bring them up in [the Discord](https://discord.gg/NsfPWZZuKU).
 
 ### Contract Page
 
@@ -77,7 +77,7 @@ The contract page is a bit different from how other explorers work:
 
 <Frame>
   <img 
-    src="/images/explorer-contract.png" 
+    src="/images/coterminal-contract.png" 
     alt="Herd contract summary page" 
   />
 </Frame>
@@ -88,7 +88,7 @@ Next up we have a "related contracts" tab, which shows all the top contracts eit
 
 <Frame>
   <img 
-    src="/images/explorer-related.png" 
+    src="/images/coterminal-related.png" 
     alt="Herd contract related tab" 
   />
 </Frame>
@@ -97,7 +97,7 @@ Then we have functions and events tabs, each with LLM summaries of what they han
 
 <Frame>
   <img 
-    src="/images/explorer-functions-tab.png" 
+    src="/images/coterminal-functions-tab.png" 
     alt="Herd functions tab page" 
   />
 </Frame>
@@ -106,7 +106,7 @@ Each function/event comes with it's own detailed page. It covers inputs/outputs,
 
 <Frame>
   <img 
-    src="/images/explorer-function-details.png" 
+    src="/images/coterminal-function-details.png" 
     alt="Herd functions tab page" 
   />
 </Frame>
@@ -115,7 +115,7 @@ Functions can also be executed directly on the page, which an LLM that helps you
 
 <Frame>
   <img 
-    src="/images/explorer-function-execute.png" 
+    src="/images/coterminal-function-execute.png" 
     alt="Herd function execution page" 
   />
 </Frame>
@@ -124,7 +124,7 @@ There is a code tab as well, which lets you explore the proxy and contract code 
 
 <Frame>
   <img 
-    src="/images/explorer-code.png" 
+    src="/images/coterminal-code.png" 
     alt="Herd code page" 
   />
 </Frame>
@@ -135,7 +135,7 @@ Many contracts will have protocol labels, such as "Circle", "Zora", "Uniswap", e
 
 <Frame>
   <img 
-    src="/images/explorer-protocol.png" 
+    src="/images/coterminal-protocol.png" 
     alt="Herd function execution page" 
   />
 </Frame>
@@ -148,7 +148,7 @@ We show an in depth summary with traces of each transaction (this works for any 
 
 <Frame>
   <img 
-    src="/images/explorer-transaction.png" 
+    src="/images/coterminal-transaction.png" 
     alt="Herd transaction page" 
   />
 </Frame>
@@ -157,7 +157,7 @@ Each trace can be expanded so that you can view the summary, decoded data, and r
 
 <Frame>
   <img 
-    src="/images/explorer-transaction-expand.png" 
+    src="/images/coterminal-transaction-expand.png" 
     alt="Herd transaction expand page" 
   />
 </Frame>
@@ -168,7 +168,7 @@ On the wallet page, we mainly showcase the top contracts they have called as wel
 
 <Frame>
   <img 
-    src="/images/explorer-wallet-page.png" 
+    src="/images/coterminal-wallet-page.png" 
     alt="Herd Explorer wallet page" 
   />
 </Frame>
