@@ -34,6 +34,15 @@
       "get": {
         "parameters": [
           {
+            "description": "Application identifier for Herd Trail",
+            "schema": {
+              "type": "string"
+            },
+            "in": "header",
+            "name": "Herd-Trail-App-Id",
+            "required": true
+          },
+          {
             "description": "UUIDv7 string",
             "schema": {
               "type": "string",
@@ -336,6 +345,15 @@
       "post": {
         "parameters": [
           {
+            "description": "Application identifier for Herd Trail",
+            "schema": {
+              "type": "string"
+            },
+            "in": "header",
+            "name": "Herd-Trail-App-Id",
+            "required": true
+          },
+          {
             "description": "UUIDv7 string",
             "schema": {
               "type": "string",
@@ -600,6 +618,15 @@
     "/v1/trails/{trailId}/versions/{versionId}/executions/query": {
       "post": {
         "parameters": [
+          {
+            "description": "Application identifier for Herd Trail",
+            "schema": {
+              "type": "string"
+            },
+            "in": "header",
+            "name": "Herd-Trail-App-Id",
+            "required": true
+          },
           {
             "description": "UUIDv7 string",
             "schema": {
@@ -1702,6 +1729,15 @@
       "post": {
         "parameters": [
           {
+            "description": "Application identifier for Herd Trail",
+            "schema": {
+              "type": "string"
+            },
+            "in": "header",
+            "name": "Herd-Trail-App-Id",
+            "required": true
+          },
+          {
             "description": "UUIDv7 string",
             "schema": {
               "type": "string",
@@ -2109,6 +2145,15 @@
     "/v1/trails/{trailId}/versions/{versionId}/nodes/{nodeId}/read": {
       "post": {
         "parameters": [
+          {
+            "description": "Application identifier for Herd Trail",
+            "schema": {
+              "type": "string"
+            },
+            "in": "header",
+            "name": "Herd-Trail-App-Id",
+            "required": true
+          },
           {
             "description": "UUIDv7 string",
             "schema": {
