@@ -7,7 +7,9 @@ description: 'Anyone can build on top of a trail, without being a developer'
 
 After publishing a trail, anyone will be able to access the guidebook and API for the trail.
 
-Go to the trail canvas or overlook and click the purple guidebook button at the start node. The rest is simple - select what you want to build and then copy the prompt/link and paste it into your AI tool of choice. Here [is an example generated in v0](https://v0.dev/chat/trail-api-implementation-Ipk7PqiYLXy) using the trail [split, deploy, collect](https://herd.eco/trails/019798af-793b-77e3-9e3f-afc3bcb06da8/overlook).
+Go to the trail canvas or overlook and click the purple guidebook button at the start node. First, you'll need to select (or create) a trail app name. This isn't actually coding an app, this is just naming the app and creating a unique id that will be stored in the prompt and used for all API requests. We use this to tie apps to transactions, enabling better discovery of your apps and also rewards in the future.
+
+Then, select what you want to build and then copy the prompt/link and paste it into your AI tool of choice. Here [is an example generated in v0](https://v0.dev/chat/trail-api-implementation-Ipk7PqiYLXy) using the trail [split, deploy, collect](https://herd.eco/trails/019798af-793b-77e3-9e3f-afc3bcb06da8/overlook).
 
 <Frame>
   <img 
@@ -18,9 +20,65 @@ Go to the trail canvas or overlook and click the purple guidebook button at the 
   />
 </Frame>
 
+If you want to update the trail app with a description/link later, you can always go to https://herd.eco/trail-apps to do so here:
+
+<Frame>
+  <img 
+    src="/images/trailapps.png" 
+    alt="guidebook popup" 
+    width="400"
+    height="400"
+  />
+</Frame>
+
 We highly recommend starting your app in v0, then creating a repo that you can take to cursor or any other tool for more granular edits. That's because v0 already sets up a lot of scaffolding for you in terms of package management, frameworks, and deployments - things that other tools may easily mess up if you're unlucky with the LLM.
 
 Again, you can use this same prompt/link to generate automations, chatbots, or anything else 🙂
+
+## Guidebook Prompt Structure
+
+The guidebook is a static text file, that contains generic guidelines for how to build on top of the trails API and then specific data about the inputs and outputs of each step of your trail.
+
+<Note>You can read the Guidebook by just pasting the link in your browser URL bar, [here is an example](https://trails-api.herd.eco/v1/trails/0198aecc-006e-7070-95ae-b7df4c9fe0ee/versions/0198aecc-0079-7be3-87ea-6912580298b8/guidebook.txt?promptObject=farcaster_miniapp&trailAppId=0198be30-6209-78f3-b451-782fbbcaf096)</Note>
+
+The structure of the guidebook text includes the following information:
+
+### 1. Overview & Implementation Instructions
+- **Trail Definition**: Explains what a trail is (linear sequence of write functions across EVM contracts)
+- **Target Application**: Instructions specific to the app type being built (e.g., "farcaster_miniapp") 
+
+### 2. Five-Step Implementation Plan
+1. **Understanding Trail Data**: Read and understand steps, inputs, and data flow across nodes
+2. **UI Components**: Build components for each primary step with user input fields
+3. **Wallet Connection**: Set up Farcaster connector and transaction submission with wagmi/viem
+4. **Execution Management**: Track consumer's trail execution history as source of truth
+5. **Data Enhancement**: Use read API to provide additional execution data
+
+### 3. Trail API Technical Implementation Details
+
+#### **Input/Output Handling**
+- **Derive Methods**: `user_input`, `user_wallet`, `creator_hardcoded`, `relational`, `step_execution`, `code`, `encode_calldata`
+- **Data Structure**: Flattened dot-path notation (e.g., `inputs.someArray.0.componentA`)
+- **Decimal Management**: `alreadyAppliedDecimals` field for proper value scaling
+- **Array Handling**: Complex array flattening with `arrayDefaults` and `arrayMaxLength` constraints
+
+#### **API Integration Patterns**
+- **Evaluations API**: Convert user inputs to transaction calldata for blockchain submission
+- **Executions API**: Track and manage transaction history per wallet address
+- **Read API**: Fetch additional on-chain data for enhanced user experience
+
+### 4. Trail-Specific Data Structure
+
+#### **Trail Metadata**
+- Trail ID, version ID, name, description
+- Creator information (Farcaster handle, display name, profile picture, follower counts)
+- Last updated timestamp
+
+#### **Step Data Array**
+Each step contains:
+- **Primary Node**: Main write function with complete input specifications
+- **Required Inputs**: Filtered list of `user_input` fields needed for API calls
+- **Read Nodes**: Optional data sources for displaying additional information
 
 ## Debugging the Trail API
 
