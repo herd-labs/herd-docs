@@ -4,7 +4,7 @@ description: 'Learn how to create and manage trails in the Canvas'
 ---
 
 <Note>
-Creating trails can be a fairly technical process, and you'll need to exercise caution when building with contracts you aren't familiar with. Always try searching for an trail to build your app off of first, and reach out in [the Discord](https://discord.gg/NsfPWZZuKU) to get a Trailblazer to help you.
+Creating trails can be a fairly technical process, and you'll need to exercise caution when building with contracts you aren't familiar with. Always try searching for a trail to build your app off of first, and reach out in [the Discord](https://discord.gg/NsfPWZZuKU) to get a Trailblazer to help you.
 
 We also have a library of [video guides](./video_examples) to help you better understand to creation process.
 </Note>
@@ -103,7 +103,7 @@ In the example above, I deploy a Split (a new contract) from a Split Factory. Th
 
 **Basically, the logical flow is that:** `createSplit()` → emits a `SplitCreated()` event → `splitAddress` from event used in input on `deployToken()` on Clanker.
 
-Please watch the video overview at the top of the page to understand this process better.
+Please watch the video overview linked at the top of the page to understand this process better.
 
 <Info>
 The relational popup will only show contracts that are in the Trail or in Sage memory. For transactions, it will only show past steps in the Trail.
@@ -115,7 +115,7 @@ If you set the relational input to be a read function, that read function can ha
 
 ### Code Nodes
 
-Select "code" in a derive method then "+ new code node" to create a code node, or add it directly from the "+ add source node" button. It comes with a default addition function, but you can edit this easily to do anything you want. Easiest way is to click the "copy" button and paste it into chatgpt/claude and ask it do write the code for you - then paste it back in here and save it.
+Select "code" in a derive method then "+ new code node" to create a code node, or add it directly from the "+ add source node" button. It comes with a default addition function, but you can edit this easily to do anything you want. Easiest way is to click the "copy" button and paste it into chatgpt/claude and ask it to write the code for you - then paste it back in here and save it.
 
 You can test out the code by running the "test code" button, or running the [deno server locally](https://github.com/herd-labs/deno-playground) for faster testing.
 
@@ -142,7 +142,7 @@ Decimals are commonly used for stuff like percentages as well, and can vary betw
 
 Arrays can always be added to by the user, but you can define "defaults" and also "hardcoded" elements. For example, you can add yourself to a split array and the user won't be able to remove your address. 
 
-Defaults help simplify array elements on the consumer side, for example you should fill in the "decimal" defaults so the user does not have to worry about decimals on an array. Defaults can be edited by clicking "edit array defaults" next to the array value, which will pop up this form. An new elements you add (or the user adds) will copy from these default inputs first.
+Defaults help simplify array elements on the consumer side, for example you should fill in the "decimal" defaults so the user does not have to worry about decimals on an array. Defaults can be edited by clicking "edit array defaults" next to the array value, which will pop up this form. Any new elements you add (or the user adds) will copy from these default inputs first.
 
 Arrays also come with a max length param, where you can optionally set a maximum number of elements for the user if needed.
 
@@ -191,5 +191,3 @@ Any changes you make to the Trail after publishing will show up immediately. If 
 
 The Trail link is just  `https://herd.eco/trails/{trailId}/overlook`
 </Info>
-
-**Learn more about [the Overlook](./overlook-sharing-trails) next.**
