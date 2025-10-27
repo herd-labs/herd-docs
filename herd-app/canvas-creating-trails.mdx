@@ -24,7 +24,7 @@ Trails are a linear set of write functions to be executed. There is no ability t
 There are three ways to add a primary step node right now:
 
 1. **Write Function:** Directly select a write function from a contract to add by either pasting a contract address or selecting one from Sage's memory.
-    1. See [Primer on Herd Coterminal/Sage Chat](./coterminal-sage-chat) for an intro to Sage.
+    1. See [Primer on Herd's explorer](./explorer) for an intro to Sage.
 2. **Swap**: We use 0x to easily route and swap between tokens. You can specify two tokens, and an amount to be swapped.
 3. **From Transactions:** This adds a write function from the contract called at the start of a past transaction. We take the "to" address and all the inputs and create a step node with pre-filled inputs for you. More details on this option in the section below.
 
@@ -60,7 +60,13 @@ There are four types of source nodes:
 
 You'll learn about how they are used in the derive methods section below.
 
-# Editing Node Inputs
+## Batching Steps
+
+Steps will be batched to be executed together (meaning the user sees one form, and submits with one transaction/signature thanks for [EIP-5792](https://eips.ethereum.org/EIPS/eip-5792#wallet_sendcalls)).
+
+We automatically create a new batch if a given step depends on an OUTPUT of the previous step's write function. This means literally a `relational` derive method on the previous write function outputs, or an event whose `step_transaction` derive method depends on the transaction from a previous write function.
+
+## Editing Node Inputs
 
 Once you have added a node, you can click on the new node to pull up the edit panel. When a node is selected, any other nodes that have a purple outline are sources of data for this one, and any other nodes that have a blue outline are targets (rely on this one for data).
 

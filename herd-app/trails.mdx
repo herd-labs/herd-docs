@@ -15,7 +15,33 @@ Here are some key benefits of trails:
 - Creating a trail will automatically generate a sandbox app (shareable as a webpage or a farcaster miniapp).
 - Trails include an LLM + API for a single copy/paste into any AI tool to help you own apps, automations, chatbots, or anything else on top.
 
-There are four parts to a trail:
+Let’s talk about where trails fit into app development. Apps today look like this:
+
+<Frame>
+  <img 
+    src="/images/old_app.png" 
+    alt="Herd old app" 
+    width="400"
+    height="200"
+  />
+</Frame>
+
+A team deploys a protocol (set of contracts), takes some of those functions, and plugs them into their app. A user might want Zora to integrate splits into their app so that they can share fees with friends. However, Zora won’t do it - not because they don’t like splits or don’t have the ability, but because of all the extra overhead I mentioned earlier that comes with other contracts. They’re busy building a very opinionated product that everyone needs to align on to nail down a consumer experience that can reach millions.
+
+Here is where trails fit in - we wanted to create the simplest abstraction that ties together functions and data across contracts so that it can then be used to generate anything (an app, an automation, a SQL query, etc.). The “abstraction” seen below is what we call a “trail.”
+
+<Frame>
+  <img 
+    src="/images/trail_new_app.png" 
+    alt="Herd new app" 
+    width="400"
+    height="200"
+  />
+</Frame>
+
+If you’re more technical, you’re probably wondering, “Why aren’t ABIs good enough?” or “Why not just use an SDK?” An ABI is too generic to help inform how input values are derived and with what options/purposes, and an SDK is usually protocol specific and very abstracted. Each trail is purpose-built for a specific user journey, making it a much more focused and flexible tool for managing onchain complexity.
+
+**There are four parts to a trail in the Herd app:**
 
 - **🔥 The Trailblazer**: the creator of the trail
 - **⚙️ The Canvas**: the place creators will create and edit trails
@@ -50,7 +76,7 @@ Here's a more complex [**trail**](https://herd.eco/trails/0197137c-2be8-7c84-a6d
 
 As you build trails, keep in mind:
 - Each trail has one "chat" associated with it that can't be changed
-- ENS and Basenames are generally supported in any address fields in the UI for Coterminal/Canvas/Overlook surfaces
+- ENS and Basenames are generally supported in any address fields in the UI for Explorer/Canvas/Overlook surfaces
 - Herd Search works best with protocol and contract names
 - For testing trails, it is recommended you publish the trail early on for now. Updating the trail in the canvas UI immediately updates the view on the overlook side.
 

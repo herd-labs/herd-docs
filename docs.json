@@ -16,8 +16,8 @@
           {
             "group": "Getting started",
             "pages": [
-              "herd-app/coterminal-sage-chat",
-              "herd-app/coterminal-trails",
+              "herd-app/trails",
+              "herd-app/explorer",
               "herd-app/supported-chains"
             ]
           },
@@ -109,5 +109,11 @@
       "github": "https://github.com/herd-labs",
       "linkedin": "https://www.linkedin.com/company/herd-labs"
     }
-  }
+  },
+  "redirects": [
+    {
+      "source": "/herd-app/explorer-trails",
+      "destination": "/herd-app/trails"
+    }
+  ]
 }
