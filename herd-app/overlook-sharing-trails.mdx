@@ -5,9 +5,9 @@ description: 'Learn how to share and execute trails in the Overlook'
 
 <Note>The overlook is a publicly shareable web app and farcaster miniapp. It comes with a chat agent, Scout, to help you understand and execute steps.</Note>
 
-Executing a trail is fairly straightforward (reference an [**example trail here**](https://herd.eco/trails/0197137c-2be8-7c84-a6dd-69a6daa97026/walk)). This can be shared as a web link or as a Farcaster Mini App by pasting the trail link (click the share button in the top left on the canvas after publishing). 
+Executing a trail is fairly straightforward (reference an [**example trail here**](https://herd.eco/trails/0197137c-2be8-7c84-a6dd-69a6daa97026/overlook)). This can be shared as a web link or as a Farcaster Mini App by pasting the trail link (click the share button in the top left on the canvas after publishing). 
 
-The user of a trail will only see **`user_input`** fields, unless they click "Advanced" which will show all inputs that the creator has pre-filled as well.
+The user of a trail will only see **`user_input`** fields for each step, unless they click "Advanced" which will show all inputs that the creator has pre-filled as well.
 
 <Frame>
   <img 
@@ -20,13 +20,55 @@ The user of a trail will only see **`user_input`** fields, unless they click "Ad
 
 Users walking the trail can simulate a step which provides an AI summary as well as Tenderly Simulation results before confirming the transaction.
 
+### Execution Management
+
+Once you press "confirm" with a connected wallet, an execution instance is saved on our end. You can click the "history" button to access your executions. Each "execution" stores all steps executed with the transaction data, including failed transactions. There can only be one successful transaction per step for a given execution id.
+
+Clicking on an execution will pull up the execution details with links to the transactions. You can switch executions by clicking "Use this Execution" in the execution details.
+
+<Frame>
+  <img 
+    src="/images/execution-details.png" 
+    alt="Overlook execution details view" 
+    width="400"
+    height="400"
+  />
+</Frame>
+
+<Note>
+You can test transactions on a simulation by toggling from "mainnet" to "simulated", which then submits transactions on a fork of mainnet. You can re-use the same fork on different executions (even on different trails) by selecting the fork id when creating a new simulated execution.
+
+When simulating, you can "set token balance" to change the token balance of any address (native ETH or any ERC20)
+</Note>
+
+If you toggle "advanced" mode on, you'll be able to branch or skip steps in an execution.
+- You can "branch" an execution anytime by clicking "branch" on any step you have already executed. This will pull all data from previous steps into a new execution which allows you continue executing from there.
+- You can skip steps anytime by clicking "skip". From the API this is just sending a 0x0000… tx hash to this step number. 
+
+### Submitting Transactions
+
+You can "confirm" after filling in all required user inputs in the form, asking scout if you have any questions about the inputs/functions.
+
+It will bring up a page that lets you preview the final inputs for each step in the batch, before submitting with EIP-5792 (batches in one transaction if you have EIP-7702 delegated, or in sequential transactions if not - both with one signature).
+
+<Frame>
+  <img 
+    src="/images/transaction-details.png" 
+    alt="Overlook confirmation details view" 
+    width="400"
+    height="400"
+  />
+</Frame>
+
+This confirmation page will then show you the status of transactions as well as the final balance changes when finished.
+
+### Read Nodes
+
 <Info>
 If there are any read nodes, then there will also be a "read data" section where you can test calling a read node.
 </Info>
 
-### Read and Transaction Calls
-
-When you submit a read node or transaction step, you will see a preview of the results.
+When you call a read node, you will see the inputs/outputs of the node. This may provide helpful context to you when executing the trail - the agent can help you call these (and build them into an app/automation if you're building with the API).
 
 <Frame>
   <img 
@@ -38,38 +80,3 @@ When you submit a read node or transaction step, you will see a preview of the r
 </Frame>
 
 You'll notice this comes with a "LLM prompt", which is targeted at helping any AI you are working with integrate a read node/transaction step into your app. You can also copy the curl request for testing out API calls easily.
-
-Clicking confirm on the main transaction form will bring you an overview on the inputs to be sent onchain:
-
-<Frame>
-  <img 
-    src="/images/overlook-confirm.png" 
-    alt="Overlook confirmation view" 
-    width="400"
-    height="400"
-  />
-</Frame>
-
-Clicking "send" will then send the transaction payload to your wallet for signing.
-
-### Forking a Trail
-
-You can view and fork a trail by clicking the trail "view" icon on the top left of the trail, and then clicking "fork" at the top of the trail. Forking will copy everything from the trail you're looking at into a trail that you own and manage. We keep track of fork history, which will be used for better attribution towards creators in the future.
-
-### Execution Management
-
-Once you press "Start Trail" with a connected wallet, an execution instance is saved on our end. You can click the "txns" button in the top left to access your executions. Each "execution" stores all steps executed with the transaction data.
-
-Clicking on an execution will pull up the execution details with links to the transactions. You can manually paste transactions into an execution or turn on "Test Mode" to manually set any transaction hashes in the trail for easier testing. Take note that executing in "Test Mode" does not save any executions.
-
-<Info>
-You can "fork" an execution anytime by clicking "re-execute this step" on the top right of any step you have already executed. This will pull all data from previous steps into a new execution which allows you continue executing from there.
-</Info>
-
-### Skipping Steps
-
-You can skip steps anytime by clicking "skip this step". From the API this is just sending a 0x0000… tx hash to this step number. 
-
-### Viewing Stats
-
-Basic stats such as forks, wallets, transactions are on the description card. You can see more detailed feeds by clicking "txns" -> "step stats".
