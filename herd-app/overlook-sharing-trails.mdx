@@ -41,6 +41,15 @@ You can test transactions on a simulation by toggling from "mainnet" to "simulat
 When simulating, you can "set token balance" to change the token balance of any address (native ETH or any ERC20)
 </Note>
 
+<Frame>
+  <img 
+    src="/images/simulation-balances.png" 
+    alt="Overlook simulation set balances view" 
+    width="400"
+    height="400"
+  />
+</Frame>
+
 If you toggle "advanced" mode on, you'll be able to branch or skip steps in an execution.
 - You can "branch" an execution anytime by clicking "branch" on any step you have already executed. This will pull all data from previous steps into a new execution which allows you continue executing from there.
 - You can skip steps anytime by clicking "skip". From the API this is just sending a 0x0000… tx hash to this step number. 
