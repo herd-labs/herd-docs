@@ -14,7 +14,7 @@
         "tab": "Herd App",
         "groups": [
           {
-            "group": "Getting started",
+            "group": "Getting Started",
             "pages": [
               "herd-app/trails",
               "herd-app/explorer",
@@ -22,17 +22,12 @@
             ]
           },
           {
-            "group": "Creating Trails",
+            "group": "Trails",
             "pages": [
               "herd-app/canvas-creating-trails",
-              "herd-app/video-examples"
-            ]
-          },
-          {
-            "group": "Sharing & Using Trails",
-            "pages": [
               "herd-app/overlook-sharing-trails",
-              "herd-app/guidebook-llm-api"
+              "herd-app/guidebook-llm-api",
+              "herd-app/video-examples"
             ]
           }
         ]

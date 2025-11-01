@@ -1,5 +1,5 @@
 ---
-title: 'The Canvas: Creating Trails'
+title: 'Canvas: Creating Trails'
 description: 'Learn how to create and manage trails in the Canvas'
 ---
 
@@ -17,18 +17,18 @@ To get started, you'll have to sign up for a Herd account. Then, you click the "
 
 <Warning>A [Farcaster account](https://farcaster.xyz/) is highly recommended for publishing a trail, this is for both security and social discovery reasons. </Warning>
 
-# Adding a Primary Node (Step)
+# Adding an Execution Node (Step)
 
 Trails are a linear set of write functions to be executed. There is no ability to add branching logic or conditions at this time. As the creator, you are purely prefilling inputs to as many function inputs as you can/want before sharing it with others to execute. Think of it like pre-filling a form.
 
-There are three ways to add a primary step node right now:
+There are three ways to add a execution step node right now:
 
 1. **Write Function:** Directly select a write function from a contract to add by either pasting a contract address or selecting one from Sage's memory.
     1. See [Primer on Herd's explorer](./explorer) for an intro to Sage.
 2. **Swap**: We use 0x to easily route and swap between tokens. You can specify two tokens, and an amount to be swapped.
 3. **From Transactions:** This adds a write function from the contract called at the start of a past transaction. We take the "to" address and all the inputs and create a step node with pre-filled inputs for you. More details on this option in the section below.
 
-You can add nodes in between steps by clicking the [+] button on the vertical connecting line. For adding read/source nodes, you can click on the add button to the right of each write node.
+You can add nodes in between steps by clicking the [+] button on the vertical connecting line. For adding read nodes, you can click on the add button to the right of each write node.
 
 ### Add steps from past transactions
 
@@ -38,20 +38,20 @@ This allows you to reference past transactions for any wallet and select/order m
 
 <img height="400" src="/images/canvas-transactions.png" />
 
-## Adding Source Nodes
+## Adding Read Nodes
 
-Non-primary nodes are called "source" nodes, which provide the data for input values to other nodes. These can be easily added by clicking the "+ Add Source Node" button on the right side of each step.
+Non-execution nodes are called "read" nodes, which provide the data for input values to other nodes. These can be easily added by clicking the "+ Add Read Node" button after clicking into any execution step.
 
 <Frame>
   <img 
-    src="/images/canvas-source-nodes.png" 
-    alt="Canvas source nodes" 
+    src="/images/canvas-read-nodes.png" 
+    alt="Canvas read nodes" 
     width="300"
     height="500"
   />
 </Frame>
 
-There are four types of source nodes:
+There are four types of read nodes:
 
 - **Read Functions**: these are view functions on any smart contract.
 - **Events**: these are events emitted from any contract in a transaction (derived from a previous step).
@@ -68,15 +68,14 @@ We automatically create a new batch if a given step depends on an OUTPUT of the 
 
 ## Editing Node Inputs
 
-Once you have added a node, you can click on the new node to pull up the edit panel. When a node is selected, any other nodes that have a purple outline are sources of data for this one, and any other nodes that have a blue outline are targets (rely on this one for data).
-
+Once you have added a node, you can click on the new node to pull up the edit panel.
 ### Derive Methods
 
 All function inputs show up here with an input field and a "derive method" dropdown. 
 
 1. **`user_input`**: the user will be required to enter an input when they go through the trail
 2. **`relational`**: this value will come from another node in the trail (a function input/output or an event). More on this later.
-3. **`step_execution`**: this means getting the transaction hash from an execution of a specific primary node/step, and is only used in event nodes (to look up event data in that transaction).
+3. **`step_execution`**: this means getting the transaction hash from an execution of a specific execution node/step, and is only used in event nodes (to look up event data in that transaction).
 4. **`creator_hardcoded`:** you hardcode a value for the user
 5. **`user_wallet`:** the user's connected wallet address will be used here
 6. **`code`:** write arbitrary typescript code to transform inputs and outputs
@@ -106,11 +105,11 @@ If you set the relational input to be a read function, that read function can ha
 
 ### Code Nodes
 
-Select "code" in a derive method then "+ new code node" to create a code node, or add it directly from the "+ add source node" button. It comes with a default addition function, but you can edit this easily to do anything you want. Easiest way is to click the "copy" button and paste it into chatgpt/claude and ask it to write the code for you - then paste it back in here and save it.
+Select "code" in a derive method then "add code" to create a code node, or add it directly from the "+ add read node" button. It comes with a default addition function, but you can edit this easily to do anything you want. Easiest way is to click the "copy" button and paste it into chatgpt/claude and ask it to write the code for you - then paste it back in here and save it.
 
 You can test out the code by running the "test code" button, or running the [deno server locally](https://github.com/herd-labs/deno-playground) for faster testing.
 
-To find relevant existing code nodes created by others, you can use the search in the "+ Add Source Node" button/popup:
+To find relevant existing code nodes created by others, you can use the search in the add code/read node button/popup:
 
 <Frame>
   <img 
@@ -137,39 +136,26 @@ Defaults help simplify array elements on the consumer side, for example you shou
 
 Arrays also come with a max length param, where you can optionally set a maximum number of elements for the user if needed.
 
-<img height="300" src="/images/canvas-arrays.png" />
+<Frame>
+  <img 
+    src="/images/canvas-arrays.png" 
+    alt="Canvas array defaults panel" 
+    width="800"
+    height="800"
+  />
+</Frame>
 
 ## Read Nodes
 
-Any node (primary or source) in the trail can be turned into a "read" node by clicking the "read API" checkbox. This will tell the LLM/user that the data from that node can be useful for informing the next steps by the user. 
+Any node (execution or read) in the trail can be turned into a "read" node by clicking the "read API" checkbox. This will tell the LLM/user that the data from that node can be useful for informing the next steps by the user. 
 
 You'll be able to see and test this in the "read data" section when you go to the trail overlook after publishing.
 
-## Adding Descriptions
+## Adding Descriptions (Agent Prompts)
 
-You can add an intent in the "Customization" tab on the left side edit panel. This will be shown to the user as a "Creator says:" on the step.
+You can add an intent to any execution or read node in the "Customization" tab on the left side edit panel. This will be shown to the user as a "Creator says:" on the step.
 
-<Frame>
-  <img 
-    src="/images/canvas-customization.png" 
-    alt="Canvas customization panel" 
-    width="400"
-    height="400"
-  />
-</Frame>
-
-You can also add an "intent" to each input by clicking the book icon within "edit inputs".
-
-Here is an example of what the user sees when executing a trail on the Overlook:
-
-<Frame>
-  <img 
-    src="/images/canvas-user-view.png" 
-    alt="User view when executing a trail" 
-    width="400"
-    height="400"
-  />
-</Frame>
+You can also add an "intent" to each input by clicking the book icon within "edit inputs". Think of this as providing an extra prompt to an agent to help a user figure out how to understand and fill in an input.
 
 # Publishing
 

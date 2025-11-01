@@ -1,5 +1,5 @@
 ---
-title: 'The Guidebook: LLM + API'
+title: 'The Guidebook: API'
 description: 'Anyone can build on top of a trail, without being a developer'
 ---
 
@@ -49,7 +49,7 @@ The structure of the guidebook text includes the following information:
 
 ### 2. Five-Step Implementation Plan
 1. **Understanding Trail Data**: Read and understand steps, inputs, and data flow across nodes
-2. **UI Components**: Build components for each primary step with user input fields
+2. **UI Components**: Build components for each execution step with user input fields
 3. **Wallet Connection**: Set up Farcaster connector and transaction submission with wagmi/viem
 4. **Execution Management**: Track consumer's trail execution history as source of truth
 5. **Data Enhancement**: Use read API to provide additional execution data
@@ -76,7 +76,7 @@ The structure of the guidebook text includes the following information:
 
 #### **Step Data Array**
 Each step contains:
-- **Primary Node**: Main write function with complete input specifications
+- **Execution Node**: Main write function with complete input specifications
 - **Required Inputs**: Filtered list of `user_input` fields needed for API calls
 - **Read Nodes**: Optional data sources for displaying additional information
 
