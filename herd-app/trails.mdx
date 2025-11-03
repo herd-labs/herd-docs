@@ -7,6 +7,10 @@ description: 'Learn about trails and how to build with them'
 
 A "trail" is a linear sequence of write functions across ethereum contracts, where the creator (the trailblazer) determines how function input values will be derived. The consumer of the trail will fill in user inputs and then submit one transaction for each step.
 
+Here's an overview of a trail opening a maker CDP vault, depositing ETH, borrowing DAI, and supplying to compound in one go - while also being able to read important data like LTV before and after:
+
+<iframe src="https://share.descript.com/embed/KYOBYBK55lz" width="640" height="360" frameborder="0" allowfullscreen></iframe>
+
 Here are some key benefits of trails:
 
 - Immediately use any deployed contract with LLM search/support, no waiting for integrations from the Herd team.
@@ -14,6 +18,8 @@ Here are some key benefits of trails:
 - Trails are transparent so that anyone can look at all the function-calling logic. They can be easily shared, used, and forked.
 - Creating a trail will automatically generate a sandbox app (shareable as a webpage or a farcaster miniapp).
 - Trails include an LLM + API for a single copy/paste into any AI tool to help you own apps, automations, chatbots, or anything else on top.
+
+## The Problem with Composability
 
 Let’s talk about where trails fit into app development. Apps today look like this:
 
@@ -52,7 +58,7 @@ If you’re more technical, you’re probably wondering, “Why aren’t ABIs go
 Sage chat cannot edit trails right now. We'll add more LLM feature to make the creator experience better soon 🙂
 </Info>
 
-### Trail Guides
+## Trail Guides
 
 Here's a simple video of me one-shotting a crypto payments app on top of a trail:
 
@@ -71,14 +77,6 @@ Here's a simple video of me one-shotting a crypto payments app on top of a trail
 Here's a more complex [**trail**](https://herd.eco/trails/0197137c-2be8-7c84-a6dd-69a6daa97026/walk) overlook to help you understand the end product output. The underlying trail can be viewed/forked by clicking the trail icon in the sandbox. Here's a [**link to an app**](https://v0.dev/chat/trail-api-implementation-Ipk7PqiYLXy) built off the same trail, using the Guidebook.
 
 <Note>We'll be adding more tutorials [on YouTube in this playlist](https://www.youtube.com/playlist?list=PLNUu1Lp_eQ2hK--vI_S3vFYms8A6b8QoJ), be sure to subscribe!</Note>
-
-### General Notes
-
-As you build trails, keep in mind:
-- Each trail has one "chat" associated with it that can't be changed
-- ENS and Basenames are generally supported in any address fields in the UI for Explorer/Canvas/Overlook surfaces
-- Herd Search works best with protocol and contract names
-- For testing trails, it is recommended you publish the trail early on for now. Updating the trail in the canvas UI immediately updates the view on the overlook side.
 
 ## Join the Community
 
