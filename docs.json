@@ -18,6 +18,7 @@
             "pages": [
               "herd-app/trails",
               "herd-app/explorer",
+              "herd-app/visualizer",
               "herd-app/supported-chains"
             ]
           },

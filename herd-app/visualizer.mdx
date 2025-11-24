@@ -1,0 +1,58 @@
+---
+title: 'Herd Visualizer'
+description: 'Find relationships across contracts and wallets with one click'
+---
+
+<Note>You can start the visualizer from any contract or function page (see the purple button at the top).</Note>
+
+The visualizer takes any contract and finds recent transactions for all of its functions, and then builds out a relationship call and variable graph. 
+
+Let's visualize the [ENS register for Basenames (on Base)](https://herd.eco/base/visualizer?contracts=0xa7d2607c6bd39ae9521e514026cbb078405ab322):
+
+<Frame>
+  <img 
+    src="/images/visualizer-ens.png" 
+    alt="Herd visualizer interface" 
+    width="800"
+    height="800"
+  />
+</Frame>
+
+Each contract, function, and variable can have relationships drawn (edges). These are what each colored edge means:
+- **Light Blue:** variable referencing a contract address
+- **Dark Blue:** variable referencing a wallet address
+- **Red:** function that creates another contract (deploys)
+- **Light Green:** write function calling another function
+- **Dark Green:** read function calling another function
+
+## Exploring and Expanding the Graph
+
+<Note>
+<p>The node headers and each function/variable can be clicked to give you more details and link you to the explorer pages. You can also click on any function edge to see the transactions associated with it.</p>
+<p>You can also use the sidebar to help you find where a contract/wallet is by hovering or clicking it there.</p>
+</Note>
+
+When you hover/click on a node, you will see the option to "Load All Functions" or "Load All Variables" if it has not already been done for that function. The contracts you choose to load functions from become "primary" contracts in the graph, and are given a purple outline. These are saved when you refresh or share the page.
+
+<Info>We currently have set limits around function expansion if 50 contracts exist already in the graph. This is for performance purposes. You can reach out to the team if this is really blocking you on something.</Info>
+
+<Frame>
+  <img 
+    src="/images/visualizer-loading-buttons.png" 
+    alt="Herd visualizer loading" 
+    width="400"
+    height="400"
+  />
+</Frame>
+
+Loading functions will look for transactions for every write function on the contract address. If a function you're looking for is missing, it means that it either hasn't been called yet or that function doesn't call any other contracts.
+
+Loading variables will look for any addresses that appear in any variable (read function with no inputs) on that contract.
+
+## Visualizer Settings
+
+In the top right of the visualizer, you'll find four buttons for key graph settings:
+- "Collapse/Expand": Collapsing will remove all functions/variables handles, showing just one line for every kind of relationship between nodes for a given node.
+- "Group/Ungroup": We group all wallets into one node and all contracts with the same code into one node by default, so that the graph is less busy. If you need node specific relations, just click "Ungroup".
+- "Functions": This toggles if you want to show the function relations (green and red lines) or not.
+- "Variables": This toggles if you want to show the variable relations (blue lines) or not.
