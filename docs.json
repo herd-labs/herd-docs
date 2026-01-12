@@ -17,18 +17,8 @@
             "group": "Getting Started",
             "pages": [
               "herd-app/explorer",
-              "herd-app/trails",
               "herd-app/visualizer",
               "herd-app/supported-chains"
-            ]
-          },
-          {
-            "group": "Trails",
-            "pages": [
-              "herd-app/canvas-creating-trails",
-              "herd-app/overlook-sharing-trails",
-              "herd-app/guidebook-llm-api",
-              "herd-app/video-examples"
             ]
           }
         ]
@@ -105,11 +95,5 @@
       "github": "https://github.com/herd-labs",
       "linkedin": "https://www.linkedin.com/company/herd-labs"
     }
-  },
-  "redirects": [
-    {
-      "source": "/herd-app/explorer-trails",
-      "destination": "/herd-app/trails"
-    }
-  ]
+  }
 }
