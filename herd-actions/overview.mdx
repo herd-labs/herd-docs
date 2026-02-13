@@ -1,0 +1,669 @@
+---
+title: HAL Expression System
+description: HAL (Herd Action Language) - JSON/DSL scripting for blockchain transactions and data reads
+---
+
+<Info>
+  This feature is currently under beta. More documentation is coming soon. Reach out to andrew@herd.eco for more information.
+</Info>
+
+# HAL Expression System Documentation
+
+## Overview
+
+HAL (Herd Action Language) is a DSL scripting language in JSON for simplifying writing transactions and reading data from the blockchain. It's used to create simplified write and read functions as "adapters" that can be reused across each other and also "actions" for transactions.
+
+---
+
+## Actions vs Adapters
+
+These are the two types of HAL expressions we let you create in Herd. Both use the same underlying language, and are meant to be composed together through imports/exports.
+
+**Actions** are executable batches of write functions that:
+
+- Have a `main` function as the entry point
+- Have batches and steps, where each batch can contain many "step" write function that get their calldata calculated together. They can be signed/sent through 7702, 5792, 4337, or just normal single sign transactions.
+- Accept user parameters once, no matter how many steps/batches
+- Can be executed in the Herd executor to produce onchain transactions
+- Transactions are saved for when you need to reference or audit them
+- Transactions can be simulated for security/previews
+
+**Example**:
+
+```json
+[
+  "do",
+  ["import", "herd", ["write-function"]],
+  ["import", "action:abc123:v1", ["transferERC20"]],
+  [
+    "export",
+    [
+      "define",
+      {
+        "name": "main",
+        "parameters": [
+          { "name": "recipient", "type": "address" },
+          { "name": "amount", "type": "uint256" }
+        ],
+        "body": [
+          [
+            "define",
+            {
+              "name": "batch0",
+              "meta": { "isBatch": true },
+              "value": [
+                ["write-function", ["transferERC20", "recipient", "amount"]]
+              ]
+            }
+          ]
+        ]
+      }
+    ]
+  ]
+]
+```
+
+**Adapters** are reusable functions that:
+
+- Specifically wrap a write function, read function, or code block
+- For write functions, it outputs calldata which can be used in action batches for transactions or as encoded calldata for multicall/bytes fields
+- For read functions, it returns the read outputs defined in the ABI
+- For code blocks, it runs the typescript code to return the code outputs. we use valtown/deno for code blocks. These can be created from the import/create adapter views.
+- Adapters can be imported into other adapter or actions for composable re-use.
+
+**Example** (write, read, or code function):
+
+```json
+[
+  "do",
+  ["import", "herd", ["encode-calldata", "decimals"]],
+  [
+    "export",
+    [
+      "define",
+      {
+        "name": "transfer",
+        "parameters": [
+          { "name": "to", "type": "address" },
+          { "name": "amount", "type": "uint256" }
+        ],
+        "body": [
+          "coerce",
+          {
+            "type": {
+              "payable": "bool",
+              "payableAmount": "uint256",
+              "encodedCalldata": {
+                "blockchain": "string",
+                "contractAddress": "address",
+                "functionSignature": "bytes4",
+                "calldata": "bytes"
+              }
+            },
+            "value": {
+              "payable": false,
+              "payableAmount": "0",
+              "encodedCalldata": [
+                "encode-calldata",
+                {
+                  "blockchain": "base",
+                  "contractAddress": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+                  "functionSignature": "0xa9059cbb",
+                  "args": {
+                    "recipient": "to",
+                    "value": [
+                      "coerce",
+                      {
+                        "type": "uint256",
+                        "value": [
+                          "decimals",
+                          { "value": "amount", "decimals": 18 }
+                        ]
+                      }
+                    ]
+                  },
+                  "inputAbi": [
+                    "quote",
+                    [
+                      { "name": "recipient", "type": "address" },
+                      { "name": "value", "type": "uint256" }
+                    ]
+                  ],
+                  "functionName": "transfer"
+                }
+              ]
+            }
+          }
+        ],
+        "meta": {
+          "description": "Transfer ERC20 tokens",
+          "originContract": {
+            "address": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+            "blockchain": "base",
+            "contractName": "USDC",
+            "functionName": "transfer"
+          }
+        }
+      }
+    ]
+  ]
+]
+```
+
+---
+
+## HAL "Define" and User Parameters
+
+The `define` statement creates named functions with typed parameters - this is what is exported as the action/adapter. This is the core mechanism for **simplifying complex onchain interactions** - turning a contract function with 10+ inputs into a user-friendly function with just 2-3 inputs.
+
+**Fields**:
+
+- **name**: Function name (used for calls and exports)
+- **parameters**: Array of `{ name, type }` objects defining user inputs (can include optional `meta` field for parameter-level metadata)
+- **body**: The expression to evaluate when the function is called
+- **meta** (optional): Metadata for UI display and documentation (see Metadata section below)
+
+### Metadata
+
+The optional `meta` field on define functions provides UI hints and documentation. Metadata schemas:
+
+**Batch metadata** (`meta` on batch `define` with `isBatch: true`):
+
+```json
+{
+  "isBatch": true,
+  "batchLabel": "string (shown on the user execute button)"
+}
+```
+
+**Parameter metadata** (`meta` on parameter objects):
+
+```json
+{
+  "description": "string (intent for user)",
+  "placeholder": "string (default value)"
+}
+```
+
+**Example with originContract and originTransaction for any defined write/read function**:
+
+```json
+[
+  "define",
+  {
+    "name": "transfer",
+    "parameters": [
+      { "name": "to", "type": "address", "meta": { "label": "Recipient Address" } },
+      { "name": "amount", "type": "uint256", "meta": { "decimals": 18 } }
+    ],
+    "body": [...],
+    "meta": {
+      "description": "Transfer 1000 USDC to recipient",
+      "originContract": {
+        "address": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+        "blockchain": "base",
+        "contractName": "FiatTokenV2_2",
+        "functionName": "transfer"
+      },
+      "originTransaction": {
+        "txHash": "0x1234567890abcdef...",
+        "blockchain": "base"
+      }
+    }
+  }
+]
+```
+
+### How Parameters Work Through Functions
+
+When a user calls a defined function, parameters are bound in the evaluation context and can be referenced by name:
+
+```json
+[
+  "define",
+  {
+    "name": "transfer",
+    "parameters": [
+      { "name": "to", "type": "address" },
+      { "name": "amount", "type": "uint256" }
+    ],
+    "body": [
+      "encode-calldata",
+      {
+        "blockchain": "base",
+        "contractAddress": "0x...",
+        "functionSignature": "0xa9059cbb",
+        "args": {
+          "recipient": "to",
+          "value": ["decimals", { "value": "amount", "decimals": 18 }]
+        }
+      }
+    ]
+  }
+]
+```
+
+Here, `"to"` and `"amount"` in the body reference the parameter values passed by the user. When you reference another define/import, only its parameters are used. And when evaluating, the parameters top level are passed once and then down through any referenced functions as well.
+
+### The Key Value of HAL: Simplifying Complex Contract Calls
+
+A key value of HAL is turning complex contract functions into simple user-facing adapters. For example, a contract's `register` function might require 10 arguments:
+
+**Complex contract function** (10 inputs):
+
+- `name`, `owner`, `duration`, `resolver`, `data[]`, `coinTypes[]`, `reverseRecord`, `signature`, `signatureExpiry`, `expires`
+
+**Simplified HAL adapter** (2 inputs):
+
+```json
+[
+  "define",
+  {
+    "name": "simpleRegister",
+    "parameters": [
+      { "name": "name", "type": "string" },
+      { "name": "years", "type": "int256" }
+    ],
+    "body": [...]
+  }
+]
+```
+
+---
+
+## Setting values in a HAL expression.
+
+Any variable can be set to a value with hardcoded values or function references (from defines and imports). The most common pattern you will see in HAL is wrapping a function call with a `getPath` and then a `coerce`. You can create a parameter and reference it in the value too (if in a define).
+
+```json
+[
+  "do",
+  ["import", "herd", ["decimals", "encode-calldata"]],
+  ["import", "action:abc123:v1", ["calculate_years_to_seconds"]],
+  [
+    "define",
+    {
+      "name": "simpleRegister",
+      "parameters": [{ "name": "years", "type": "int256" }],
+      "body": [
+        "let",
+        { "duration": ["calculate_years_to_seconds", "years"] },
+        [
+          "encode-calldata",
+          {
+            "duration": ["getPath", { "object": "duration", "path": ["seconds"] }]
+          }
+        ]
+      ]
+    }
+  ]
+]
+```
+
+In this example:
+
+- `"duration"` is set by calling the imported function `calculate_years_to_seconds` with the user parameter `"years"`
+- The result is then extracted using `getPath` to get the `"seconds"` field from the `"duration"` object
+
+In the Herd editor, we make dropdown suggestions that auto create/set parameters, wrap functions/outputs, and check types.
+
+---
+
+## Standard Library Functions
+
+HAL provides standard library functions imported from the `herd` and `object` modules. Import them using:
+
+```json
+["import", "herd", ["function-name"]]
+["import", "object", ["getPath"]]
+```
+
+### write-function
+
+Executes a state-changing contract call. **Only used within batch steps in the `main` function of actions.**
+
+```json
+["write-function", { "encodedCalldata": ..., "payable": ..., "payableAmount": ... }]
+```
+
+**Input**: Accepts batch call data format from user-defined write adapter functions:
+
+- `encodedCalldata`: Result from `encode-calldata`
+- `payable`: boolean
+- `payableAmount`: uint256 (in wei)
+
+**Returns**: `{ blockchain, toAddress, functionSignature, transactionHash, transactionStatus }`
+
+This is the only function that submits/takes a transaction hash!!!
+
+### Batch Call Data Format (Use for Write Function adapters)
+
+User-defined write functions return a standardized format for use in action batches:
+
+```json
+{
+  "payable": false,
+  "payableAmount": "0",
+  "encodedCalldata": {
+    "blockchain": "base",
+    "contractAddress": "0x...",
+    "functionSignature": "0x...",
+    "calldata": "0x..."
+  }
+}
+```
+
+This format is consumed directly by `write-function` in batch steps. This format does NOT produce a transaction, only the write-function does.
+
+### read-function
+
+Executes a read-only contract call (view/pure functions).
+
+```json
+[
+  "coerce",
+  {
+    "type": { "balance": "uint256" },
+    "value": [
+      "read-function",
+      {
+        "calldata": [
+          "encode-calldata",
+          {
+            "blockchain": "base",
+            "contractAddress": "0x...",
+            "functionSignature": "0x...",
+            "args": { ... },
+            "inputAbi": ["quote", ...],
+            "functionName": "transfer"
+          }
+        ],
+        "outputAbi": ["quote", ...]
+      }
+    ]
+  }
+]
+```
+
+**Input**: `{ calldata: EncodeCalldataExpression, outputAbi: ["quote", AbiParameter[]] }`
+
+**Returns**: Object with decoded output values keyed by ABI output names (e.g., `{ balance: "1000000" }`)
+
+### encode-calldata
+
+Encodes function arguments into calldata for contract calls. Used internally by read/write functions.
+
+**Returns**: `{ blockchain, contractAddress, functionSignature, calldata }`
+
+### code
+
+Executes a TypeScript code block. Code blocks are created/managed in the Code Blocks view and run on Valtown/Deno.
+
+```json
+[
+  "coerce",
+  {
+    "type": { "result": "string" },
+    "value": [
+      "code",
+      {
+        "args": { "inputArg": "value" },
+        "id": "definitionId:codeVersionId"
+      }
+    ]
+  }
+]
+```
+
+We always create one auto-synced adapter for each code block, which can't be edited but is kept up to date by each saved/publish of the underlying code block. You can test the code block in the code editor too. For adapters that aren't auto-synced you will need to update the "import" of the code block each time you update the code. Keep in mind:
+
+- `id` format: `definitionId:codeVersionId` - combines the definition UUID with the specific code version
+- Each code block has a single auto-synced adapter that updates when the code is published
+- Input/output args are typed using HAL types
+
+### getPath
+
+Gets a value at a nested path within an object. Imported from the `object` module.
+
+**Expression format**:
+
+```json
+["import", "object", ["getPath"]]
+["getPath", { "object": ..., "path": ["field", "nested"] }]
+```
+
+**Input**: `{ object: any, path: string[] }`
+
+**Returns**: Value at the specified path
+
+### coerce
+
+Runtime type coercion and validation. Wraps a value to declare its expected type for the type inference system.
+
+```json
+["coerce", { "type": { "sum": "uint256" }, "value": ... }]
+```
+
+Used to declare return types for type inference. Commonly used with `code`, `read-function`, `decimals`, and write adapters returning batch call data (see examples above).
+
+### decimals
+
+Multiplies a value by 10^decimals. Converts human-readable values to raw integers (e.g., for wei).
+
+```json
+[
+  "coerce",
+  {
+    "type": "uint256",
+    "value": ["decimals", { "value": "1.5", "decimals": 18 }]
+  }
+]
+```
+
+**Input**: `{ value: uint256|int256|float64, decimals: uint8 }`
+
+**Returns**: String representation of the scaled integer
+
+### user-wallet
+
+Returns the current user's wallet address. No arguments required.
+
+**Returns**: `address` (e.g., `"0x1234..."`)
+
+### lookup-transaction-function
+
+Retrieves function inputs or outputs from a committed transaction trace. **Only used in step outputs within `main`** to extract values from previous transaction results.
+
+```json
+[
+  "lookup-transaction-function",
+  {
+    "blockchain": "base",
+    "contractAddress": "0x...",
+    "functionSignature": "0xa9059cbb",
+    "transactionHash": "transactionHash",
+    "direction": "outputs",
+    "abi": ["quote", [{ "name": "success", "type": "bool" }]]
+  }
+]
+```
+
+**Input**:
+
+- `direction`: `"inputs"` or `"outputs"`
+- `abi`: Quoted array of ABI parameters for decoding
+
+**Returns**: Object with decoded values keyed by ABI param names
+
+### lookup-transaction-event
+
+Retrieves event outputs from a committed transaction's logs. **Only used in step outputs within `main`** to extract event data from previous transactions.
+
+```json
+[
+  "lookup-transaction-event",
+  {
+    "blockchain": "base",
+    "contractAddress": "0x...",
+    "eventSignature": "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+    "transactionHash": "transactionHash",
+    "outputAbi": [
+      "quote",
+      [
+        { "name": "from", "type": "address", "indexed": true },
+        { "name": "to", "type": "address", "indexed": true },
+        { "name": "value", "type": "uint256", "indexed": false }
+      ]
+    ]
+  }
+]
+```
+
+**Returns**: Object with decoded event data keyed by input names
+
+---
+
+## Import/Export and Versioning
+
+### Import Syntax
+
+Import functions from other adapters/actions or stdlib modules:
+
+```json
+["import", "herd", ["write-function", "encode-calldata"]]
+["import", "action:actionId:versionId", ["functionName"]]
+["import", "action:actionId:versionId", [["exportName", "localAlias"]]]
+```
+
+**Action import format**: `action:actionId:versionId`
+
+- `actionId`: UUID of the action/adapter
+- `versionId`: UUID of the specific version to import
+
+### Export Syntax
+
+Export functions for use by other expressions:
+
+```json
+["export", ["define", { "name": "myFunction", "parameters": [...], "body": [...] }]]
+```
+
+Each action/adapter only exports ONE defined function right now. This keeps expressions simpler and more composable. For actions, that function is "main" always. For adapters that can be any defined "write" batch call data, read-function, or code block.
+
+### Versioning
+
+**Critical**: When you publish a new version of an adapter, any actions/adapters that import it will continue using the **old version** until updated.
+
+**To update imports**:
+
+1. Importers must explicitly update the `versionId` in their import statement
+2. The HAL editor shows stale import warnings when newer versions are available
+3. Update the import to use the new version ID: `action:actionId:newVersionId`
+
+This ensures stability - consumers control when they adopt breaking changes.
+
+---
+
+## Evaluation and Operation Logs (Oplogs)
+
+You can test any HAL expression by clicking "Test" mode in the action editor, entering user parameters, and clicking run. The evaluation produces an **operation log (oplog)** - a detailed trace of every function call during execution.
+
+### Oplog Structure
+
+Each entry represents a single function call:
+
+- **operationId**: Unique ID for this operation
+- **functionName**: Name of the function called (e.g., `code`, `read-function`, `getPath`, user-defined functions)
+- **status**: `"success"` or `"error"`
+- **timestamp/timestampIso**: When the operation executed
+- **args**: Arguments passed to the function
+- **result**: Return value (or error message if failed)
+
+### Example Oplog Walkthrough
+
+Here's a condensed example showing how operations chain together:
+
+```json
+{
+  "executionStatus": "completed",
+  "entries": [
+    {
+      "functionName": "code",
+      "args": [{ "id": "...:...", "args": { "years": "5n" } }],
+      "result": { "seconds": "157680000" }
+    },
+    {
+      "functionName": "calculate_years_to_seconds",
+      "args": ["5n"],
+      "result": { "seconds": "157680000n" }
+    },
+    {
+      "functionName": "getPath",
+      "args": [
+        {
+          "path": ["seconds"],
+          "object": { "seconds": "157680000n" }
+        }
+      ],
+      "result": "157680000n"
+    },
+    {
+      "functionName": "encode-calldata",
+      "args": [
+        {
+          "blockchain": "base",
+          "contractAddress": "0x508...",
+          "functionSignature": "0x50e9a715",
+          "args": { "name": "ilemi", "duration": "157680000n" }
+        }
+      ],
+      "result": {
+        "blockchain": "base",
+        "contractAddress": "0x508...",
+        "calldata": "0x50e9a715..."
+      }
+    },
+    {
+      "functionName": "read-function",
+      "args": [
+        {
+          "calldata": {
+            "blockchain": "base",
+            "contractAddress": "0x508...",
+            "calldata": "0x50e9a715..."
+          }
+        }
+      ],
+      "result": { "0": { "base": "4995440843040000n", "premium": "0n" } }
+    },
+    {
+      "functionName": "simpleRegister",
+      "args": ["ilemi", "5n"],
+      "result": {
+        "payable": true,
+        "payableAmount": "4995440843040000n",
+        "encodedCalldata": { ... }
+      }
+    }
+  ],
+  "finalResult": {
+    "payable": true,
+    "payableAmount": "4995440843040000n",
+    "encodedCalldata": { ... }
+  }
+}
+```
+
+**What this shows**:
+
+1. `code` executes a TypeScript code block to convert years to seconds
+2. `calculate_years_to_seconds` is the user-defined wrapper function
+3. `getPath` extracts the `seconds` field from the result
+4. `encode-calldata` prepares the contract call arguments
+5. `read-function` calls the contract to get pricing info
+6. `simpleRegister` is the final user-defined adapter that returns batch call data
+
+### Using Oplogs for Debugging
+
+- **Trace execution flow**: See exactly which functions run and in what order and check what each function receives and returns
+- **Identify failures**: Failed operations show `"status": "error"` with error messages

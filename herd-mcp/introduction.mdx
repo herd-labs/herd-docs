@@ -1,0 +1,79 @@
+---
+title: Introduction
+description: Blockchain intelligence for Claude Code
+---
+
+# Herd MCP
+
+Herd connects Claude Code to on-chain data through the Model Context Protocol. Query contracts, decode transactions, and analyze wallets using natural language.
+
+## Capabilities
+
+<CardGroup cols={2}>
+  <Card title="Contracts" icon="file-code">
+    Fetch metadata, search source code, compare proxy implementations
+  </Card>
+  <Card title="Transactions" icon="arrow-right-arrow-left">
+    Decode traces, parse logs, track balance changes
+  </Card>
+  <Card title="Wallets" icon="wallet">
+    Detect wallet types, view holdings, list deployments
+  </Card>
+  <Card title="Tokens" icon="coins">
+    Track transfers, check balances, pull market data
+  </Card>
+</CardGroup>
+
+## Supported Networks
+
+| Network | Status |
+|---------|--------|
+| Ethereum | Supported |
+| Base | Supported |
+
+## Use Cases
+
+**Developers** — Understand existing contracts before integrating. Search for specific patterns in verified source code.
+
+**Security Researchers** — Audit contracts, trace exploit transactions, compare implementation versions.
+
+**Analysts** — Track wallet activity, monitor token flows, investigate on-chain behavior.
+
+## Example
+
+```
+> What does the swap function do in Uniswap V3 Router?
+
+Claude fetches the contract, parses the source, and explains the swap logic.
+```
+
+```
+> Decode transaction 0x1234...
+
+Claude retrieves traces, logs, and balance changes, then summarizes what happened.
+```
+
+## Tools Quick Reference
+
+| Tool | Use For | Example Query |
+|------|---------|---------------|
+| [Contract Metadata](/herd-mcp/tools/contract-metadata) | Contract info, ABI, tokens | "What is contract 0x...?" |
+| [Code Analysis](/herd-mcp/tools/code-analysis) | Search contract code | "Find the transfer function" |
+| [Diff Versions](/herd-mcp/tools/diff-versions) | Compare upgrades | "What changed in the upgrade?" |
+| [Query Transaction](/herd-mcp/tools/query-transaction) | Decode transactions | "What happened in tx 0x...?" |
+| [Latest Transactions](/herd-mcp/tools/latest-transactions) | Recent function/event calls | "Show recent swaps" |
+| [Transaction Activity](/herd-mcp/tools/transaction-activity) | Address tx history | "What has 0x... been doing?" |
+| [Wallet Overview](/herd-mcp/tools/wallet-overview) | Wallet profile | "Overview of 0x..." |
+| [Token Activity](/herd-mcp/tools/token-activity) | Token transfer history | "USDC history for 0x..." |
+| [Deployed Contracts](/herd-mcp/tools/deployed-contracts) | Find deployments | "What contracts did 0x... deploy?" |
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Configuration" icon="gear" href="/herd-mcp/configuration">
+    Connect Herd and set up MCP
+  </Card>
+  <Card title="Contract Metadata" icon="file-code" href="/herd-mcp/tools/contract-metadata">
+    Start analyzing contracts
+  </Card>
+</CardGroup>

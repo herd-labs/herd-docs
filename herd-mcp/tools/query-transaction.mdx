@@ -1,0 +1,240 @@
+---
+title: Query Transaction
+description: "Decode traces, logs, and balance changes for any transaction"
+---
+
+# Query Transaction
+
+Decodes transaction data including traces, logs, and balance changes.
+
+## Returns
+
+- Decoded calldata and function calls
+- Parsed event logs with parameters
+- Token/ETH balance changes
+- Internal transaction traces
+- All contracts and addresses involved
+
+## Example Queries
+
+```
+What happened in transaction 0x1234...?
+```
+
+```
+Decode this swap transaction: 0xabcd...
+```
+
+```
+Explain all the token transfers in tx 0x5678...
+```
+
+## Parameters
+
+| Parameter | Required | Description |
+|-----------|----------|-------------|
+| `txHash` | Yes | The transaction hash (0x...) |
+| `returnAllData` | No | Return all data without filtering (default: false) |
+| `balanceQuery` | No | Filter balance changes by query (e.g., "USDC transfers") |
+| `traceLogQuery` | No | Filter traces/logs by query (e.g., "swap function calls") |
+| `includeRawData` | No | Include raw hex calldata (default: false) |
+| `blockchain` | No | `ethereum` or `base` (auto-detected if not provided) |
+
+## Understanding Transaction Components
+
+### Balance Changes
+
+Shows all token/ETH movements:
+
+```
+Balance Changes:
+┌──────────────┬─────────────┬────────────────┬─────────────────┐
+│ Token        │ From        │ To             │ Amount          │
+├──────────────┼─────────────┼────────────────┼─────────────────┤
+│ USDC         │ 0xUser...   │ 0xPool...      │ 1,000.00        │
+│ WETH         │ 0xPool...   │ 0xUser...      │ 0.35            │
+└──────────────┴─────────────┴────────────────┴─────────────────┘
+```
+
+<Note>
+Balance amounts are already decimal-adjusted (human-readable). No need to divide by decimals.
+</Note>
+
+### Traces
+
+Internal calls within the transaction:
+
+```
+Traces:
+1. 0xUser calls 0xRouter.swap(...)
+   └─ 2. 0xRouter calls 0xPool.swap(...)
+      └─ 3. 0xPool calls 0xUSDC.transferFrom(...)
+      └─ 4. 0xPool calls 0xWETH.transfer(...)
+```
+
+### Event Logs
+
+Decoded events emitted:
+
+```
+Events:
+1. Swap (0xPool)
+   - sender: 0xRouter
+   - amount0In: 1000000000 (1000 USDC)
+   - amount1Out: 350000000000000000 (0.35 WETH)
+
+2. Transfer (0xUSDC)
+   - from: 0xUser
+   - to: 0xPool
+   - value: 1000000000
+
+3. Transfer (0xWETH)
+   - from: 0xPool
+   - to: 0xUser
+   - value: 350000000000000000
+```
+
+### Basic Decode
+
+```
+What happened in 0x8a3c4b5d6e7f...
+```
+
+Returns: summary, function called, token transfers, gas cost, status
+
+### Filtered Results
+
+```
+Show me only the USDC transfers in this transaction
+```
+
+Uses `balanceQuery` to filter balance changes.
+
+### DeFi Transactions
+
+```
+Explain this Uniswap swap step by step
+```
+
+Shows: function called, input/output tokens, routing path, exchange rate, fees
+
+## Real-World Examples
+
+### Example 1: Simple Token Transfer
+
+```
+Transaction: 0x123...
+Type: ERC-20 Transfer
+From: 0xAlice
+To: 0xBob
+Token: USDC
+Amount: 500.00 USDC
+Gas: 65,000 ($2.34)
+Status: Success
+```
+
+### Example 2: Complex DeFi Transaction
+
+```
+Transaction: 0x456...
+Type: Multi-hop Swap
+Protocol: Uniswap V3
+
+Action: Swapped 10,000 USDC → 3.5 ETH
+
+Route:
+  USDC → WETH (0.3% fee pool)
+
+Balance Changes:
+  - User: -10,000 USDC
+  - User: +3.5 WETH
+
+Events Emitted:
+  1. Approval (USDC)
+  2. Swap (Uniswap Pool)
+  3. Transfer (USDC)
+  4. Transfer (WETH)
+
+Effective Rate: 1 ETH = 2,857.14 USDC
+Gas Used: 184,532 ($8.45)
+```
+
+### Example 3: Failed Transaction
+
+```
+Transaction: 0x789...
+Status: FAILED (Reverted)
+Reason: "Insufficient liquidity"
+
+What Happened:
+  User tried to swap 1M USDC for ETH
+  Pool didn't have enough liquidity
+  Transaction reverted after consuming 45,000 gas
+
+Gas Wasted: $1.89
+```
+
+## Filtering Options
+
+### Balance Query Examples
+
+```
+"USDC transfers"           → Only USDC movements
+"mints and burns"          → Token minting/burning
+"ETH transfers"            → Native ETH movements
+"NFT transfers"            → ERC-721 movements
+```
+
+### Trace/Log Query Examples
+
+```
+"swap function calls"      → Swap-related traces
+"Transfer events"          → ERC-20 Transfer logs
+"approval events"          → Token approvals
+"admin functions"          → Privileged operations
+```
+
+## Full Data Mode
+
+Set `returnAllData: true` for complete output:
+- All balance changes (unfiltered)
+- Complete trace tree
+- All decoded logs
+- Raw data (if `includeRawData: true`)
+
+## Tips
+
+<Tip>
+Start broad, then filter. Ask "what happened" first, then drill into specifics.
+</Tip>
+
+<Tip>
+Ask "why" questions: "Why did this fail?" or "Why so many internal calls?"
+</Tip>
+
+## Common Questions
+
+<AccordionGroup>
+  <Accordion title="What if the transaction failed?">
+    Claude will explain why it failed, show what it tried to do, and how much gas was wasted.
+  </Accordion>
+
+  <Accordion title="Can I see pending transactions?">
+    No, only confirmed (mined) transactions can be analyzed.
+  </Accordion>
+
+  <Accordion title="What about internal transactions?">
+    Yes! The traces show all internal calls, even those not visible on basic block explorers.
+  </Accordion>
+</AccordionGroup>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Latest Transactions" icon="clock" href="/herd-mcp/tools/latest-transactions">
+    Find recent transactions by function/event
+  </Card>
+  <Card title="Transaction Activity" icon="list" href="/herd-mcp/tools/transaction-activity">
+    Get transaction history for an address
+  </Card>
+</CardGroup>

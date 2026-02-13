@@ -1,0 +1,183 @@
+---
+title: Code Analysis
+description: "Search contract source code with AI-generated regex patterns"
+---
+
+# Code Analysis
+
+Searches verified contract source code using AI-generated regex patterns.
+
+## Capabilities
+
+- Search by natural language query
+- Find functions, patterns, or behaviors
+- Return filtered results or full code
+
+## Example Queries
+
+```
+Find all functions that can transfer tokens in the USDC contract
+```
+
+```
+Show me the access control logic in this contract
+```
+
+```
+What modifiers does this contract use?
+```
+
+## Parameters
+
+| Parameter | Required | Description |
+|-----------|----------|-------------|
+| `query` | Yes | What you're searching for |
+| `contractAddresses` | Yes | Array of contract addresses to search |
+| `includeProxies` | No | Search proxy code instead of implementation (default: false) |
+| `returnAllCode` | No | Return all code without filtering (default: false) |
+
+## Usage Patterns
+
+### Finding Functions
+
+```
+Find all mint functions in contract 0x...
+```
+
+### Access Control
+
+```
+How is admin access controlled in this contract?
+```
+
+Searches for: `onlyOwner` modifiers, role-based patterns, admin state variables
+
+### Security Patterns
+
+```
+Are there any functions that can pause this contract?
+```
+
+Finds: pause/unpause functions, emergency stops, circuit breakers
+
+## Practical Examples
+
+### Example 1: Finding Fee Logic
+
+**You:** "Show me how fees are calculated in the Uniswap V3 swap function"
+
+**Result:**
+```solidity
+// From SwapRouter.sol
+function exactInputSingle(ExactInputSingleParams calldata params)
+    external
+    payable
+    override
+    returns (uint256 amountOut)
+{
+    amountOut = exactInputInternal(
+        params.amountIn,
+        params.recipient,
+        params.sqrtPriceLimitX96,
+        SwapCallbackData({
+            path: abi.encodePacked(params.tokenIn, params.fee, params.tokenOut),
+            payer: msg.sender
+        })
+    );
+    // Fee is encoded in the path...
+}
+```
+
+### Example 2: Checking for Dangerous Patterns
+
+**You:** "Does this contract have any selfdestruct or delegatecall?"
+
+**Result:**
+```
+Found 0 matches for 'selfdestruct'
+Found 1 match for 'delegatecall':
+
+Line 245: (bool success, ) = implementation.delegatecall(data);
+Context: This is the standard proxy pattern delegatecall,
+which is expected and safe in this context.
+```
+
+### Example 3: Understanding State Variables
+
+**You:** "What are the main state variables in this contract?"
+
+**Result:**
+```solidity
+// Storage variables found:
+mapping(address => uint256) private _balances;
+mapping(address => mapping(address => uint256)) private _allowances;
+uint256 private _totalSupply;
+string private _name;
+string private _symbol;
+address public owner;
+bool public paused;
+```
+
+## Full Code Retrieval
+
+Use `returnAllCode: true` to get complete source code for:
+- Full code review
+- Context around matches
+- Cross-function patterns
+
+## Multi-Contract Search
+
+Search across multiple contracts simultaneously:
+
+```
+Find how 'swap' is implemented across these DEX contracts: [addresses]
+```
+
+## Tips
+
+<Tip>
+Be specific: "find the withdraw function" beats "find withdrawal logic"
+</Tip>
+
+<Tip>
+Search by behavior: "functions that can move user funds" captures more than "find transfer"
+</Tip>
+
+## Common Search Queries
+
+| What You Want | How to Ask |
+|---------------|------------|
+| Admin functions | "Find all functions with onlyOwner or admin access" |
+| Token transfers | "Show me functions that transfer or move tokens" |
+| External calls | "Find all external contract calls" |
+| Events | "What events does this contract emit?" |
+| Modifiers | "List all modifiers in this contract" |
+| Constructor | "Show me the constructor and initialization logic" |
+| Upgrade logic | "How does this contract handle upgrades?" |
+
+## Limitations
+
+<Warning>
+**Only works on verified contracts.** Unverified contracts don't have source code available.
+</Warning>
+
+<Warning>
+**Large contracts may be truncated.** Very large codebases might not return complete results in a single query.
+</Warning>
+
+## Combining with Other Tools
+
+1. **Get overview first** → `contractMetadataTool`
+2. **Search specific code** → `regexCodeAnalysisTool`
+3. **Check how it's used** → `getLatestTransactionsTool`
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Contract Metadata" icon="file-code" href="/herd-mcp/tools/contract-metadata">
+    Get contract overview first
+  </Card>
+  <Card title="Version Diffs" icon="code-compare" href="/herd-mcp/tools/diff-versions">
+    Compare contract versions
+  </Card>
+</CardGroup>

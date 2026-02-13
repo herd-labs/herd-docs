@@ -1,0 +1,187 @@
+---
+title: Deployed Contracts
+description: "Find contracts deployed by a wallet or factory"
+---
+
+# Deployed Contracts
+
+Lists contracts deployed by an address. Works with EOAs, factories, and Safes.
+
+## Returns
+
+- Deployed contract addresses and names
+- Deployment timestamps and tx hashes
+- Verification status
+- Paginated results (10 per page)
+
+## Example Queries
+
+```
+What contracts has 0x... deployed?
+```
+
+```
+Show me all tokens created by this wallet
+```
+
+```
+List contracts deployed by the Uniswap factory
+```
+
+## Parameters
+
+| Parameter | Required | Description |
+|-----------|----------|-------------|
+| `deployerAddress` | Yes | The deployer address to query |
+| `blockchain` | No | `ethereum` (default) or `base` |
+| `page` | No | Page number (default: 1) |
+
+## Deployment Patterns Supported
+
+| Pattern | How It Works |
+|---------|--------------|
+| **Direct (EOA)** | Wallet directly deploys via transaction |
+| **Factory** | Contract creates other contracts |
+| **Safe** | Multisig deploys via execution |
+| **CREATE2** | Deterministic address deployment |
+
+## Example Output
+
+### EOA Deployer
+
+```
+Contracts Deployed by 0xDeveloper...
+====================================
+
+Total Contracts: 15
+Page 1 of 2
+
+1. MyToken (0xToken...)
+   - Deployed: 2024-01-10 14:32:00
+   - Transaction: 0xabc...
+   - Verified: Yes
+   - Type: ERC-20 Token
+
+2. NFTCollection (0xNFT...)
+   - Deployed: 2024-01-08 10:15:00
+   - Transaction: 0xdef...
+   - Verified: Yes
+   - Type: ERC-721 NFT
+
+3. StakingRewards (0xStake...)
+   - Deployed: 2024-01-05 16:45:00
+   - Transaction: 0x123...
+   - Verified: No
+   - Type: Unknown
+
+...
+```
+
+### Factory Contract
+
+```
+Contracts Deployed by Uniswap V3 Factory
+========================================
+
+Total Pools Created: 12,456
+Page 1 of 1,246
+
+1. USDC/WETH 0.3% Pool (0xPool1...)
+   - Created: 2023-05-01
+   - Creator Transaction: 0xabc...
+
+2. WBTC/WETH 0.05% Pool (0xPool2...)
+   - Created: 2023-04-28
+   - Creator Transaction: 0xdef...
+
+...
+```
+
+## Use Cases
+
+**Developer portfolio:**
+```
+What contracts has this developer deployed?
+```
+
+**Factory analysis:**
+```
+How many pools has Uniswap V3 factory created on Base?
+```
+
+**Scam investigation:**
+```
+This scam token came from 0x... - what else did they deploy?
+```
+
+## Combining with Other Tools
+
+For complete deployer analysis:
+
+1. **List deployments** → `getDeployedContractsTool`
+2. **Check deployer wallet** → `getWalletOverviewTool`
+3. **Analyze specific contract** → `contractMetadataTool`
+4. **Search contract code** → `regexCodeAnalysisTool`
+
+## Common Use Cases
+
+<AccordionGroup>
+  <Accordion title="Auditing a developer's work">
+    "List all contracts deployed by this audit client's wallet"
+  </Accordion>
+
+  <Accordion title="Finding protocol contracts">
+    "What contracts make up the [Protocol] ecosystem?"
+  </Accordion>
+
+  <Accordion title="Scam investigation">
+    "What other tokens has this rug-puller deployed?"
+  </Accordion>
+
+  <Accordion title="Factory usage analysis">
+    "How actively is this factory being used?"
+  </Accordion>
+</AccordionGroup>
+
+## Tips
+
+<Tip>
+Check verification status—verified contracts are easier to analyze.
+</Tip>
+
+<Tip>
+Look for patterns. Multiple similar deployments indicate factory or serial behavior.
+</Tip>
+
+## Pagination
+
+For deployers with many contracts:
+
+```
+Page 1: Contracts 1-10
+Page 2: Contracts 11-20
+...
+```
+
+**You:** "Show page 3 of contracts deployed by this factory"
+
+## Limitations
+
+<Warning>
+**10 contracts per page.** Use pagination for complete list.
+</Warning>
+
+<Warning>
+**Complex factory patterns.** Some unusual factory patterns may not be fully captured.
+</Warning>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Contract Metadata" icon="file-code" href="/herd-mcp/tools/contract-metadata">
+    Analyze a deployed contract
+  </Card>
+  <Card title="Wallet Overview" icon="wallet" href="/herd-mcp/tools/wallet-overview">
+    Learn more about the deployer
+  </Card>
+</CardGroup>

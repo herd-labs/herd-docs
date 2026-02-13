@@ -1,0 +1,216 @@
+---
+title: Latest Transactions
+description: "Find recent transactions by function call or event"
+---
+
+# Latest Transactions
+
+Fetches recent transactions that call a specific function or emit a specific event.
+
+## Returns
+
+- Transaction hashes with decoded arguments
+- Function parameters or event data
+- Useful for monitoring activity and finding examples
+
+## Example Queries
+
+```
+Show me the last 10 swaps on Uniswap V3
+```
+
+```
+Find recent mint transactions for this NFT contract
+```
+
+```
+What are the latest Transfer events from USDC?
+```
+
+## Parameters
+
+| Parameter | Required | Description |
+|-----------|----------|-------------|
+| `type` | Yes | `function` or `event` |
+| `signature` | Yes | Keccak hash of function/event (from ABI) |
+| `contractAddress` | Yes | The contract to query |
+| `blockchain` | No | `ethereum` (default) or `base` |
+
+<Note>
+You don't need to know the signature hash - Claude will look it up from the contract's ABI automatically.
+</Note>
+
+### Function Calls
+
+```
+Show me the latest deposit() calls on Aave
+```
+
+### Events
+
+```
+Find recent Transfer events from the PEPE token
+```
+
+## Understanding the Output
+
+### Function Call Results
+
+```
+Recent deposit() calls on Aave V3 Pool:
+
+1. Transaction: 0xabc...
+   Block: 18,450,123
+   Timestamp: 2024-01-15 14:32:00
+   Arguments:
+     - asset: 0xUSDC (USDC)
+     - amount: 50,000.00
+     - onBehalfOf: 0xUser...
+     - referralCode: 0
+
+2. Transaction: 0xdef...
+   Block: 18,450,089
+   ...
+```
+
+### Event Results
+
+```
+Recent Transfer events from USDC:
+
+1. Transaction: 0x111...
+   Block: 18,450,200
+   Event Args:
+     - from: 0xBinance
+     - to: 0xUser
+     - value: 10,000.00
+
+2. Transaction: 0x222...
+   ...
+```
+
+## Common Use Cases
+
+### Monitor Protocol Activity
+
+**You:** "How many swaps happened on Uniswap in the last hour?"
+
+### Find Example Transactions
+
+**You:** "Find me an example of someone using the flashLoan function"
+
+### Track Large Movements
+
+**You:** "Show recent large USDC transfers (look for whale activity)"
+
+### Analyze User Behavior
+
+**You:** "What functions are people calling most on this contract?"
+
+## Function vs Event
+
+| Use Functions When | Use Events When |
+|-------------------|-----------------|
+| You want to see how people call the contract | You want to track outcomes/results |
+| Analyzing input parameters | Tracking token movements |
+| Finding failed transactions | Historical data analysis |
+| Debugging contract interactions | Building activity feeds |
+
+## Signature Hashes Explained
+
+Each function and event has a unique identifier:
+
+**Function signatures** (4 bytes):
+```
+transfer(address,uint256) → 0xa9059cbb
+```
+
+**Event signatures** (32 bytes):
+```
+Transfer(address,address,uint256) → 0xddf252ad...
+```
+
+Claude automatically handles these - just describe what you're looking for.
+
+## Practical Examples
+
+### Example 1: Monitoring NFT Mints
+
+**You:** "Show me recent mints from the Azuki contract"
+
+**Result:**
+```
+Recent mint() calls:
+
+1. 0xabc... - Minted 2 tokens to 0xCollector
+2. 0xdef... - Minted 1 token to 0xWhale
+3. 0x123... - Minted 5 tokens to 0xTrader
+
+Total minted in last 10 txs: 15 tokens
+```
+
+### Example 2: DEX Activity
+
+**You:** "What pairs are being swapped most on Uniswap V3?"
+
+**Result:**
+```
+Recent swap activity analysis:
+
+Most active pairs:
+1. WETH/USDC - 45 swaps
+2. WETH/USDT - 23 swaps
+3. WBTC/WETH - 18 swaps
+
+Average swap size: $12,450
+```
+
+### Example 3: Governance Activity
+
+**You:** "Show recent votes on Compound governance"
+
+**Result:**
+```
+Recent VoteCast events:
+
+1. Proposal #145: 0xVoter voted FOR (250,000 COMP)
+2. Proposal #145: 0xWhale voted AGAINST (180,000 COMP)
+3. Proposal #144: 0xDAO voted FOR (500,000 COMP)
+```
+
+## Combining with Other Tools
+
+1. **Find recent transactions** → `getLatestTransactionsTool`
+2. **Analyze specific tx** → `queryTransactionTool`
+3. **Understand the function** → `regexCodeAnalysisTool`
+
+## Tips
+
+<Tip>
+Be specific: "deposit" is clearer than "put money in"
+</Tip>
+
+<Tip>
+Mention the contract—different protocols use different function names.
+</Tip>
+
+## Limitations
+
+<Warning>
+**Historical depth varies.** Very old transactions may not be available.
+</Warning>
+
+<Warning>
+**Rate limits apply.** Don't query too frequently for the same data.
+</Warning>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Query Transaction" icon="receipt" href="/herd-mcp/tools/query-transaction">
+    Analyze a specific transaction in detail
+  </Card>
+  <Card title="Transaction Activity" icon="list" href="/herd-mcp/tools/transaction-activity">
+    Get full transaction history for an address
+  </Card>
+</CardGroup>

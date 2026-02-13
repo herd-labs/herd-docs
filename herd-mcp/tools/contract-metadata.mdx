@@ -1,0 +1,159 @@
+---
+title: Contract Metadata
+description: "Fetch contract info, ABI, deployment history, and token data"
+---
+
+# Contract Metadata
+
+Returns contract information including ABI, proxy history, and token data.
+
+## Returns
+
+- **Basic Info** - Contract name, compiler version, verification status
+- **ABI** - Complete Application Binary Interface with function signatures
+- **Proxy Information** - Implementation addresses for upgradeable contracts
+- **Deployment History** - When and how the contract was deployed
+- **Token Details** - If it's a token: price, volume, market cap, holders (via CoinGecko)
+
+## Example Queries
+
+```
+What is the contract at 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48?
+```
+
+```
+Give me an overview of the Uniswap V3 Router contract
+```
+
+```
+What functions does AAVE's lending pool have?
+```
+
+## Parameters
+
+| Parameter | Required | Description |
+|-----------|----------|-------------|
+| `contractAddress` | Yes | The contract address (0x...) |
+| `blockchain` | No | `ethereum` (default) or `base` |
+
+## Sample Output
+
+For `0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2`:
+
+- Contract name: Wrapped Ether (WETH)
+- Verified: Yes
+- Compiler: Solidity 0.4.18
+- Functions: deposit, withdraw, approve, transfer
+- Token data: price, market cap, holders
+
+## What You Get Back
+
+### Contract Information
+
+```
+Name: Wrapped Ether
+Address: 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2
+Verified: true
+Compiler: v0.4.18+commit.9cf6e910
+```
+
+### ABI Summary
+
+The tool provides function and event summaries:
+
+**Functions:**
+| Name | Type | Description |
+|------|------|-------------|
+| deposit | write | Wrap ETH into WETH |
+| withdraw | write | Unwrap WETH to ETH |
+| transfer | write | Transfer WETH to another address |
+| approve | write | Approve spender allowance |
+| balanceOf | read | Check WETH balance |
+
+**Events:**
+| Name | Description |
+|------|-------------|
+| Transfer | Emitted on transfers |
+| Approval | Emitted on approvals |
+| Deposit | Emitted when ETH is wrapped |
+| Withdrawal | Emitted when WETH is unwrapped |
+
+### Token Data (if applicable)
+
+```
+Symbol: WETH
+Decimals: 18
+Price: $3,245.67
+Market Cap: $4.2B
+24h Volume: $1.8B
+Holders: 845,231
+```
+
+### Proxy Information
+
+For upgradeable contracts:
+
+```
+Proxy Type: TransparentUpgradeableProxy
+Current Implementation: 0x1234...
+Previous Implementations:
+  - 0xabcd... (upgraded at block 15000000)
+  - 0x5678... (original)
+```
+
+## Proxy Support
+
+For upgradeable contracts, the tool:
+
+1. Detects proxy type
+2. Identifies current implementation
+3. Returns implementation history
+4. Provides the implementation ABI
+
+## Related Tools
+
+1. **Get overview** → `contractMetadataTool`
+2. **Search code** → `regexCodeAnalysisTool` for specific functions
+3. **Check upgrades** → `diffContractVersions` for change history
+4. **See usage** → `getLatestTransactionsTool` for recent activity
+
+## Tips
+
+<Tip>
+Be specific: "what are the main functions" is better than "tell me about this contract"
+</Tip>
+
+<Tip>
+Specify chain for non-Ethereum: "on Base"
+</Tip>
+
+## Common Use Cases
+
+<AccordionGroup>
+  <Accordion title="Before interacting with a new DeFi protocol">
+    "Give me an overview of [protocol] contract. What functions will I be calling to deposit/withdraw?"
+  </Accordion>
+
+  <Accordion title="Checking if a token is legitimate">
+    "Is this token contract verified? Does it have any unusual functions like blacklist or pause?"
+  </Accordion>
+
+  <Accordion title="Understanding an NFT contract">
+    "What's the minting function for this NFT? Are there any limits or requirements?"
+  </Accordion>
+
+  <Accordion title="Researching a protocol's architecture">
+    "What are all the contracts in the [protocol] system and how do they relate to each other?"
+  </Accordion>
+</AccordionGroup>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Code Analysis" icon="magnifying-glass" href="/herd-mcp/tools/code-analysis">
+    Search within contract code
+  </Card>
+  <Card title="Version Diffs" icon="code-compare" href="/herd-mcp/tools/diff-versions">
+    Compare contract versions
+  </Card>
+</CardGroup>

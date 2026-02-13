@@ -1,0 +1,176 @@
+---
+title: Token Activity
+description: "Token balance and transfer history for any address"
+---
+
+# Token Activity
+
+Returns token balance and transfer history for a specific holder/token pair.
+
+## Returns
+
+- Current balance
+- Transfer history (in/out direction)
+- Paginated results (100 per page)
+
+## Example Queries
+
+```
+Show me the USDC transfer history for 0x...
+```
+
+```
+When did this wallet last receive ETH?
+```
+
+```
+Track PEPE token activity for this address
+```
+
+## Parameters
+
+| Parameter | Required | Description |
+|-----------|----------|-------------|
+| `holderAddress` | Yes | The wallet address to check |
+| `tokenAddress` | Yes | The token contract address |
+| `blockchain` | No | `ethereum` (default) or `base` |
+| `page` | No | Page number (default: 1) |
+
+<Note>
+You can use token symbols (like "USDC") - Claude will look up the correct contract address.
+</Note>
+
+## Example Output
+
+```
+Token Activity for 0xUser...
+Token: USDC (0xA0b86991...)
+============================
+
+Current Balance: 25,000.00 USDC
+
+Transfer History (Page 1):
+┌───────────────────────┬───────────┬─────────────────┬────────────────┐
+│ Date                  │ Direction │ Amount          │ Counterparty   │
+├───────────────────────┼───────────┼─────────────────┼────────────────┤
+│ 2024-01-15 14:32:00   │ OUT       │ 1,000.00        │ 0xDEX...       │
+│ 2024-01-14 10:15:00   │ IN        │ 5,000.00        │ 0xCEX...       │
+│ 2024-01-13 22:45:00   │ OUT       │ 2,500.00        │ 0xFriend...    │
+│ 2024-01-12 08:00:00   │ IN        │ 10,000.00       │ 0xSalary...    │
+│ 2024-01-10 16:30:00   │ OUT       │ 500.00          │ 0xMerchant...  │
+└───────────────────────┴───────────┴─────────────────┴────────────────┘
+
+Showing 5 of 150 transfers (100 per page)
+```
+
+## Understanding Direction
+
+| Direction | Meaning |
+|-----------|---------|
+| **IN** | Tokens received by the holder |
+| **OUT** | Tokens sent from the holder |
+
+## Use Cases
+
+**Track incoming funds:**
+```
+When did this wallet last receive USDC and from where?
+```
+
+**Analyze spending:**
+```
+How much ETH has this wallet spent in the last month?
+```
+
+**Track whale movements:**
+```
+Track PEPE transfers for this known whale wallet
+```
+
+## Pagination
+
+For addresses with extensive history:
+
+**You:** "Show page 5 of USDC transfers for 0x..."
+
+```
+Transfer History (Page 5):
+Showing transfers 401-500 of 1,234
+```
+
+## Comparing Multiple Tokens
+
+You can ask about multiple tokens:
+
+**You:** "Compare the USDC and USDT activity for this wallet"
+
+**Claude will make multiple queries and provide comparison.**
+
+## Common Use Cases
+
+<AccordionGroup>
+  <Accordion title="Track salary/income payments">
+    "Show me all incoming USDC transfers over $1,000"
+  </Accordion>
+
+  <Accordion title="Monitor DeFi positions">
+    "Track aUSDC (Aave deposit token) activity for this wallet"
+  </Accordion>
+
+  <Accordion title="Analyze trading activity">
+    "Show the WETH in/out flow for this trader"
+  </Accordion>
+
+  <Accordion title="Investigate token accumulation">
+    "When did this wallet start accumulating this token?"
+  </Accordion>
+</AccordionGroup>
+
+## Combining with Other Tools
+
+For complete analysis:
+
+1. **Check all holdings** → `getWalletOverviewTool`
+2. **Focus on one token** → `getTokenActivityTool`
+3. **Analyze specific transfer** → `queryTransactionTool`
+4. **Check counterparty** → `getWalletOverviewTool` on the other address
+
+## Tips
+
+<Tip>
+Use token symbols—"USDC activity" is easier than the full address.
+</Tip>
+
+<Tip>
+Ask for net flow: "What's the net USDC flow for this wallet?"
+</Tip>
+
+## Supported Token Types
+
+| Type | Support |
+|------|---------|
+| ERC-20 | Full support |
+| Native ETH | Full support |
+| ERC-721 (NFTs) | Transfer tracking |
+| ERC-1155 | Transfer tracking |
+
+## Limitations
+
+<Warning>
+**100 transfers per page.** Use pagination for complete history.
+</Warning>
+
+<Warning>
+**Historical depth.** Very old transfers may have limited data.
+</Warning>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Wallet Overview" icon="wallet" href="/herd-mcp/tools/wallet-overview">
+    See complete wallet profile
+  </Card>
+  <Card title="Deployed Contracts" icon="file-code" href="/herd-mcp/tools/deployed-contracts">
+    Find contracts created by an address
+  </Card>
+</CardGroup>

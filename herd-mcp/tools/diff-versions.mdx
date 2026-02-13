@@ -1,0 +1,193 @@
+---
+title: Contract Version Diffs
+description: "Compare code changes between upgradeable contract versions"
+---
+
+# Contract Version Diffs
+
+Compares source code between contract implementation versions.
+
+## Capabilities
+
+- Structured diffs of code changes
+- Works with proxy/implementation patterns
+- Compare last two or all historical versions
+
+## Example Queries
+
+```
+What changed in the latest USDC upgrade?
+```
+
+```
+Show me the differences between the last two versions of this contract
+```
+
+```
+Compare all historical versions of this upgradeable contract
+```
+
+## Parameters
+
+| Parameter | Required | Description |
+|-----------|----------|-------------|
+| `compareAllVersions` | No | Compare all versions (default: false, only last two) |
+
+<Note>
+The contract address is automatically determined from the current context. Make sure you've referenced a contract before asking for diffs.
+</Note>
+
+## Usage
+
+### Latest Upgrade
+
+```
+Show me what changed in the latest upgrade of the Aave V3 Pool
+```
+
+### Full History
+
+```
+Show all changes this contract has gone through since deployment
+```
+
+Uses `compareAllVersions: true` to show every upgrade.
+
+## Understanding the Output
+
+### Diff Format
+
+Changes are shown in a structured format:
+
+```diff
+// File: LendingPool.sol
+
+- function deposit(address asset, uint256 amount) external {
++ function deposit(address asset, uint256 amount, address onBehalfOf) external {
+      // Added ability to deposit on behalf of another address
+
+-     _deposit(asset, amount, msg.sender);
++     _deposit(asset, amount, onBehalfOf);
+  }
+
++ // New function added in v2
++ function flashLoan(
++     address receiver,
++     address[] calldata assets,
++     uint256[] calldata amounts,
++     bytes calldata params
++ ) external {
++     // Flash loan implementation
++ }
+```
+
+### Change Summary
+
+```
+Changes in v2.0 → v2.1:
+- Modified: deposit() - added onBehalfOf parameter
+- Added: flashLoan() - new flash loan functionality
+- Modified: withdraw() - added safety checks
+- Removed: emergencyWithdraw() - deprecated function
+```
+
+## Why This Matters
+
+### Security Research
+
+When a contract is upgraded, you want to know:
+- Were security fixes applied?
+- Were new features added that could introduce risk?
+- Were any functions removed or modified?
+
+### Protocol Analysis
+
+Understanding how a protocol evolves:
+- What features were added over time?
+- How did the team respond to issues?
+- What's the upgrade frequency?
+
+### Due Diligence
+
+Before interacting with a protocol:
+- Was it recently upgraded?
+- What changed in the upgrade?
+- Does the new code look safe?
+
+## Real-World Example
+
+### USDC Contract Upgrade Analysis
+
+**You:** "Analyze the changes in the last USDC upgrade"
+
+**Claude might return:**
+
+```
+USDC Implementation Upgrade Analysis
+====================================
+
+Previous: 0xabcd... (deployed Jan 2023)
+Current:  0x1234... (deployed June 2023)
+
+Key Changes:
+
+1. Gas Optimizations
+   - Simplified internal transfer logic
+   - Reduced storage reads in balanceOf
+
+2. New Features
+   - Added permit() for gasless approvals (EIP-2612)
+   - Added receiveWithAuthorization() for meta-transactions
+
+3. Security Updates
+   - Added additional checks in blacklist functions
+   - Updated access control modifiers
+
+4. Removed
+   - Deprecated legacy migration functions
+
+Assessment: Standard maintenance upgrade with gas
+optimizations and new signature-based approval features.
+```
+
+## Proxy Pattern Detection
+
+The tool automatically handles different proxy patterns:
+
+| Pattern | How It Works |
+|---------|--------------|
+| Transparent Proxy | Compares implementation contracts |
+| UUPS Proxy | Compares implementation contracts |
+| Beacon Proxy | Compares beacon implementations |
+| Diamond (EIP-2535) | Compares facet changes |
+
+## Tips
+
+<Tip>
+Start with metadata to understand the proxy structure.
+</Tip>
+
+<Tip>
+Be specific: "Did the upgrade change how withdrawals work?"
+</Tip>
+
+## Limitations
+
+<Warning>
+**Requires verified implementations.** All versions must have verified source code.
+</Warning>
+
+<Warning>
+**Proxy detection limitations.** Some custom proxy patterns may not be automatically detected.
+</Warning>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Contract Metadata" icon="file-code" href="/herd-mcp/tools/contract-metadata">
+    Get the full contract overview
+  </Card>
+  <Card title="Transaction Analysis" icon="receipt" href="/herd-mcp/tools/query-transaction">
+    See how the contract is being used
+  </Card>
+</CardGroup>

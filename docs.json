@@ -11,7 +11,7 @@
   "navigation": {
     "tabs": [
       {
-        "tab": "Herd App",
+        "tab": "App",
         "groups": [
           {
             "group": "Getting Started",
@@ -24,29 +24,45 @@
         ]
       },
       {
-        "tab": "API reference",
+        "tab": "MCP",
         "groups": [
           {
-            "group": "API documentation",
+            "group": "Overview",
             "pages": [
-              "api-reference/introduction"
+              "herd-mcp/introduction",
+              "herd-mcp/configuration"
             ]
           },
           {
-            "group": "Step Evaluation & Read Nodes",
+            "group": "Contract Tools",
             "pages": [
-              "api-reference/endpoint/evaluate-step",
-              "api-reference/endpoint/read-node-data"
+              "herd-mcp/tools/contract-metadata",
+              "herd-mcp/tools/code-analysis",
+              "herd-mcp/tools/diff-versions"
             ]
           },
           {
-            "group": "Executions",
+            "group": "Transaction Tools",
             "pages": [
-              "api-reference/endpoint/get-execution",
-              "api-reference/endpoint/create-execution-step",
-              "api-reference/endpoint/query-executions"
+              "herd-mcp/tools/query-transaction",
+              "herd-mcp/tools/latest-transactions",
+              "herd-mcp/tools/transaction-activity"
+            ]
+          },
+          {
+            "group": "Wallet Tools",
+            "pages": [
+              "herd-mcp/tools/wallet-overview",
+              "herd-mcp/tools/token-activity",
+              "herd-mcp/tools/deployed-contracts"
             ]
           }
+        ]
+      },
+      {
+        "tab": "Actions (HAL)",
+        "pages": [
+          "herd-actions/overview"
         ]
       }
     ],
@@ -78,15 +94,15 @@
   },
   "contextual": {
     "options": [
-     "copy",
-     "view",
-     "chatgpt",
-     "claude",
-     "perplexity",
-     "mcp",
-     "cursor",
-     "vscode"
-   ]
+      "copy",
+      "view",
+      "chatgpt",
+      "claude",
+      "perplexity",
+      "mcp",
+      "cursor",
+      "vscode"
+    ]
   },
   "footer": {
     "socials": {

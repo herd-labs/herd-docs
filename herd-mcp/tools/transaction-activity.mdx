@@ -1,0 +1,198 @@
+---
+title: Transaction Activity
+description: "Enriched transaction history for any address"
+---
+
+# Transaction Activity
+
+Returns transaction history with decoded function calls, balance changes, and contract creations.
+
+## Returns
+
+- Function names and decoded parameters
+- Balance changes per transaction
+- Contract creations
+- Paginated history (10 per page)
+
+## Example Queries
+
+```
+Show me the recent transactions from 0x...
+```
+
+```
+What has this wallet been doing lately?
+```
+
+```
+Get the transaction history for vitalik.eth
+```
+
+## Parameters
+
+| Parameter | Required | Description |
+|-----------|----------|-------------|
+| `fromAddress` | Yes | The address to get activity for |
+| `toAddress` | No | Filter to specific destination |
+| `blockchain` | No | `ethereum` (default) or `base` |
+| `page` | No | Page number (default: 1, 10 txs per page) |
+
+## Example Output
+
+```
+Transaction Activity for 0xUser...
+Page 1 of 15 (10 transactions per page)
+
+1. 2024-01-15 14:32:00
+   Function: swap(...)
+   To: Uniswap V3 Router
+   Balance Changes:
+     - Sent: 1,000 USDC
+     - Received: 0.35 WETH
+   Gas: $4.52
+
+2. 2024-01-15 10:15:00
+   Function: approve(...)
+   To: USDC Contract
+   Balance Changes: None
+   Gas: $2.11
+
+3. 2024-01-14 22:45:00
+   Function: deposit(...)
+   To: Aave V3 Pool
+   Balance Changes:
+     - Sent: 5,000 USDC
+     - Received: 5,000 aUSDC
+   Gas: $6.78
+
+...
+```
+
+## Filtering by Destination
+
+To see only interactions with a specific contract:
+
+**You:** "Show me all transactions from 0xUser to Uniswap"
+
+This uses the `toAddress` parameter to filter results.
+
+## Use Cases
+
+**Wallet investigation:**
+```
+What has this wallet been doing in the last week?
+```
+
+**Protocol usage:**
+```
+How does this user interact with Aave?
+```
+
+**Trading analysis:**
+```
+Show me the trading activity of this MEV bot
+```
+
+## Pagination
+
+For addresses with many transactions:
+
+**You:** "Show me page 3 of transactions for 0x..."
+
+```
+Transaction Activity for 0xUser...
+Page 3 of 15
+
+21. 2024-01-10 ...
+22. 2024-01-10 ...
+...
+30. 2024-01-09 ...
+
+Showing transactions 21-30 of ~150
+```
+
+## Balance Changes Explained
+
+Each transaction shows what moved:
+
+```
+Balance Changes:
+  - Sent: 1,000 USDC (to 0xPool)
+  - Received: 0.35 WETH (from 0xPool)
+  - Received: 50 UNI (airdrop claim)
+```
+
+<Note>
+Only shows balance changes where the queried address is the holder. For complete transaction breakdown, use `queryTransactionTool`.
+</Note>
+
+## Contract Creations
+
+When an address deploys contracts:
+
+```
+Transaction: 0xabc...
+Type: Contract Creation
+Created: 0xNewContract (MyToken)
+Verified: Yes
+```
+
+## Common Use Cases
+
+<AccordionGroup>
+  <Accordion title="Due diligence on a wallet">
+    "Give me an overview of this wallet's activity over the past month"
+  </Accordion>
+
+  <Accordion title="Finding specific transactions">
+    "When did this wallet last interact with Compound?"
+  </Accordion>
+
+  <Accordion title="Analyzing trading patterns">
+    "What DEXs does this wallet use most?"
+  </Accordion>
+
+  <Accordion title="Tracking protocol deployments">
+    "What contracts has this deployer wallet created?"
+  </Accordion>
+</AccordionGroup>
+
+## Combining with Other Tools
+
+For comprehensive analysis:
+
+1. **Get wallet overview** → `getWalletOverviewTool`
+2. **Check transaction history** → `getTransactionActivityTool`
+3. **Deep dive specific tx** → `queryTransactionTool`
+4. **Check token holdings** → `getTokenActivityTool`
+
+## Tips
+
+<Tip>
+Filter when possible—use `toAddress` to focus on specific protocols.
+</Tip>
+
+<Tip>
+Ask for summaries: "Summarize this wallet's DeFi activity"
+</Tip>
+
+## Limitations
+
+<Warning>
+**10 transactions per page.** Use pagination for full history.
+</Warning>
+
+<Warning>
+**Only shows outgoing context.** Balance changes are relative to the fromAddress. Use `queryTransactionTool` for complete transaction details.
+</Warning>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Query Transaction" icon="receipt" href="/herd-mcp/tools/query-transaction">
+    Get full details on any transaction
+  </Card>
+  <Card title="Wallet Overview" icon="wallet" href="/herd-mcp/tools/wallet-overview">
+    Get complete wallet profile
+  </Card>
+</CardGroup>

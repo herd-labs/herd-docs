@@ -1,0 +1,47 @@
+---
+title: Configuration
+description: Installation and setup
+---
+
+## Add Herd MCP
+
+```bash
+add --transport http herd-mcp https://mcp.herd.eco/v1
+```
+
+- **Claude Code**: `claude mcp add --transport http herd-mcp https://mcp.herd.eco/v1`
+- **Cursor**: Add via Settings → MCP
+- **Codex**: Add via MCP configuration
+
+## Authenticate
+
+1. Open **/mcp** in your IDE (Claude, Cursor, or Codex)
+2. Find **herd-mcp** in the MCP list
+3. Click **Authenticate** to complete the OAuth flow
+4. Sign in with your Herd account at [herd.eco](https://herd.eco)
+
+Once authenticated, all Herd MCP tools are available.
+
+## Manage
+
+```bash
+# List configured MCPs (Claude Code)
+claude mcp list
+
+# Remove
+claude mcp remove herd-mcp
+```
+
+## Available Tools
+
+| Tool | Purpose |
+|------|---------|
+| `contractMetadataTool` | Contract info, ABI, proxy history, token data |
+| `regexCodeAnalysisTool` | Search contract source code |
+| `diffContractVersions` | Compare implementation versions |
+| `queryTransactionTool` | Decode transactions with traces and logs |
+| `getLatestTransactionsTool` | Recent function calls or events |
+| `getWalletOverviewTool` | Wallet type, balances, tx count |
+| `getTokenActivityTool` | Token balance and transfer history |
+| `getTransactionActivityTool` | Address transaction history |
+| `getDeployedContractsTool` | Contracts deployed by address |
