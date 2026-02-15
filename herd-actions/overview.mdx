@@ -438,6 +438,8 @@ Returns the current user's wallet address. No arguments required.
 
 ### swap
 
+**this function should ONLY be used within action batches, not within adapters or values**
+
 Fetches swap quote and execute data from the **0x API**. The approval step is **optional**—it is only required when the wallet has not already approved the spender. Use `swapSteps.approval.approvalRequired` to conditionally include the approval step in a batch.
 
 sellTokenAmount here is the actual amount, not the raw bigint. If you're passing values from a read function or something onchain into this field, toggle divideDecimals on so we can automatically convert using the token's decimals.
