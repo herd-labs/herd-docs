@@ -11,7 +11,7 @@ description: HAL (Herd Action Language) - JSON/DSL scripting for blockchain tran
 
 ## Overview
 
-HAL (Herd Action Language) is a DSL scripting language in JSON for simplifying writing transactions and reading data from the blockchain. It's used to create simplified write and read functions as "adapters" that can be reused across each other and also "actions" for transactions.
+HAL (Herd Action Language) is a JSON scripting language for simplifying writing transactions and reading data from the blockchain. It's used to create simplified write and read functions as "adapters" that can be reused across each other and also "actions" for transactions.
 
 ---
 
@@ -51,9 +51,7 @@ These are the two types of HAL expressions we let you create in Herd. Both use t
             {
               "name": "batch0",
               "meta": { "isBatch": true },
-              "value": [
-                ["write-function", ["transferERC20", "recipient", "amount"]]
-              ]
+              "value": [["write-function", ["transferERC20", "recipient", "amount"]]] //array of steps
             }
           ]
         ]
@@ -88,6 +86,7 @@ These are the two types of HAL expressions we let you create in Herd. Both use t
           { "name": "amount", "type": "uint256" }
         ],
         "body": [
+          //this body will be different depending on batch call (write), read-function, or code function being used in the adapter.
           "coerce",
           {
             "type": {
@@ -113,13 +112,7 @@ These are the two types of HAL expressions we let you create in Herd. Both use t
                     "recipient": "to",
                     "value": [
                       "coerce",
-                      {
-                        "type": "uint256",
-                        "value": [
-                          "decimals",
-                          { "value": "amount", "decimals": 18 }
-                        ]
-                      }
+                      { "type": "uint256", "value": ["decimals", { "value": "amount", "decimals": 18 }] }
                     ]
                   },
                   "inputAbi": [
@@ -150,11 +143,9 @@ These are the two types of HAL expressions we let you create in Herd. Both use t
 ]
 ```
 
----
-
 ## HAL "Define" and User Parameters
 
-The `define` statement creates named functions with typed parameters - this is what is exported as the action/adapter. This is the core mechanism for **simplifying complex onchain interactions** - turning a contract function with 10+ inputs into a user-friendly function with just 2-3 inputs.
+The `define` statement creates named functions with typed parameters - this is what is exported as the aciton/adapter. This is the core mechanism for **simplifying complex onchain interactions** - turning a contract function with 10+ inputs into a user-friendly function with just 2-3 inputs.
 
 **Fields**:
 
@@ -188,30 +179,27 @@ The optional `meta` field on define functions provides UI hints and documentatio
 **Example with originContract and originTransaction for any defined write/read function**:
 
 ```json
-[
-  "define",
-  {
-    "name": "transfer",
-    "parameters": [
-      { "name": "to", "type": "address", "meta": { "label": "Recipient Address" } },
-      { "name": "amount", "type": "uint256", "meta": { "decimals": 18 } }
-    ],
-    "body": [...],
-    "meta": {
-      "description": "Transfer 1000 USDC to recipient",
-      "originContract": {
-        "address": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
-        "blockchain": "base",
-        "contractName": "FiatTokenV2_2",
-        "functionName": "transfer"
-      },
-      "originTransaction": {
-        "txHash": "0x1234567890abcdef...",
-        "blockchain": "base"
-      }
+["define", {
+  "name": "transfer",
+  "parameters": [
+    { "name": "to", "type": "address", "meta": { "label": "Recipient Address" } },
+    { "name": "amount", "type": "uint256", "meta": { "decimals": 18 } }
+  ],
+  "body": [...],
+  "meta": {
+    "description": "Transfer 1000 USDC to recipient",
+    "originContract": {
+      "address": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+      "blockchain": "base",
+      "contractName": "FiatTokenV2_2",
+      "functionName": "transfer"
+    },
+    "originTransaction": {
+      "txHash": "0x1234567890abcdef...",
+      "blockchain": "base"
     }
   }
-]
+}]
 ```
 
 ### How Parameters Work Through Functions
@@ -256,47 +244,33 @@ A key value of HAL is turning complex contract functions into simple user-facing
 **Simplified HAL adapter** (2 inputs):
 
 ```json
-[
-  "define",
-  {
-    "name": "simpleRegister",
-    "parameters": [
-      { "name": "name", "type": "string" },
-      { "name": "years", "type": "int256" }
-    ],
-    "body": [...]
-  }
-]
+["define", {
+  "name": "simpleRegister",
+  "parameters": [
+    { "name": "name", "type": "string" },
+    { "name": "years", "type": "int256" }
+  ],
+  "body": <expression that computes all 10 args from just name and years>
+}]
 ```
-
----
 
 ## Setting values in a HAL expression.
 
 Any variable can be set to a value with hardcoded values or function references (from defines and imports). The most common pattern you will see in HAL is wrapping a function call with a `getPath` and then a `coerce`. You can create a parameter and reference it in the value too (if in a define).
 
 ```json
-[
-  "do",
+["do",
   ["import", "herd", ["decimals", "encode-calldata"]],
   ["import", "action:abc123:v1", ["calculate_years_to_seconds"]],
-  [
-    "define",
-    {
-      "name": "simpleRegister",
-      "parameters": [{ "name": "years", "type": "int256" }],
-      "body": [
-        "let",
-        { "duration": ["calculate_years_to_seconds", "years"] },
-        [
-          "encode-calldata",
-          {
-            "duration": ["getPath", { "object": "duration", "path": ["seconds"] }]
-          }
-        ]
-      ]
-    }
-  ]
+
+  ["define", {
+    "name": "simpleRegister",
+    "parameters": [{ "name": "years", "type": "int256" }],
+    "body": [
+      "let", { "duration": ["calculate_years_to_seconds", "years"] },
+      ["encode-calldata", { ... "duration": ["getPath", { "object": "duration", "path": ["seconds"] }] }]
+    ]
+  }]
 ]
 ```
 
@@ -305,9 +279,7 @@ In this example:
 - `"duration"` is set by calling the imported function `calculate_years_to_seconds` with the user parameter `"years"`
 - The result is then extracted using `getPath` to get the `"seconds"` field from the `"duration"` object
 
-In the Herd editor, we make dropdown suggestions that auto create/set parameters, wrap functions/outputs, and check types.
-
----
+In the Herd editor, we make dropdown suggestions that auto create/set parameters, wrap functions/outputs, and check types.\*\*\*\*
 
 ## Standard Library Functions
 
@@ -323,7 +295,11 @@ HAL provides standard library functions imported from the `herd` and `object` mo
 Executes a state-changing contract call. **Only used within batch steps in the `main` function of actions.**
 
 ```json
-["write-function", { "encodedCalldata": ..., "payable": ..., "payableAmount": ... }]
+["write-function", {
+  "encodedCalldata": <EncodeCalldataResult>,
+  "payable": <boolean>,
+  "payableAmount": <uint256>
+}]
 ```
 
 **Input**: Accepts batch call data format from user-defined write adapter functions:
@@ -360,29 +336,23 @@ This format is consumed directly by `write-function` in batch steps. This format
 Executes a read-only contract call (view/pure functions).
 
 ```json
-[
-  "coerce",
-  {
-    "type": { "balance": "uint256" },
-    "value": [
-      "read-function",
+["coerce", {
+  "type": { "balance": "uint256" },
+  "value": ["read-function", {
+    "calldata": [
+      "encode-calldata",
       {
-        "calldata": [
-          "encode-calldata",
-          {
-            "blockchain": "base",
-            "contractAddress": "0x...",
-            "functionSignature": "0x...",
-            "args": { ... },
-            "inputAbi": ["quote", ...],
-            "functionName": "transfer"
-          }
-        ],
-        "outputAbi": ["quote", ...]
+        "blockchain": "base",
+        "contractAddress": "0x...",
+        "functionSignature": "0x...",
+        "args": { ... },
+        "inputAbi": ["quote", <AbiParameter[]>],
+        "functionName": "transfer"
       }
-    ]
-  }
-]
+    ],
+    "outputAbi": ["quote", <AbiParameter[]>]
+  }]
+}]
 ```
 
 **Input**: `{ calldata: EncodeCalldataExpression, outputAbi: ["quote", AbiParameter[]] }`
@@ -404,24 +374,20 @@ Executes a TypeScript code block. Code blocks are created/managed in the Code Bl
   "coerce",
   {
     "type": { "result": "string" },
-    "value": [
-      "code",
-      {
-        "args": { "inputArg": "value" },
-        "id": "definitionId:codeVersionId"
-      }
-    ]
+    "value": ["code", { "args": { "inputArg": "value" }, "id": "definitionId:codeVersionId" }]
   }
 ]
 ```
 
-We always create one auto-synced adapter for each code block, which can't be edited but is kept up to date by each saved/publish of the underlying code block. You can test the code block in the code editor too. For adapters that aren't auto-synced you will need to update the "import" of the code block each time you update the code. Keep in mind:
+We always create one auto-synced adapter for each code block, which can't be edited but is kept up to date by each saved/publish of the underlying code block. You can test the code block in the code editor too. For adapters that aren't auto-synced you will need to update the "import" of the code block each time you update the code.
 
-- `id` format: `definitionId:codeVersionId` - combines the definition UUID with the specific code version
+Keep in mind:
+
+- `id` format: `<definitionId>:<codeVersionId>` - combines the definition UUID with the specific code version
 - Each code block has a single auto-synced adapter that updates when the code is published
 - Input/output args are typed using HAL types
 
-### getPath
+### **getPath**
 
 Gets a value at a nested path within an object. Imported from the `object` module.
 
@@ -429,7 +395,7 @@ Gets a value at a nested path within an object. Imported from the `object` modul
 
 ```json
 ["import", "object", ["getPath"]]
-["getPath", { "object": ..., "path": ["field", "nested"] }]
+["getPath", { "object": <result>, "path": ["field", "nested"] }]
 ```
 
 **Input**: `{ object: any, path: string[] }`
@@ -441,7 +407,7 @@ Gets a value at a nested path within an object. Imported from the `object` modul
 Runtime type coercion and validation. Wraps a value to declare its expected type for the type inference system.
 
 ```json
-["coerce", { "type": { "sum": "uint256" }, "value": ... }]
+["coerce", { "type": { "sum": "uint256" }, "value": <expression> }]
 ```
 
 Used to declare return types for type inference. Commonly used with `code`, `read-function`, `decimals`, and write adapters returning batch call data (see examples above).
@@ -469,6 +435,105 @@ Multiplies a value by 10^decimals. Converts human-readable values to raw integer
 Returns the current user's wallet address. No arguments required.
 
 **Returns**: `address` (e.g., `"0x1234..."`)
+
+### swap
+
+Fetches swap quote and execute data from the **0x API**. The approval step is **optional**—it is only required when the wallet has not already approved the spender. Use `swapSteps.approval.approvalRequired` to conditionally include the approval step in a batch.
+
+sellTokenAmount here is the actual amount, not the raw bigint. If you're passing values from a read function or something onchain into this field, toggle divideDecimals on so we can automatically convert using the token's decimals.
+
+**Input**: `{ blockchain, sellTokenAddress, sellTokenAmount, buyTokenAddress, walletAddress, divideDecimals }`
+
+**Returns**: `{ swapSteps: { approval: { approvalRequired: boolean, ... }, swap: EncodeCalldataResult }, quote: ... }`
+
+**Example** (approve-then-execute with conditional approval):
+
+```json
+[
+  "do",
+  ["import", "herd", ["swap", "write-function", "user-wallet"]],
+  ["import", "object", ["getPath"]],
+  [
+    "define",
+    {
+      "name": "main",
+      "parameters": [],
+      "body": [
+        [
+          "define",
+          {
+            "name": "batch0",
+            "meta": { "isBatch": true, "batchLabel": "Swap Tokens" },
+            "value": [
+              [
+                "if",
+                [
+                  "getPath",
+                  {
+                    "object": [
+                      "swap",
+                      {
+                        "blockchain": "base",
+                        "sellTokenAddress": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+                        "sellTokenAmount": 1,
+                        "buyTokenAddress": "0x0000000000000000000000000000000000000000",
+                        "walletAddress": ["user-wallet"],
+                        "divideDecimals": false
+                      }
+                    ],
+                    "path": ["quote", ["swapSteps", "approval", "approvalRequired"]]
+                  }
+                ],
+                [
+                  "write-function",
+                  [
+                    "getPath",
+                    {
+                      "object": [
+                        "swap",
+                        {
+                          "blockchain": "base",
+                          "sellTokenAddress": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+                          "sellTokenAmount": 1,
+                          "buyTokenAddress": "0x0000000000000000000000000000000000000000",
+                          "walletAddress": ["user-wallet"],
+                          "divideDecimals": false
+                        }
+                      ],
+                      "path": ["quote", ["swapSteps", "approval"]]
+                    }
+                  ]
+                ],
+                null
+              ],
+              [
+                "write-function",
+                [
+                  "getPath",
+                  {
+                    "object": [
+                      "swap",
+                      {
+                        "blockchain": "base",
+                        "sellTokenAddress": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+                        "sellTokenAmount": 1,
+                        "buyTokenAddress": "0x0000000000000000000000000000000000000000",
+                        "walletAddress": ["user-wallet"],
+                        "divideDecimals": false
+                      }
+                    ],
+                    "path": ["quote", ["swapSteps", "swap"]]
+                  }
+                ]
+              ]
+            ]
+          }
+        ]
+      ]
+    }
+  ]
+]
+```
 
 ### lookup-transaction-function
 
@@ -535,7 +600,7 @@ Import functions from other adapters/actions or stdlib modules:
 ["import", "action:actionId:versionId", [["exportName", "localAlias"]]]
 ```
 
-**Action import format**: `action:actionId:versionId`
+**Action import format**: `action:<actionId>:<versionId>`
 
 - `actionId`: UUID of the action/adapter
 - `versionId`: UUID of the specific version to import
@@ -561,8 +626,6 @@ Each action/adapter only exports ONE defined function right now. This keeps expr
 3. Update the import to use the new version ID: `action:actionId:newVersionId`
 
 This ensures stability - consumers control when they adopt breaking changes.
-
----
 
 ## Evaluation and Operation Logs (Oplogs)
 
@@ -599,58 +662,26 @@ Here's a condensed example showing how operations chain together:
     },
     {
       "functionName": "getPath",
-      "args": [
-        {
-          "path": ["seconds"],
-          "object": { "seconds": "157680000n" }
-        }
-      ],
+      "args": [{ "path": ["seconds"], "object": { "seconds": "157680000n" } }],
       "result": "157680000n"
     },
     {
       "functionName": "encode-calldata",
-      "args": [
-        {
-          "blockchain": "base",
-          "contractAddress": "0x508...",
-          "functionSignature": "0x50e9a715",
-          "args": { "name": "ilemi", "duration": "157680000n" }
-        }
-      ],
-      "result": {
-        "blockchain": "base",
-        "contractAddress": "0x508...",
-        "calldata": "0x50e9a715..."
-      }
+      "args": [{ "blockchain": "base", "contractAddress": "0x508...", "functionSignature": "0x50e9a715", "args": { "name": "ilemi", "duration": "157680000n" } }],
+      "result": { "blockchain": "base", "contractAddress": "0x508...", "calldata": "0x50e9a715..." }
     },
     {
       "functionName": "read-function",
-      "args": [
-        {
-          "calldata": {
-            "blockchain": "base",
-            "contractAddress": "0x508...",
-            "calldata": "0x50e9a715..."
-          }
-        }
-      ],
+      "args": [{ "calldata": { "blockchain": "base", "contractAddress": "0x508...", "calldata": "0x50e9a715..." } }],
       "result": { "0": { "base": "4995440843040000n", "premium": "0n" } }
     },
     {
       "functionName": "simpleRegister",
       "args": ["ilemi", "5n"],
-      "result": {
-        "payable": true,
-        "payableAmount": "4995440843040000n",
-        "encodedCalldata": { ... }
-      }
+      "result": { "payable": true, "payableAmount": "4995440843040000n", "encodedCalldata": { ... } }
     }
   ],
-  "finalResult": {
-    "payable": true,
-    "payableAmount": "4995440843040000n",
-    "encodedCalldata": { ... }
-  }
+  "finalResult": { "payable": true, "payableAmount": "4995440843040000n", "encodedCalldata": { ... } }
 }
 ```
 
