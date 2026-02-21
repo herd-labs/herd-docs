@@ -56,6 +56,12 @@
               "herd-mcp/tools/token-activity",
               "herd-mcp/tools/deployed-contracts"
             ]
+          },
+          {
+            "group": "Bookmark Tools",
+            "pages": [
+              "herd-mcp/tools/bookmarks"
+            ]
           }
         ]
       },

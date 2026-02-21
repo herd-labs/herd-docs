@@ -1,0 +1,132 @@
+---
+title: Bookmarks
+description: "Get and manage your saved wallets, contracts, and transactions"
+---
+
+# Bookmarks
+
+Two tools for reading and managing the current user's bookmarks — saved wallets, contracts, and transactions.
+
+## Get Bookmarks
+
+Fetches all bookmarks for the authenticated user, grouped by type.
+
+### Returns
+
+- **Contracts** — Address, blockchain, contract name, and label
+- **Transactions** — Hash, blockchain, and label
+- **Wallets** — Address and label
+
+### Example Queries
+
+```
+What wallets do I have bookmarked?
+```
+
+```
+Show me my saved contracts
+```
+
+```
+List all my bookmarks
+```
+
+### Parameters
+
+No input required. Returns bookmarks for the authenticated user.
+
+### Sample Output
+
+```
+Bookmarks
+=========
+
+Contracts (2):
+- USDC (ethereum) — 0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48
+- Uniswap V3 Router (base) — 0x2626664c2603336e57b271c5c0b26f421741e481
+
+Transactions (1):
+- Aave Deposit — 0xabc123...
+
+Wallets (1):
+- My Hot Wallet — 0xdef456...
+```
+
+---
+
+## Update Bookmarks
+
+Adds, edits, or removes a single bookmark.
+
+### Operations
+
+| Operation | Description |
+|-----------|-------------|
+| `add` | Save a new bookmark; auto-generates a label if none is provided |
+| `edit` | Update the label on an existing bookmark (`null` to clear) |
+| `remove` | Delete a bookmark |
+
+### Parameters
+
+| Parameter | Required | Description |
+|-----------|----------|-------------|
+| `operation` | Yes | `add`, `edit`, or `remove` |
+| `objectType` | Yes | `wallet`, `contract`, or `transaction` |
+| `objectId` | Yes | Contract address, transaction hash, or wallet address (`0x...`) |
+| `blockchain` | Conditional | Required for `contract` and `transaction`; omit for `wallet`. `ethereum` or `base` |
+| `userLabel` | No | Custom label. For `add`: omit to auto-generate. For `edit`: new label, or `null` to clear |
+
+### Example Queries
+
+```
+Bookmark vitalik.eth for me
+```
+
+```
+Save contract 0x... on Base as "My Token"
+```
+
+```
+Rename my USDC bookmark to "Circle Stablecoin"
+```
+
+```
+Remove the bookmark for transaction 0x...
+```
+
+---
+
+## Bookmark Types
+
+| Type | `objectId` | `blockchain` required? |
+|------|-----------|------------------------|
+| `wallet` | Wallet address | No |
+| `contract` | Contract address | Yes |
+| `transaction` | Transaction hash | Yes |
+
+## Tips
+
+<Tip>
+When adding with no label, a default is generated automatically — e.g. ENS name for wallets, contract name for contracts.
+</Tip>
+
+<Tip>
+Use `getBookmarksTool` first to check existing bookmarks before adding duplicates.
+</Tip>
+
+## Related Tools
+
+- **View wallet details** → `getWalletOverviewTool`
+- **View contract details** → `contractMetadataTool`
+- **View transaction details** → `queryTransactionTool`
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Wallet Overview" icon="wallet" href="/herd-mcp/tools/wallet-overview">
+    Profile any wallet address
+  </Card>
+  <Card title="Contract Metadata" icon="file-code" href="/herd-mcp/tools/contract-metadata">
+    Fetch contract details
+  </Card>
+</CardGroup>
