@@ -11,19 +11,6 @@
   "navigation": {
     "tabs": [
       {
-        "tab": "App",
-        "groups": [
-          {
-            "group": "Getting Started",
-            "pages": [
-              "herd-app/explorer",
-              "herd-app/visualizer",
-              "herd-app/supported-chains"
-            ]
-          }
-        ]
-      },
-      {
         "tab": "MCP",
         "groups": [
           {
@@ -61,6 +48,19 @@
             "group": "Bookmark Tools",
             "pages": [
               "herd-mcp/tools/bookmarks"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "App",
+        "groups": [
+          {
+            "group": "Getting Started",
+            "pages": [
+              "herd-app/explorer",
+              "herd-app/visualizer",
+              "herd-app/supported-chains"
             ]
           }
         ]
