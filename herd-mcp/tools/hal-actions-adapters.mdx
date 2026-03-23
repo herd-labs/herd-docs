@@ -1,0 +1,168 @@
+---
+title: Actions & Adapters
+description: "Create, search, update, and delete HAL actions and adapters"
+---
+
+# Actions & Adapters
+
+Tools for managing HAL actions and adapters — the core building blocks of the [HAL Expression System](/herd-actions/overview).
+
+**Actions** are executable batches of write functions for on-chain transactions. **Adapters** are reusable functions (write, read, or code) that can be imported into actions or other adapters.
+
+---
+
+## Search Actions & Adapters
+
+Search existing actions and adapters before creating new ones — existing adapters can be imported directly into new actions.
+
+### Parameters
+
+| Parameter | Required | Description |
+|-----------|----------|-------------|
+| `expressionType` | No | `action`, `adapter`, or `both` (default) |
+| `name` | No | Search by name |
+| `scope` | No | Filter by `yours` and/or `verified` |
+| `contractAddress` | No | Filter by contract address |
+| `functionSignature` | No | Filter by function signature (4-byte selector) |
+| `blockchain` | No | `ethereum` or `base` |
+| `page` | No | Page number for pagination (20 per page) |
+
+### Example Queries
+
+```
+Search for existing USDC transfer adapters
+```
+
+```
+Find verified swap actions on Base
+```
+
+---
+
+## Get Action or Adapter
+
+Retrieve a specific action or adapter by ID, including its full HAL expression.
+
+### Parameters
+
+| Parameter | Required | Description |
+|-----------|----------|-------------|
+| `id` | Yes | Action or adapter ID |
+| `versionName` | No | Version name (e.g. `v1`); defaults to latest |
+| `includeReferences` | No | When `true`, inlines imported expressions and code blocks |
+
+---
+
+## Create Action
+
+Create a new action from a HAL expression. Actions have batched steps — each batch contains `write-function` calls.
+
+<Tip>
+Before creating an action, read the HAL documentation using the [Documentation tool](/herd-mcp/tools/documentation) with document IDs `hal://spec/syntax`, `hal://spec/modules/herd`, and `hal://spec/examples`. Search for existing adapters first with the search tool above.
+</Tip>
+
+### Parameters
+
+| Parameter | Required | Description |
+|-----------|----------|-------------|
+| `name` | Yes | Action name |
+| `description` | No | Description of what the action does |
+| `expression` | Yes | HAL expression (JSON array) |
+| `publish` | No | Publish immediately (`true`/`false`) |
+
+---
+
+## Create Adapter
+
+Create a new adapter from a HAL expression. Adapters encapsulate reusable logic (queries and writes) for import into actions.
+
+### Parameters
+
+| Parameter | Required | Description |
+|-----------|----------|-------------|
+| `name` | Yes | Adapter name |
+| `description` | No | Description of what the adapter does |
+| `expression` | Yes | HAL expression (JSON array) |
+| `publish` | No | Publish immediately (`true`/`false`) |
+
+<Tip>
+Start with logic in actions — extract to adapters when you see the same pattern repeated across multiple actions.
+</Tip>
+
+---
+
+## Update Action
+
+Update an existing action's name, description, expression, or publish status.
+
+### Parameters
+
+| Parameter | Required | Description |
+|-----------|----------|-------------|
+| `id` | Yes | Action ID |
+| `name` | No | New name |
+| `description` | No | New description |
+| `expression` | No | JSON Patch operations (RFC 6902) to modify the expression |
+| `publish` | No | Publish the latest version |
+
+Expression updates use [JSON Patch](https://datatracker.ietf.org/doc/html/rfc6902) operations: `add`, `remove`, `replace`, `move`, `copy`, `test`. Paths use JSON Pointer syntax (e.g., `/0`, `/1/2`, `/1/2/1`).
+
+---
+
+## Update Adapter
+
+Update an existing adapter's name, description, expression, or publish status. Same parameters and patch format as Update Action.
+
+### Parameters
+
+| Parameter | Required | Description |
+|-----------|----------|-------------|
+| `id` | Yes | Adapter ID |
+| `name` | No | New name |
+| `description` | No | New description |
+| `expression` | No | JSON Patch operations (RFC 6902) to modify the expression |
+| `publish` | No | Publish the latest version |
+
+---
+
+## Delete Action or Adapter
+
+Delete an action or adapter by ID.
+
+### Parameters
+
+| Parameter | Required | Description |
+|-----------|----------|-------------|
+| `id` | Yes | Action or adapter ID |
+
+<Warning>
+Deletion fails if the action/adapter is auto-synced to a code block (delete the code block instead) or if other actions/adapters import it.
+</Warning>
+
+---
+
+## Workflow
+
+1. **Search** for existing adapters that do what you need
+2. **Read** HAL documentation if creating new expressions
+3. **Create** adapters for reusable logic, actions for transactions
+4. **Simulate** with [Evaluation tools](/herd-mcp/tools/hal-evaluation) before publishing
+5. **Publish** once tested
+
+## Related Tools
+
+- **Simulate expressions** → [Evaluation](/herd-mcp/tools/hal-evaluation)
+- **Manage code blocks** → [Code Blocks](/herd-mcp/tools/hal-code-blocks)
+- **Organize into groups** → [Collections](/herd-mcp/tools/hal-collections)
+- **HAL language reference** → [HAL Expression System](/herd-actions/overview)
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="HAL Reference" icon="book" href="/herd-actions/overview">
+    Full HAL language documentation
+  </Card>
+  <Card title="Evaluation" icon="flask" href="/herd-mcp/tools/hal-evaluation">
+    Simulate before publishing
+  </Card>
+</CardGroup>

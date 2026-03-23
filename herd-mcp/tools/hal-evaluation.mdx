@@ -1,0 +1,111 @@
+---
+title: Evaluation
+description: "Simulate and test HAL expressions in a sandboxed environment"
+---
+
+# Evaluation
+
+Tools for simulating HAL expressions before publishing. Expressions run in a sandboxed Tevm fork — no real transactions are submitted.
+
+---
+
+## Evaluate Existing Action
+
+Simulate a saved action by ID. Loads the action's HAL expression, injects the `main()` call with provided inputs, and simulates the entire action.
+
+### Parameters
+
+| Parameter | Required | Description |
+|-----------|----------|-------------|
+| `actionId` | Yes | Action ID to simulate |
+| `inputs` | Yes | Input values for the action's parameters |
+
+### Returns
+
+- **Evaluation result** — Final output of the expression
+- **Operation log (oplog)** — Full trace of every function call during execution
+- **Simulated transaction hashes** — Can be inspected with [Query Transaction](/herd-mcp/tools/query-transaction)
+
+<Tip>
+Always simulate actions before publishing. Iteration is expected: simulate → inspect results with Query Transaction (works on simulated tx hashes) → fix issues → simulate again.
+</Tip>
+
+---
+
+## Evaluate Arbitrary Expression
+
+Evaluate a complete, self-contained HAL expression in a sandboxed Tevm fork. Use this for testing expressions that aren't saved yet.
+
+### Parameters
+
+| Parameter | Required | Description |
+|-----------|----------|-------------|
+| `expression` | Yes | Complete HAL expression (JSON array) |
+| `inputs` | No | Input values if the expression has parameters |
+
+### Returns
+
+- **Evaluation result** — Final output
+- **Operation log (oplog)** — Full execution trace
+
+<Warning>
+Before constructing a HAL expression, read the HAL documentation using the [Documentation tool](/herd-mcp/tools/documentation) with document IDs `hal://spec/syntax`, `hal://spec/modules/herd`, and `hal://spec/examples`. HAL has non-obvious syntax requirements (e.g., ABI arrays must be wrapped in `["quote", [...]]` to prevent evaluation).
+</Warning>
+
+### Tevm Fork Behavior
+
+- Forks are created lazily — only when the expression performs on-chain actions (`read-function`, `write-function`, `swap`)
+- Pure expressions evaluate without any blockchain interaction
+- Simulated transaction hashes can be queried with [Query Transaction](/herd-mcp/tools/query-transaction) to inspect traces
+
+---
+
+## Understanding Oplogs
+
+Both evaluation tools return an operation log (oplog) — a detailed trace of every function call during execution. Each entry contains:
+
+| Field | Description |
+|-------|-------------|
+| `operationId` | Unique ID for this operation |
+| `functionName` | Function called (e.g., `code`, `read-function`, `getPath`, user-defined) |
+| `status` | `success` or `error` |
+| `args` | Arguments passed to the function |
+| `result` | Return value (or error message) |
+| `timestamp` | When the operation executed |
+
+### Debugging with Oplogs
+
+- **Trace execution flow** — See which functions run and in what order
+- **Inspect inputs/outputs** — Check what each function receives and returns
+- **Identify failures** — Failed operations show `"status": "error"` with error messages
+- **Inspect transactions** — Use simulated tx hashes with [Query Transaction](/herd-mcp/tools/query-transaction) to discover missing approvals, encoding errors, etc.
+
+---
+
+## Simulation Workflow
+
+1. **Read docs** — Fetch HAL documentation with the [Documentation tool](/herd-mcp/tools/documentation)
+2. **Search adapters** — Find existing adapters with [Actions & Adapters](/herd-mcp/tools/hal-actions-adapters)
+3. **Build expression** — Construct your HAL expression
+4. **Simulate** — Run with Evaluate Arbitrary or Evaluate Existing
+5. **Inspect** — Check oplog and use Query Transaction on simulated hashes
+6. **Iterate** — Fix issues and simulate again
+7. **Publish** — Once validated, publish via [Actions & Adapters](/herd-mcp/tools/hal-actions-adapters)
+
+## Related Tools
+
+- **Create actions** → [Actions & Adapters](/herd-mcp/tools/hal-actions-adapters)
+- **Inspect simulated txs** → [Query Transaction](/herd-mcp/tools/query-transaction)
+- **Read HAL docs** → [Documentation](/herd-mcp/tools/documentation)
+- **HAL language reference** → [HAL Expression System](/herd-actions/overview)
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Query Transaction" icon="magnifying-glass" href="/herd-mcp/tools/query-transaction">
+    Inspect simulated transactions
+  </Card>
+  <Card title="HAL Reference" icon="book" href="/herd-actions/overview">
+    Full HAL language documentation
+  </Card>
+</CardGroup>

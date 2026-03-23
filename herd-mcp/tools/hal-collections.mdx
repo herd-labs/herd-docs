@@ -1,0 +1,114 @@
+---
+title: Collections
+description: "Organize actions and adapters into collections"
+---
+
+# Collections
+
+Tools for organizing HAL actions and adapters into named collections. Only actions and read/code adapters can be added — write adapters are not allowed in collections.
+
+---
+
+## Search Collections
+
+List and search collections by name, scope, or both.
+
+### Parameters
+
+| Parameter | Required | Description |
+|-----------|----------|-------------|
+| `name` | No | Search by name |
+| `scope` | No | Filter by `yours` and/or `verified` |
+| `page` | No | Page number for pagination (20 per page) |
+
+### Returns
+
+Each collection includes:
+- **id, name, description** — Collection metadata
+- **Item count** — Number of items in the collection
+- **Items** — Action/adapter ID, version, type, name, description, verified status
+
+---
+
+## Get Collection
+
+Retrieve a specific collection and its items.
+
+### Parameters
+
+| Parameter | Required | Description |
+|-----------|----------|-------------|
+| `id` | Yes | Collection ID |
+
+### Returns
+
+- **Collection metadata** — ID, name, description, creator
+- **Items** — Each item includes version ID, action ID, name, description, version name, intent, publish status
+
+---
+
+## Create Collection
+
+Create a new collection of actions and adapters.
+
+### Parameters
+
+| Parameter | Required | Description |
+|-----------|----------|-------------|
+| `name` | Yes | Collection name |
+| `description` | No | Collection description |
+| `actions` | No | Array of action/adapter IDs to include |
+
+<Tip>
+After creating an action and its supporting adapters, organize them into a collection. Include the action and any read/code adapters that provide useful data context.
+</Tip>
+
+---
+
+## Update Collection
+
+Update a collection's name, description, and/or items.
+
+### Parameters
+
+| Parameter | Required | Description |
+|-----------|----------|-------------|
+| `id` | Yes | Collection ID |
+| `name` | No | New name |
+| `description` | No | New description |
+| `actionsToAdd` | No | Array of action/adapter IDs to add |
+| `actionsToRemove` | No | Array of action/adapter IDs to remove |
+
+---
+
+## Use Cases
+
+<AccordionGroup>
+  <Accordion title="Protocol bundles">
+    Group a protocol's deposit action with its position monitoring read adapter and balance checker.
+  </Accordion>
+
+  <Accordion title="Workflow sets">
+    Collect related actions that form a complete workflow — e.g., approve, swap, and deposit.
+  </Accordion>
+
+  <Accordion title="Sharing verified actions">
+    Organize verified, production-ready actions into discoverable collections for other users.
+  </Accordion>
+</AccordionGroup>
+
+## Related Tools
+
+- **Create actions** → [Actions & Adapters](/herd-mcp/tools/hal-actions-adapters)
+- **Manage code blocks** → [Code Blocks](/herd-mcp/tools/hal-code-blocks)
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Actions & Adapters" icon="layer-group" href="/herd-mcp/tools/hal-actions-adapters">
+    Create items for your collections
+  </Card>
+  <Card title="Evaluation" icon="flask" href="/herd-mcp/tools/hal-evaluation">
+    Test actions before adding to collections
+  </Card>
+</CardGroup>

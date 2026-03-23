@@ -1,0 +1,68 @@
+---
+title: Role Topology
+description: "Inspect the role and permission structure of a smart contract"
+---
+
+# Role Topology
+
+Fetches the full role topology for a smart contract — the hierarchy of roles, their holders, and relationships. Always fetches fresh on-chain data.
+
+## Returns
+
+- **Roots** — Top-level roles (e.g., DEFAULT_ADMIN_ROLE)
+- **Nodes** — All role nodes with holder edges embedded
+- **Resolved At** — Block number at which roles were resolved
+
+## Example Queries
+
+```
+What roles exist on this contract and who holds them?
+```
+
+```
+Show me the admin structure for 0x...
+```
+
+```
+Who has the MINTER_ROLE on this contract?
+```
+
+## Parameters
+
+| Parameter | Required | Description |
+|-----------|----------|-------------|
+| `contractAddress` | Yes | The contract address (0x...) |
+| `blockchain` | No | `ethereum` (default) or `base` |
+
+## Use Cases
+
+<AccordionGroup>
+  <Accordion title="Security auditing">
+    Check who holds privileged roles like owner, admin, pauser, or upgrader before interacting with a protocol.
+  </Accordion>
+
+  <Accordion title="Governance research">
+    Map out the permission structure of a DAO or multisig-controlled protocol.
+  </Accordion>
+
+  <Accordion title="Pre-integration checks">
+    Before integrating with a contract, verify that the role hierarchy matches what the protocol claims.
+  </Accordion>
+</AccordionGroup>
+
+## Related Tools
+
+- **Contract overview** → [Contract Metadata](/herd-mcp/tools/contract-metadata)
+- **Check upgrades** → [Diff Versions](/herd-mcp/tools/diff-versions)
+- **See usage** → [Latest Transactions](/herd-mcp/tools/latest-transactions)
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Contract Metadata" icon="file-code" href="/herd-mcp/tools/contract-metadata">
+    Fetch contract details
+  </Card>
+  <Card title="Diff Versions" icon="code-compare" href="/herd-mcp/tools/diff-versions">
+    Compare contract versions
+  </Card>
+</CardGroup>

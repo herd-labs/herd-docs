@@ -1,0 +1,154 @@
+---
+title: Code Blocks
+description: "Create, update, and execute TypeScript code blocks for use in HAL expressions"
+---
+
+# Code Blocks
+
+Tools for managing TypeScript code blocks that run on Val.town/Deno. Code blocks can be called from HAL expressions via the `code` function and have auto-synced adapters generated for them.
+
+---
+
+## Get Code Block
+
+Retrieve a code block's metadata, code, argument schemas, and version history. When called without an ID, lists code blocks with optional filtering.
+
+### Parameters
+
+| Parameter | Required | Description |
+|-----------|----------|-------------|
+| `definitionId` | No | Code block ID. Omit to list all code blocks |
+| `name` | No | Filter by name (when listing) |
+| `page` | No | Page number for pagination |
+
+### Returns
+
+- **Metadata** — Name, intent, creation date
+- **Code** — Full TypeScript source for the selected version
+- **Argument schemas** — Input and output schemas extracted from the deployed endpoint
+- **Versions** — List of all versions with publish status
+- **Auto-synced adapter ID** — The adapter that stays in sync with this code block
+
+---
+
+## Create Code Block
+
+Create a new code block with TypeScript source code. The code is deployed to Val.town and an adapter is auto-generated.
+
+### Parameters
+
+| Parameter | Required | Description |
+|-----------|----------|-------------|
+| `name` | Yes | Code block name |
+| `code` | Yes | TypeScript source code |
+| `publish` | No | Immediately publish the first version |
+
+### Code Format
+
+Code blocks must use the `@herd-labs/code-blocks-framework` package:
+
+```typescript
+import { initializeHerdCodeBlockServer } from "@herd-labs/code-blocks-framework";
+
+export default initializeHerdCodeBlockServer({
+  inputSchema: {
+    years: { type: "int256" },
+  },
+  outputSchema: {
+    seconds: { type: "uint256" },
+  },
+  handler: async ({ years }) => {
+    const seconds = BigInt(years) * 365n * 24n * 60n * 60n;
+    return { seconds: seconds.toString() };
+  },
+}).fetch;
+```
+
+<Tip>
+Set `publish=true` to make the code block immediately usable in actions. Otherwise, publish later via the update tool.
+</Tip>
+
+---
+
+## Update Code Block
+
+Update a code block's metadata and/or TypeScript code. Code changes trigger redeployment and schema re-extraction.
+
+### Parameters
+
+| Parameter | Required | Description |
+|-----------|----------|-------------|
+| `definitionId` | Yes | Code block ID |
+| `name` | No | New name |
+| `intent` | No | New intent/description |
+| `code` | No | New TypeScript source code |
+| `publish` | No | Publish the latest unpublished draft |
+
+When code is provided: if the latest version is an unpublished draft, it's updated in-place; otherwise a new draft version is created.
+
+---
+
+## Delete Code Block
+
+Delete a code block and its auto-synced adapter.
+
+### Parameters
+
+| Parameter | Required | Description |
+|-----------|----------|-------------|
+| `definitionId` | Yes | Code block ID |
+
+<Warning>
+Deletion fails if the auto-synced adapter is imported by other actions or adapters.
+</Warning>
+
+---
+
+## Execute Code Block
+
+Run a code block with given arguments. Uses the test branch (safe for iteration).
+
+### Parameters
+
+| Parameter | Required | Description |
+|-----------|----------|-------------|
+| `definitionId` | Yes | Code block ID |
+| `codeId` | No | Specific version ID (defaults to latest) |
+| `args` | Yes | Input arguments matching the code block's schema |
+
+### Returns
+
+- **Result** — Output values from the code block
+- **Logs** — Console output from execution (useful for debugging)
+
+---
+
+## How Code Blocks Work in HAL
+
+Once created, code blocks are callable in HAL expressions via the `code` function:
+
+```json
+["coerce", {
+  "type": { "seconds": "uint256" },
+  "value": ["code", { "args": { "years": "years" }, "id": "definitionId:codeVersionId" }]
+}]
+```
+
+Each code block has an auto-synced adapter that updates automatically when the code is published. This adapter can be imported into actions like any other adapter.
+
+## Related Tools
+
+- **Use in actions** → [Actions & Adapters](/herd-mcp/tools/hal-actions-adapters)
+- **Test expressions** → [Evaluation](/herd-mcp/tools/hal-evaluation)
+- **HAL language reference** → [HAL Expression System](/herd-actions/overview)
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Actions & Adapters" icon="layer-group" href="/herd-mcp/tools/hal-actions-adapters">
+    Use code blocks in actions
+  </Card>
+  <Card title="Evaluation" icon="flask" href="/herd-mcp/tools/hal-evaluation">
+    Test your code blocks in expressions
+  </Card>
+</CardGroup>

@@ -1,21 +1,107 @@
 ---
 title: Introduction
-description: Blockchain intelligence for Claude Code
+description: Blockchain intelligence for AI agents
 ---
 
-<Info>
-  [Add the Herd MCP to your client now](/herd-mcp/configuration)
-</Info>
+# Herd Agent
 
-# Herd MCP
+Herd connects AI agents to on-chain data and actions through multiple interfaces. Query contracts, decode transactions, analyze wallets, and build HAL expressions — all using natural language.
 
-Herd connects any MCP client (Claude Code, Cursor, Codex, etc) to on-chain data through the Model Context Protocol. Query contracts, decode transactions, and analyze wallets using natural language.
+The MCP server, CLI, and TypeScript SDK all expose the same set of tools and capabilities.
+
+## MCP Install
+
+Add Herd as an MCP server to your AI coding client.
+
+```bash
+claude mcp add --transport http herd-mcp https://mcp.herd.eco/v1
+```
+
+- **Claude Code**: `claude mcp add --transport http herd-mcp https://mcp.herd.eco/v1`
+- **Cursor**: Add via Settings → MCP
+- **Codex**: Add via MCP configuration
+
+### Authenticate
+
+1. Open **/mcp** in your IDE (Claude, Cursor, or Codex)
+2. Find **herd-mcp** in the MCP list
+3. Click **Authenticate** to complete the OAuth flow
+4. Sign in with your Herd account at [herd.eco](https://herd.eco)
+
+### Manage
+
+```bash
+# List configured MCPs (Claude Code)
+claude mcp list
+
+# Remove
+claude mcp remove herd-mcp
+```
+
+## CLI Install
+
+Install the [Herd CLI](https://github.com/herd-labs/herd-cli) for terminal-based access to all Herd tools.
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/herd-labs/herd-cli/main/install.sh | bash
+```
+
+### Authenticate
+
+```bash
+herd login
+```
+
+This opens a browser for OAuth authentication. On successful login, the CLI automatically provisions an API key stored at `~/.herd/credentials.json`. This API key can also be used with the TypeScript SDK.
+
+### Commands
+
+| Group | Commands | Description |
+|-------|----------|-------------|
+| `herd contract` | `metadata`, `deployed`, `roles`, `diff` | Contract info, deployments, roles, version diffs |
+| `herd tx` | `query`, `latest` | Transaction inspection, recent activity |
+| `herd wallet` | `overview`, `tokens`, `transactions` | Wallet profiling, token activity, tx history |
+| `herd bookmarks` | `list`, `update` | Manage saved items |
+| `herd hal` | `create`, `get`, `search`, `update`, `delete`, `simulate`, `simulate-existing` | HAL actions, adapters, code blocks, collections |
+| `herd docs` | `read` | Read HAL and platform documentation |
+
+### Output Formats
+
+```bash
+--format pretty   # Indented JSON (default for TTY)
+--format json     # Compact JSON for piping
+--format table    # ASCII table for lists
+```
+
+## SDK Install
+
+Install the [Herd TypeScript SDK](https://www.npmjs.com/package/@herd-labs/sdk) to integrate Herd tools into your applications.
+
+```bash
+npm install @herd-labs/sdk
+```
+
+### Authentication
+
+Use an API key generated via the CLI (`herd login`) or set the `HERD_API_KEY` environment variable.
+
+```typescript
+import { HerdSDK } from "@herd-labs/sdk";
+
+const herd = new HerdSDK({
+  apiKey: process.env.HERD_API_KEY,
+});
+```
+
+The SDK provides programmatic access to all the same tools available through the MCP server and CLI.
+
+---
 
 ## Capabilities
 
 <CardGroup cols={2}>
   <Card title="Contracts" icon="file-code">
-    Fetch metadata, search source code, compare proxy implementations
+    Fetch metadata, search source code, compare proxy implementations, inspect role topology
   </Card>
   <Card title="Transactions" icon="arrow-right-arrow-left">
     Decode traces, parse logs, track balance changes
@@ -23,8 +109,8 @@ Herd connects any MCP client (Claude Code, Cursor, Codex, etc) to on-chain data 
   <Card title="Wallets" icon="wallet">
     Detect wallet types, view holdings, list deployments
   </Card>
-  <Card title="Tokens" icon="coins">
-    Track transfers, check balances, pull market data
+  <Card title="HAL" icon="code">
+    Create and simulate actions, adapters, code blocks, and collections
   </Card>
   <Card title="Bookmarks" icon="bookmark">
     Save and manage wallets, contracts, and transactions
@@ -38,51 +124,45 @@ Herd connects any MCP client (Claude Code, Cursor, Codex, etc) to on-chain data 
 | Ethereum | Supported |
 | Base | Supported |
 
-## Use Cases
-
-**Developers** — Understand existing contracts before integrating. Search for specific patterns in verified source code.
-
-**Security Researchers** — Audit contracts, trace exploit transactions, compare implementation versions.
-
-**Analysts** — Track wallet activity, monitor token flows, investigate on-chain behavior.
-
-## Example
-
-```
-> What does the swap function do in Uniswap V3 Router?
-
-Claude fetches the contract, parses the source, and explains the swap logic.
-```
-
-```
-> Decode transaction 0x1234...
-
-Claude retrieves traces, logs, and balance changes, then summarizes what happened.
-```
-
 ## Tools Quick Reference
 
-| Tool | Use For | Example Query |
-|------|---------|---------------|
-| [Contract Metadata](/herd-mcp/tools/contract-metadata) | Contract/code summaries, enhanced ABI, token data, version history | "What is the main functionality of contract 0x...?" |
-| [Code Analysis](/herd-mcp/tools/code-analysis) | Search contract code for proxy/implementations together | "Find who manages mints and auctions across functions" |
-| [Diff Versions](/herd-mcp/tools/diff-versions) | Compare impl version upgrades | "What changed in the last contract upgrade?" |
-| [Query Transaction](/herd-mcp/tools/query-transaction) | Decoded traces, logs, balances, transfers, and more | "What key transfers occured and why?" |
-| [Latest Transactions](/herd-mcp/tools/latest-transactions) | Recent function/event calls with filters | "Show recent roles set in functions" |
-| [Transaction Activity](/herd-mcp/tools/transaction-activity) | Address tx history with filters | "How has 0x... called morpho?" |
-| [Wallet Overview](/herd-mcp/tools/wallet-overview) | Wallet profiling of transactions, positions, and deployments | "Overview of 0x..." |
-| [Token Activity](/herd-mcp/tools/token-activity) | Token transfer history for a given position | "When did USDC get transferred for deposits?" |
-| [Deployed Contracts](/herd-mcp/tools/deployed-contracts) | Find deployments from a wallet | "What contracts did 0x... deploy?" |
-| [Get Bookmarks](/herd-mcp/tools/bookmarks) | List saved wallets, contracts, and transactions | "What do I have bookmarked?" |
-| [Update Bookmarks](/herd-mcp/tools/bookmarks) | Add, rename, or remove a bookmark | "Bookmark this contract as 'My Token'" |
+### Contract Tools
 
-## Next
+| Tool | Use For |
+|------|---------|
+| [Contract Metadata](/herd-mcp/tools/contract-metadata) | Contract info, ABI, proxy history, token data |
+| [Code Analysis](/herd-mcp/tools/code-analysis) | Search contract source code with regex |
+| [Diff Versions](/herd-mcp/tools/diff-versions) | Compare implementation version upgrades |
+| [Role Topology](/herd-mcp/tools/role-topology) | Inspect role/permission structure of a contract |
 
-<CardGroup cols={2}>
-  <Card title="Configuration" icon="gear" href="/herd-mcp/configuration">
-    Connect Herd and set up MCP
-  </Card>
-  <Card title="Contract Metadata" icon="file-code" href="/herd-mcp/tools/contract-metadata">
-    Start analyzing contracts
-  </Card>
-</CardGroup>
+### Transaction Tools
+
+| Tool | Use For |
+|------|---------|
+| [Query Transaction](/herd-mcp/tools/query-transaction) | Decoded traces, logs, balances, transfers |
+| [Latest Transactions](/herd-mcp/tools/latest-transactions) | Recent function/event calls with filters |
+| [Transaction Activity](/herd-mcp/tools/transaction-activity) | Address tx history with filters |
+
+### Wallet Tools
+
+| Tool | Use For |
+|------|---------|
+| [Wallet Overview](/herd-mcp/tools/wallet-overview) | Wallet type, balances, tx count, signers |
+| [Token Activity](/herd-mcp/tools/token-activity) | Token transfer history for a given position |
+| [Deployed Contracts](/herd-mcp/tools/deployed-contracts) | Contracts deployed by an address |
+
+### Bookmark Tools
+
+| Tool | Use For |
+|------|---------|
+| [Bookmarks](/herd-mcp/tools/bookmarks) | List, add, edit, remove saved items |
+
+### HAL Tools
+
+| Tool | Use For |
+|------|---------|
+| [Actions & Adapters](/herd-mcp/tools/hal-actions-adapters) | Create, search, update, delete HAL actions and adapters |
+| [Code Blocks](/herd-mcp/tools/hal-code-blocks) | Create, update, execute TypeScript code blocks |
+| [Collections](/herd-mcp/tools/hal-collections) | Organize actions and adapters into collections |
+| [Evaluation](/herd-mcp/tools/hal-evaluation) | Simulate and test HAL expressions |
+| [Documentation](/herd-mcp/tools/documentation) | Read HAL and platform docs |

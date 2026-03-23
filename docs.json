@@ -11,13 +11,12 @@
   "navigation": {
     "tabs": [
       {
-        "tab": "MCP",
+        "tab": "Agent",
         "groups": [
           {
-            "group": "Overview",
+            "group": "Configuration",
             "pages": [
-              "herd-mcp/introduction",
-              "herd-mcp/configuration"
+              "herd-mcp/introduction"
             ]
           },
           {
@@ -25,7 +24,8 @@
             "pages": [
               "herd-mcp/tools/contract-metadata",
               "herd-mcp/tools/code-analysis",
-              "herd-mcp/tools/diff-versions"
+              "herd-mcp/tools/diff-versions",
+              "herd-mcp/tools/role-topology"
             ]
           },
           {
@@ -48,6 +48,16 @@
             "group": "Bookmark Tools",
             "pages": [
               "herd-mcp/tools/bookmarks"
+            ]
+          },
+          {
+            "group": "HAL Tools",
+            "pages": [
+              "herd-mcp/tools/hal-actions-adapters",
+              "herd-mcp/tools/hal-code-blocks",
+              "herd-mcp/tools/hal-collections",
+              "herd-mcp/tools/hal-evaluation",
+              "herd-mcp/tools/documentation"
             ]
           }
         ]

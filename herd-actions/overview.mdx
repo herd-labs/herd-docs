@@ -3,15 +3,17 @@ title: HAL Expression System
 description: HAL (Herd Action Language) - JSON/DSL scripting for blockchain transactions and data reads
 ---
 
-<Info>
-  This feature is currently under beta. More documentation is coming soon. Reach out to andrew@herd.eco for more information.
-</Info>
+# HAL Expression System
 
-# HAL Expression System Documentation
+<Info>
+  HAL is designed to be written and executed by AI agents through the [MCP, CLI, or SDK](/herd-mcp/introduction).
+</Info>
 
 ## Overview
 
-HAL (Herd Action Language) is a JSON scripting language for simplifying writing transactions and reading data from the blockchain. It's used to create simplified write and read functions as "adapters" that can be reused across each other and also "actions" for transactions.
+HAL (Herd Action Language) is a JSON scripting language for generating calldata for batches of on-chain actions and saving durable transaction records after submission. Herd does not take an opinion on the wallet or method of execution — HAL produces the calldata, and you choose how to sign and submit it.
+
+HAL is used to create simplified write and read functions as "adapters" that can be reused across each other and also "actions" for transactions.
 
 ---
 
@@ -51,7 +53,7 @@ These are the two types of HAL expressions we let you create in Herd. Both use t
             {
               "name": "batch0",
               "meta": { "isBatch": true },
-              "value": [["write-function", ["transferERC20", "recipient", "amount"]]] //array of steps
+              "value": [["write-function", ["transferERC20", "recipient", "amount"]]]
             }
           ]
         ]
@@ -66,10 +68,11 @@ These are the two types of HAL expressions we let you create in Herd. Both use t
 - Specifically wrap a write function, read function, or code block
 - For write functions, it outputs calldata which can be used in action batches for transactions or as encoded calldata for multicall/bytes fields
 - For read functions, it returns the read outputs defined in the ABI
-- For code blocks, it runs the typescript code to return the code outputs. we use valtown/deno for code blocks. These can be created from the import/create adapter views.
+- For code blocks, it runs the typescript code to return the code outputs. We use valtown/deno for code blocks. These can be created from the import/create adapter views.
 - Adapters can be imported into other adapter or actions for composable re-use.
+- The exported function body must be one of: coerce (write batch), coerce wrapping read-function, or coerce wrapping code. The rest of the expression (imports, defines) can have any structure.
 
-**Example** (write, read, or code function):
+**Example: Write adapter** (coerce with batch call format)
 
 ```json
 [
@@ -86,7 +89,6 @@ These are the two types of HAL expressions we let you create in Herd. Both use t
           { "name": "amount", "type": "uint256" }
         ],
         "body": [
-          //this body will be different depending on batch call (write), read-function, or code function being used in the adapter.
           "coerce",
           {
             "type": {
@@ -143,9 +145,80 @@ These are the two types of HAL expressions we let you create in Herd. Both use t
 ]
 ```
 
+**Example: Read adapter** (coerce wrapping read-function)
+
+```json
+[
+  "do",
+  ["import", "herd", ["read-function", "encode-calldata"]],
+  [
+    "export",
+    [
+      "define",
+      {
+        "name": "getBalance",
+        "parameters": [{ "name": "token", "type": "address" }, { "name": "account", "type": "address" }],
+        "body": [
+          "coerce",
+          {
+            "type": { "balance": "uint256" },
+            "value": [
+              "read-function",
+              {
+                "calldata": [
+                  "encode-calldata",
+                  {
+                    "blockchain": "ethereum",
+                    "contractAddress": "token",
+                    "functionSignature": "0x70a08231",
+                    "args": { "account": "account" },
+                    "inputAbi": ["quote", [{ "name": "account", "type": "address" }]],
+                    "functionName": ["quote", "balanceOf"]
+                  }
+                ],
+                "outputAbi": ["quote", [{ "name": "", "type": "uint256" }]]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  ]
+]
+```
+
+**Example: Code adapter** (coerce wrapping code)
+
+```json
+[
+  "do",
+  ["import", "herd", ["code"]],
+  [
+    "export",
+    [
+      "define",
+      {
+        "name": "sumCalculator",
+        "parameters": [
+          { "name": "a", "type": "uint256" },
+          { "name": "b", "type": "uint256" }
+        ],
+        "body": [
+          "coerce",
+          {
+            "type": { "sum": "uint256" },
+            "value": ["code", { "args": { "a": "a", "b": "b" }, "id": "definitionId:codeVersionId" }]
+          }
+        ]
+      }
+    ]
+  ]
+]
+```
+
 ## HAL "Define" and User Parameters
 
-The `define` statement creates named functions with typed parameters - this is what is exported as the aciton/adapter. This is the core mechanism for **simplifying complex onchain interactions** - turning a contract function with 10+ inputs into a user-friendly function with just 2-3 inputs.
+The `define` statement creates named functions with typed parameters - this is what is exported as the action/adapter. This is the core mechanism for **simplifying complex onchain interactions** - turning a contract function with 10+ inputs into a user-friendly function with just 2-3 inputs.
 
 **Fields**:
 
@@ -185,7 +258,7 @@ The optional `meta` field on define functions provides UI hints and documentatio
     { "name": "to", "type": "address", "meta": { "label": "Recipient Address" } },
     { "name": "amount", "type": "uint256", "meta": { "decimals": 18 } }
   ],
-  "body": [...],
+  "body": ["..."],
   "meta": {
     "description": "Transfer 1000 USDC to recipient",
     "originContract": {
@@ -250,11 +323,11 @@ A key value of HAL is turning complex contract functions into simple user-facing
     { "name": "name", "type": "string" },
     { "name": "years", "type": "int256" }
   ],
-  "body": <expression that computes all 10 args from just name and years>
+  "body": "<expression that computes all 10 args from just name and years>"
 }]
 ```
 
-## Setting values in a HAL expression.
+## Setting Values in a HAL Expression
 
 Any variable can be set to a value with hardcoded values or function references (from defines and imports). The most common pattern you will see in HAL is wrapping a function call with a `getPath` and then a `coerce`. You can create a parameter and reference it in the value too (if in a define).
 
@@ -268,7 +341,7 @@ Any variable can be set to a value with hardcoded values or function references 
     "parameters": [{ "name": "years", "type": "int256" }],
     "body": [
       "let", { "duration": ["calculate_years_to_seconds", "years"] },
-      ["encode-calldata", { ... "duration": ["getPath", { "object": "duration", "path": ["seconds"] }] }]
+      ["encode-calldata", { "...": "...", "duration": ["getPath", { "object": "duration", "path": ["seconds"] }] }]
     ]
   }]
 ]
@@ -279,15 +352,39 @@ In this example:
 - `"duration"` is set by calling the imported function `calculate_years_to_seconds` with the user parameter `"years"`
 - The result is then extracted using `getPath` to get the `"seconds"` field from the `"duration"` object
 
-In the Herd editor, we make dropdown suggestions that auto create/set parameters, wrap functions/outputs, and check types.\*\*\*\*
+In the Herd editor, we make dropdown suggestions that auto create/set parameters, wrap functions/outputs, and check types.
 
 ## Standard Library Functions
 
-HAL provides standard library functions imported from the `herd` and `object` modules. Import them using:
+HAL provides standard library functions imported from the `herd`, `object`, and `math` modules. Import them using:
 
 ```json
 ["import", "herd", ["function-name"]]
 ["import", "object", ["getPath"]]
+["import", "math", ["add", "eq", "lt", "gt", "lte", "gte"]]
+```
+
+### Math Module (Arithmetic and Comparison)
+
+Import from `math`: `["import", "math", ["add", "sub", "mul", "div", "pow", "eq", "neq", "lt", "gt", "lte", "gte"]]`
+
+**Arithmetic**: `add`, `sub`, `mul`, `div`, `pow` — operate on numeric values (bigint, number, or numeric strings).
+
+**Comparison** (return `bool`):
+- `eq(a, b)` — equality (numeric or primitive `===`)
+- `neq(a, b)` — inequality (negation of eq)
+- `lt(a, b)` — less than
+- `gt(a, b)` — greater than
+- `lte(a, b)` — less than or equal
+- `gte(a, b)` — greater than or equal
+
+**Example** (conditional with gt):
+```json
+["do",
+  ["import", "math", ["gt"]],
+  ["define", { "name": "x", "value": 42 }],
+  ["if", ["gt", "x", 0], "positive", "non-positive"]
+]
 ```
 
 ### write-function
@@ -296,9 +393,9 @@ Executes a state-changing contract call. **Only used within batch steps in the `
 
 ```json
 ["write-function", {
-  "encodedCalldata": <EncodeCalldataResult>,
-  "payable": <boolean>,
-  "payableAmount": <uint256>
+  "encodedCalldata": "<EncodeCalldataResult>",
+  "payable": "<boolean>",
+  "payableAmount": "<uint256>"
 }]
 ```
 
@@ -310,9 +407,9 @@ Executes a state-changing contract call. **Only used within batch steps in the `
 
 **Returns**: `{ blockchain, toAddress, functionSignature, transactionHash, transactionStatus }`
 
-This is the only function that submits/takes a transaction hash!!!
+This is the only function that submits/takes a transaction hash.
 
-### Batch Call Data Format (Use for Write Function adapters)
+### Batch Call Data Format (Use for Write Function Adapters)
 
 User-defined write functions return a standardized format for use in action batches:
 
@@ -345,12 +442,12 @@ Executes a read-only contract call (view/pure functions).
         "blockchain": "base",
         "contractAddress": "0x...",
         "functionSignature": "0x...",
-        "args": { ... },
-        "inputAbi": ["quote", <AbiParameter[]>],
+        "args": { "...": "..." },
+        "inputAbi": ["quote", ["<AbiParameter[]>"]],
         "functionName": "transfer"
       }
     ],
-    "outputAbi": ["quote", <AbiParameter[]>]
+    "outputAbi": ["quote", ["<AbiParameter[]>"]]
   }]
 }]
 ```
@@ -364,6 +461,26 @@ Executes a read-only contract call (view/pure functions).
 Encodes function arguments into calldata for contract calls. Used internally by read/write functions.
 
 **Returns**: `{ blockchain, contractAddress, functionSignature, calldata }`
+
+### encode-parameters
+
+Encodes function parameters using ABI encoding. Similar to `encode-calldata` but only encodes the parameters without blockchain context or function signature.
+
+**Input**: `{ inputs: { [paramName]: value }, inputAbi: ["quote", AbiParameter[]] }`
+
+**Returns**: `bytes` (hex string like `"0x..."`)
+
+**Example**:
+
+```json
+["encode-parameters", {
+  "inputs": { "to": "0x1234567890123456789012345678901234567890", "amount": "1000" },
+  "inputAbi": ["quote", [
+    { "name": "to", "type": "address" },
+    { "name": "amount", "type": "uint256" }
+  ]]
+}]
+```
 
 ### code
 
@@ -387,7 +504,7 @@ Keep in mind:
 - Each code block has a single auto-synced adapter that updates when the code is published
 - Input/output args are typed using HAL types
 
-### **getPath**
+### getPath
 
 Gets a value at a nested path within an object. Imported from the `object` module.
 
@@ -395,7 +512,7 @@ Gets a value at a nested path within an object. Imported from the `object` modul
 
 ```json
 ["import", "object", ["getPath"]]
-["getPath", { "object": <result>, "path": ["field", "nested"] }]
+["getPath", { "object": "<result>", "path": ["field", "nested"] }]
 ```
 
 **Input**: `{ object: any, path: string[] }`
@@ -407,7 +524,7 @@ Gets a value at a nested path within an object. Imported from the `object` modul
 Runtime type coercion and validation. Wraps a value to declare its expected type for the type inference system.
 
 ```json
-["coerce", { "type": { "sum": "uint256" }, "value": <expression> }]
+["coerce", { "type": { "sum": "uint256" }, "value": "<expression>" }]
 ```
 
 Used to declare return types for type inference. Commonly used with `code`, `read-function`, `decimals`, and write adapters returning batch call data (see examples above).
@@ -438,11 +555,13 @@ Returns the current user's wallet address. No arguments required.
 
 ### swap
 
-**this function should ONLY be used within action batches, not within adapters or values**
+<Warning>
+This function should ONLY be used within action batches, not within adapters or values.
+</Warning>
 
-Fetches swap quote and execute data from the **0x API**. The approval step is **optional**—it is only required when the wallet has not already approved the spender. Use `swapSteps.approval.approvalRequired` to conditionally include the approval step in a batch.
+Fetches swap quote and execute data from the **0x API**. The approval step is optional — it is only required when the wallet has not already approved the spender. Use `swapSteps.approval.approvalRequired` to conditionally include the approval step in a batch.
 
-sellTokenAmount here is the actual amount, not the raw bigint. If you're passing values from a read function or something onchain into this field, toggle divideDecimals on so we can automatically convert using the token's decimals.
+`sellTokenAmount` is the actual amount, not the raw bigint. If you're passing values from a read function or something onchain into this field, toggle `divideDecimals` on so we can automatically convert using the token's decimals.
 
 **Input**: `{ blockchain, sellTokenAddress, sellTokenAmount, buyTokenAddress, walletAddress, divideDecimals }`
 
@@ -612,7 +731,7 @@ Import functions from other adapters/actions or stdlib modules:
 Export functions for use by other expressions:
 
 ```json
-["export", ["define", { "name": "myFunction", "parameters": [...], "body": [...] }]]
+["export", ["define", { "name": "myFunction", "parameters": ["..."], "body": ["..."] }]]
 ```
 
 Each action/adapter only exports ONE defined function right now. This keeps expressions simpler and more composable. For actions, that function is "main" always. For adapters that can be any defined "write" batch call data, read-function, or code block.
@@ -680,10 +799,10 @@ Here's a condensed example showing how operations chain together:
     {
       "functionName": "simpleRegister",
       "args": ["ilemi", "5n"],
-      "result": { "payable": true, "payableAmount": "4995440843040000n", "encodedCalldata": { ... } }
+      "result": { "payable": true, "payableAmount": "4995440843040000n", "encodedCalldata": { "...": "..." } }
     }
   ],
-  "finalResult": { "payable": true, "payableAmount": "4995440843040000n", "encodedCalldata": { ... } }
+  "finalResult": { "payable": true, "payableAmount": "4995440843040000n", "encodedCalldata": { "...": "..." } }
 }
 ```
 
