@@ -529,6 +529,20 @@ Runtime type coercion and validation. Wraps a value to declare its expected type
 
 Used to declare return types for type inference. Commonly used with `code`, `read-function`, `decimals`, and write adapters returning batch call data (see examples above).
 
+**Available scalar types for `"type"`**: `uint256`, `int256`, `address`, `bool`, `string`, `bytes`, `float64`, and fixed-size variants (`uint8`…`uint256`, `bytes1`…`bytes32`).
+
+Use **`float64`** when the adapter returns a decimal value — for example, a USD price computed by dividing a raw 1e18-scaled on-chain integer by `pow(10, 18)`. HAL's `div` is float division and produces a decimal result; coercing to `float64` preserves it:
+
+```json
+["coerce", {
+  "type": "float64",
+  "value": ["div",
+    ["getPath", { "path": ["quote", ["arg0"]], "object": ["read-function", { ... }] }],
+    ["pow", 10, 18]
+  ]
+}]
+```
+
 ### decimals
 
 Multiplies a value by 10^decimals. Converts human-readable values to raw integers (e.g., for wei).
