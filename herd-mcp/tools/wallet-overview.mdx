@@ -1,41 +1,40 @@
 ---
-title: Agent Wallet Tools
-description: Let agent wallets prepare governed transaction proposals for Safe and other MPC wallets.
+title: Wallet Tools
+description: Analyze wallets, token activity, and transaction history on fully indexed EVM chains.
 ---
 
-# Agent Wallet Tools
+# Wallet Tools
 
-<Warning>
-  Agent Wallet Tools require an Enterprise plan. To get access, contact [andrew@herd.eco](mailto:andrew@herd.eco).
-</Warning>
-
-Agent Wallet Tools let agents prepare transactions without bypassing an organization's custody or approval controls.
-
-Create shared groups with quorum rules and Herd-managed agent wallets. Link an agent wallet to a Safe or another MPC-controlled wallet, prepare a HAL action, simulate it, collect approvals, and propose the resulting calls for human signing and execution.
-
-For Safe integrations, Herd validates proposer access, proposal calls, simulation evidence, and group quorum. It can package multiple calls into one Safe transaction and track whether the proposal executes or becomes superseded.
-
-The agent proposes; the destination wallet's owners or policy sign and execute. Herd does not bypass the wallet's threshold or custody controls.
-
-## Functionality
-
-- Create groups, membership rules, and approval quorums.
-- Provision agent wallets for those groups.
-- Connect agent wallets to Safe or other MPC wallet accounts.
-- Build and simulate proposed calls with HAL.
-- Collect group approvals before pushing a wallet proposal.
-- Reconcile proposals with their eventual onchain execution.
-
-## Typical flow
-
-1. Read the group, agent wallet, and destination wallet context.
-2. Reuse or create a HAL action.
-3. Publish and simulate the action as the destination wallet.
-4. Create a governed proposal from the simulated calls.
-5. Collect group approvals and push the proposal.
-6. Sign and execute in the Safe or MPC wallet.
-7. Reconcile the proposal with its onchain execution.
+Wallet Tools analyze EOAs, smart accounts, Safes, delegated accounts, and contract addresses using Herd's historical indexes.
 
 <Info>
-  Safe proposal support is available on a subset of registered EVM chains. See [Supported Chains](/herd-mcp/supported-chains) for the current list.
+  Wallet Tools are available on fully indexed chains: **Base, Ethereum, and Monad**.
 </Info>
+
+## Available tools
+
+| Tool | Use it to |
+|---|---|
+| `getWalletOverviewTool` | Summarize account type, balances, transaction counts, deployments, delegation, and Safe details. |
+| `getTokenActivityTool` | Read a holder's current token balance and paginated incoming or outgoing transfers. |
+| `getTransactionActivityTool` | Read enriched address activity with traces, balance changes, and contract creations. |
+
+## Wallet overview
+
+Wallet overview detects EOAs, ERC-7702 delegated accounts, ERC-4337 smart accounts, multisigs, and other contract wallets. Results can include token balances with USD values, activity totals, deployed contract counts, Safe signers and pending transactions, and delegation details.
+
+## Token activity
+
+Token activity returns a holder's current balance and up to 100 transfers per page. Each transfer indicates whether value moved in or out relative to the selected address.
+
+The holder can be any valid EVM address, including a wallet, vault, token contract, or protocol contract.
+
+## Transaction activity
+
+Transaction activity returns decoded calls, traces, balance changes, and contract creations. Use caller mode for outgoing activity and callee mode for inbound or internal-call activity.
+
+Query both directions and merge the results when you need a complete address history.
+
+<Tip>
+  Use [Transaction Tools](/herd-mcp/tools/query-transaction) to inspect one transaction in full after finding it in wallet activity.
+</Tip>

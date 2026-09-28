@@ -21,25 +21,34 @@
             ]
           },
           {
-            "group": "All EVM Chain Tools",
+            "group": "Explorer Tools",
             "pages": [
               "herd-mcp/tools/contract-metadata",
               "herd-mcp/tools/query-transaction",
+              "herd-mcp/tools/wallet-overview",
               "herd-mcp/tools/bookmarks",
               "herd-mcp/tools/documentation"
             ]
           },
           {
-            "group": "Fully Indexed Chain Tools",
+            "group": "Agent Wallet Tools",
             "pages": [
-              "herd-mcp/tools/latest-transactions"
+              "herd-mcp/tools/agent-wallet-tools"
             ]
           },
           {
-            "group": "Enterprise Tools",
+            "group": "DoubleClick Tools",
             "pages": [
-              "herd-mcp/tools/wallet-overview",
               "herd-mcp/tools/doubleclick"
+            ]
+          },
+          {
+            "group": "HAL Tools",
+            "pages": [
+              "herd-mcp/tools/hal-actions-adapters",
+              "herd-mcp/tools/hal-collections",
+              "herd-mcp/tools/hal-evaluation",
+              "herd-mcp/tools/hal-code-blocks"
             ]
           }
         ]
@@ -51,15 +60,6 @@
             "group": "Overview",
             "pages": [
               "herd-actions/overview"
-            ]
-          },
-          {
-            "group": "HAL Tools",
-            "pages": [
-              "herd-mcp/tools/hal-actions-adapters",
-              "herd-mcp/tools/hal-collections",
-              "herd-mcp/tools/hal-evaluation",
-              "herd-mcp/tools/hal-code-blocks"
             ]
           }
         ]

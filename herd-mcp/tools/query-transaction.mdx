@@ -1,22 +1,34 @@
 ---
 title: Transaction Tools
-description: Inspect real and simulated EVM transactions across every registered EVM chain.
+description: Inspect real and simulated transactions, then search indexed function and event activity.
 ---
 
 # Transaction Tools
 
-Transaction lookup works across all registered EVM chains. It supports both committed transaction hashes and hashes produced by HAL simulations.
+Transaction Tools inspect individual transactions across all registered EVM chains. On fully indexed chains, they also search recent decoded function calls and event emissions.
 
 ## Available tools
 
-| Tool | Use it to |
-|---|---|
-| `queryTransactionTool` | Decode traces, logs, transfers, balance changes, and contract creations for one real or simulated transaction. |
-| `queryTevmFork` | List every transaction recorded on a specific HAL simulation fork with its action, execution, batch, and step context. |
+| Tool | Use it to | Chain availability |
+|---|---|---|
+| `queryTransactionTool` | Decode traces, logs, transfers, balance changes, and contract creations for one real or simulated transaction. | All registered EVM chains |
+| `queryTevmFork` | List every transaction recorded on a specific HAL simulation fork with its action, execution, batch, and step context. | All registered EVM chains |
+| `getLatestFunctionTransactionsTool` | Find recent decoded function calls for a contract, optionally filtered by function name or four-byte selector. | Base, Ethereum, Monad |
+| `getLatestEventTransactionsTool` | Find recent decoded event emissions, optionally filtered by event name, topic hash, and indexed topics. | Base, Ethereum, Monad |
 
 `queryTransactionTool` can return all decoded data or filter balances, traces, and logs with a natural-language query. Transfer and balance amounts are decimal-adjusted; trace and log values remain raw.
 
 For simulated hashes, pass the `tevmForkId` returned by HAL. The same deterministic hash can exist on more than one fork, so the fork ID identifies the exact simulation state.
+
+## Indexed contract activity
+
+Function and event searches return the latest 20 matching transactions. Use a function or event name to resolve its signature from the contract ABI, or pass the selector or topic hash directly.
+
+Argument values are raw rather than decimal-adjusted. Use contract metadata and ABI types to interpret units and structure.
+
+<Tip>
+  Before authoring a HAL action, inspect recent calls and events. Real transactions reveal approvals, parameter patterns, and multi-step flows that an ABI cannot show.
+</Tip>
 
 ## Common uses
 
@@ -29,7 +41,3 @@ For simulated hashes, pass the `tevmForkId` returned by HAL. The same determinis
 <Warning>
   A successful simulation can still call an address with no deployed code. Treat zero gas with no calls, logs, or transfers as evidence that nothing ran.
 </Warning>
-
-<Info>
-  Historical activity search is separate and requires a fully indexed chain. See [Fully Indexed Activity](/herd-mcp/tools/latest-transactions).
-</Info>
