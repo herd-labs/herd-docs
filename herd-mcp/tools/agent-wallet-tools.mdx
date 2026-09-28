@@ -1,0 +1,37 @@
+---
+title: Agent Wallet Tools
+description: Let agent wallets prepare governed transaction proposals for Safe and other MPC wallets.
+---
+
+# Agent Wallet Tools
+
+<Warning>
+  Agent Wallet Tools require an Enterprise plan. To get access, contact [andrew@herd.eco](mailto:andrew@herd.eco).
+</Warning>
+
+Agent Wallet Tools let agents prepare transactions without bypassing an organization's custody or approval controls.
+
+Create shared groups with quorum rules and Herd-managed agent wallets. Link an agent wallet to a Safe or another MPC-controlled wallet, prepare a HAL action, simulate it, collect approvals, and propose the resulting calls for human signing and execution.
+
+For Safe integrations, Herd validates proposer access, proposal calls, simulation evidence, and group quorum. It can package multiple calls into one Safe transaction and track whether the proposal executes or becomes superseded.
+
+The agent proposes; the destination wallet's owners or policy sign and execute. Herd does not bypass the wallet's threshold or custody controls.
+
+## Functionality
+
+- Create groups, membership rules, and approval quorums.
+- Provision agent wallets for those groups.
+- Connect agent wallets to Safe or other MPC wallet accounts.
+- Build and simulate proposed calls with HAL.
+- Collect group approvals before pushing a wallet proposal.
+- Reconcile proposals with their eventual onchain execution.
+
+## Typical flow
+
+1. Read the group, agent wallet, and destination wallet context.
+2. Reuse or create a HAL action.
+3. Publish and simulate the action as the destination wallet.
+4. Create a governed proposal from the simulated calls.
+5. Collect group approvals and push the proposal.
+6. Sign and execute in the Safe or MPC wallet.
+7. Reconcile the proposal with its onchain execution.

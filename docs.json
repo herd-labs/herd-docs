@@ -3,8 +3,8 @@
   "theme": "mint",
   "name": "Herd",
   "colors": {
-    "primary": "#FF003C",
-    "light": "#bf3959",
+    "primary": "#CC0030",
+    "light": "#FF668A",
     "dark": "#bf3959"
   },
   "favicon": "/favicon.ico",
@@ -14,71 +14,38 @@
         "tab": "Agent",
         "groups": [
           {
-            "group": "Configuration",
-            "pages": [
-              "herd-mcp/introduction"
-            ]
-          },
-          {
-            "group": "Contract Tools",
-            "pages": [
-              "herd-mcp/tools/contract-metadata",
-              "herd-mcp/tools/code-analysis",
-              "herd-mcp/tools/diff-versions",
-              "herd-mcp/tools/role-topology"
-            ]
-          },
-          {
-            "group": "Transaction Tools",
-            "pages": [
-              "herd-mcp/tools/query-transaction",
-              "herd-mcp/tools/latest-transactions",
-              "herd-mcp/tools/transaction-activity"
-            ]
-          },
-          {
-            "group": "Wallet Tools",
-            "pages": [
-              "herd-mcp/tools/wallet-overview",
-              "herd-mcp/tools/token-activity",
-              "herd-mcp/tools/deployed-contracts"
-            ]
-          },
-          {
-            "group": "Bookmark Tools",
-            "pages": [
-              "herd-mcp/tools/bookmarks"
-            ]
-          },
-          {
-            "group": "HAL Tools",
-            "pages": [
-              "herd-mcp/tools/hal-actions-adapters",
-              "herd-mcp/tools/hal-code-blocks",
-              "herd-mcp/tools/hal-collections",
-              "herd-mcp/tools/hal-evaluation",
-              "herd-mcp/tools/documentation"
-            ]
-          }
-        ]
-      },
-      {
-        "tab": "App",
-        "groups": [
-          {
             "group": "Getting Started",
             "pages": [
-              "herd-app/explorer",
-              "herd-app/visualizer",
-              "herd-app/supported-chains"
+              "herd-mcp/introduction",
+              "herd-mcp/supported-chains"
+            ]
+          },
+          {
+            "group": "Herd Tools",
+            "pages": [
+              "herd-mcp/tools/contract-metadata",
+              "herd-mcp/tools/query-transaction",
+              "herd-mcp/tools/wallet-overview",
+              "herd-mcp/tools/bookmarks",
+              "herd-mcp/tools/agent-wallet-tools",
+              "herd-mcp/tools/doubleclick",
+              "herd-mcp/tools/hal-actions-adapters",
+              "herd-mcp/tools/hal-collections",
+              "herd-mcp/tools/hal-evaluation",
+              "herd-mcp/tools/hal-code-blocks"
             ]
           }
         ]
       },
       {
         "tab": "Actions (HAL)",
-        "pages": [
-          "herd-actions/overview"
+        "groups": [
+          {
+            "group": "Overview",
+            "pages": [
+              "herd-actions/overview"
+            ]
+          }
         ]
       }
     ],
@@ -104,7 +71,7 @@
   "navbar": {
     "primary": {
       "type": "button",
-      "label": "Herd App",
+      "label": "Herd",
       "href": "https://herd.eco"
     }
   },

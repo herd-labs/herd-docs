@@ -1,0 +1,56 @@
+---
+title: Supported Chains
+description: Understand which Herd capabilities work across registered and fully indexed EVM chains.
+---
+
+# Supported Chains
+
+Herd separates **registered EVM support** from **full indexing**. A tool's chain parameter enforces the correct tier.
+
+## Availability by tier
+
+| Capability | All registered EVM chains | Fully indexed chains |
+|---|---:|---:|
+| Inspect a transaction by hash | ✓ | ✓ |
+| Run HAL reads and simulations | ✓ | ✓ |
+| Save chain-aware bookmarks | ✓ | ✓ |
+| Read verified contract metadata and source | Most chains | ✓ |
+| Search recent function calls and event logs | — | ✓ |
+| Analyze wallet transactions, token activity, and deployments | — | ✓ |
+
+<Note>
+  Contract metadata and source search require an available code explorer. Polygon zkEVM, Sophon, and Swell do not currently support these features.
+</Note>
+
+## Fully indexed EVM chains
+
+Herd maintains complete historical activity indexes for:
+
+<CardGroup cols={3}>
+  <Card title="Base" icon="circle-check">Full activity indexing</Card>
+  <Card title="Ethereum" icon="circle-check">Full activity indexing</Card>
+  <Card title="Monad" icon="circle-check">Full activity indexing</Card>
+</CardGroup>
+
+## All registered EVM chains
+
+The following slugs are accepted by Herd's EVM registry:
+
+| | | |
+|---|---|---|
+| `arbitrum` | `arc` | `avalanche` |
+| `base` | `berachain` | `blast` |
+| `bsc` | `ethereum` | `fraxtal` |
+| `hyperevm` | `ink` | `kaia` |
+| `katana` | `linea` | `mantle` |
+| `megaeth` | `mode` | `monad` |
+| `morph` | `optimism` | `plasma` |
+| `plume` | `polygon` | `polygon-zkevm` |
+| `robinhood` | `scroll` | `sei` |
+| `soneium` | `sonic` | `sophon` |
+| `swell` | `tac` | `tempo` |
+| `unichain` | `worldchain` | `zksync` |
+
+<Warning>
+  Chain registration does not imply full historical indexing. Use the capability table above before choosing an activity or aggregate tool.
+</Warning>

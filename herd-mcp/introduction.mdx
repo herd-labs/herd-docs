@@ -1,168 +1,68 @@
 ---
 title: Getting Started
-description: Build on top of crypto with agents powered by Herd's institutional-grade infrastructure. We handle the full operational lifecycle from due diligence to execution and monitoring.
+description: Connect agents to Herd's contract intelligence, transaction data, and action infrastructure.
 ---
+
+<Info>
+  Herd also provides a Slack agent for bringing these capabilities into your team's workspace. [Install the Herd Slack agent](https://herd.eco/slack).
+</Info>
 
 # Herd Agent
 
-Herd connects AI agents to on-chain data and actions through multiple interfaces. Query contracts, decode transactions, analyze wallets, build/simulate actions, and query onchain data — all using natural language.
+Herd gives agents one interface for researching EVM activity, understanding contracts, simulating transactions, and preparing onchain actions.
 
-The MCP server, CLI, and TypeScript SDK all expose the same set of tools and capabilities.
+Use Herd through its hosted MCP server or command-line interface. The available capabilities depend on your plan and the selected chain's indexing tier.
 
-## MCP Install
+## Connect with MCP
 
-Add Herd as an MCP server to your AI coding client.
-
-```bash
-claude mcp add --transport http herd-mcp https://mcp.herd.eco/v1
-```
-
-- **Claude Code**: `claude mcp add --transport http herd-mcp https://mcp.herd.eco/v1`
-- **Cursor**: Add via Settings → MCP
-- **Codex**: Add via MCP configuration
-
-### Authenticate
-
-1. Open **/mcp** in your IDE (Claude, Cursor, or Codex)
-2. Find **herd-mcp** in the MCP list
-3. Click **Authenticate** to complete the OAuth flow
-4. Sign in with your Herd account at [herd.eco](https://herd.eco)
-
-### Manage
+Add the hosted server to an MCP client:
 
 ```bash
-# List configured MCPs (Claude Code)
-claude mcp list
-
-# Remove
-claude mcp remove herd-mcp
+claude mcp add --transport http herd https://mcp.herd.eco/v1
 ```
 
-## CLI Install
+Then open your client's MCP settings, select **Herd**, and complete the browser sign-in flow. Herd uses OAuth and does not require you to paste a token into your client.
 
-Install the [Herd CLI](https://github.com/herd-labs/herd-cli) for terminal-based access to all Herd tools.
+<AccordionGroup>
+  <Accordion title="Cursor">
+    Add `https://mcp.herd.eco/v1` as a remote MCP server in **Settings → MCP**, then authenticate.
+  </Accordion>
+  <Accordion title="Codex">
+    Add `https://mcp.herd.eco/v1` as an HTTP MCP server in your Codex MCP configuration, then authenticate.
+  </Accordion>
+  <Accordion title="Claude Code">
+    Run the command above, open `/mcp`, select **Herd**, and authenticate.
+  </Accordion>
+</AccordionGroup>
+
+## Install the CLI
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/herd-labs/herd-cli/main/install.sh | bash
-```
-
-### Authenticate
-
-```bash
 herd login
 ```
 
-This opens a browser for OAuth authentication. On successful login, the CLI automatically provisions an API key stored at `~/.herd/credentials.json`. This API key can also be used with the TypeScript SDK.
+`herd login` opens a browser for OAuth. The CLI stores its credentials in `~/.herd/credentials.json` with restricted file permissions.
 
-### Commands
-
-| Group | Commands | Description |
-|-------|----------|-------------|
-| `herd contract` | `metadata`, `deployed`, `roles`, `diff` | Contract info, deployments, roles, version diffs |
-| `herd tx` | `query`, `latest` | Transaction inspection, recent activity |
-| `herd wallet` | `overview`, `tokens`, `transactions` | Wallet profiling, token activity, tx history |
-| `herd bookmarks` | `list`, `update` | Manage saved items |
-| `herd hal` | `create`, `get`, `search`, `update`, `delete`, `simulate`, `simulate-existing` | HAL actions, adapters, code blocks, collections |
-| `herd docs` | `read` | Read HAL and platform documentation |
-
-### Output Formats
-
-```bash
---format pretty   # Indented JSON (default for TTY)
---format json     # Compact JSON for piping
---format table    # ASCII table for lists
-```
-
-## SDK Install
-
-Install the [Herd TypeScript SDK](https://www.npmjs.com/package/@herd-labs/sdk) to integrate Herd tools into your applications.
-
-```bash
-npm install @herd-labs/sdk
-```
-
-### Authentication
-
-Use an API key generated via the CLI (`herd login`) or set the `HERD_API_KEY` environment variable.
-
-```typescript
-import { HerdSDK } from "@herd-labs/sdk";
-
-const herd = new HerdSDK({
-  apiKey: process.env.HERD_API_KEY,
-});
-```
-
-The SDK provides programmatic access to all the same tools available through the MCP server and CLI.
-
----
-
-## Capabilities
+## What Herd can do
 
 <CardGroup cols={2}>
-  <Card title="Contracts" icon="file-code">
-    Fetch metadata, search source code, compare proxy implementations, inspect role topology
+  <Card title="Research contracts" icon="file-code">
+    Read verified metadata, ABIs, proxy history, deployment data, and source code.
   </Card>
-  <Card title="Transactions" icon="arrow-right-arrow-left">
-    Decode traces, parse logs, track balance changes
+  <Card title="Inspect transactions" icon="arrow-right-arrow-left">
+    Decode real or simulated transactions, including traces, logs, transfers, and balance changes.
   </Card>
-  <Card title="Wallets" icon="wallet">
-    Detect wallet types, view holdings, list deployments
+  <Card title="Analyze indexed activity" icon="chart-line">
+    Search contract calls, event emissions, wallet activity, token transfers, and deployments.
   </Card>
-  <Card title="HAL" icon="code">
-    Create and simulate actions, adapters, code blocks, and collections
-  </Card>
-  <Card title="Bookmarks" icon="bookmark">
-    Save and manage wallets, contracts, and transactions
+  <Card title="Build and simulate actions" icon="code">
+    Compose reusable HAL adapters and actions, organize them into collections, and simulate before execution.
   </Card>
 </CardGroup>
 
-## Supported Networks
+## Choose the right chain tier
 
-| Network | Status |
-|---------|--------|
-| Ethereum | Supported |
-| Base | Supported |
-
-## Tools Quick Reference
-
-### Contract Tools
-
-| Tool | Use For |
-|------|---------|
-| [Contract Metadata](/herd-mcp/tools/contract-metadata) | Contract info, ABI, proxy history, token data |
-| [Code Analysis](/herd-mcp/tools/code-analysis) | Search contract source code with regex |
-| [Diff Versions](/herd-mcp/tools/diff-versions) | Compare implementation version upgrades |
-| [Role Topology](/herd-mcp/tools/role-topology) | Inspect role/permission structure of a contract |
-
-### Transaction Tools
-
-| Tool | Use For |
-|------|---------|
-| [Query Transaction](/herd-mcp/tools/query-transaction) | Decoded traces, logs, balances, transfers |
-| [Latest Transactions](/herd-mcp/tools/latest-transactions) | Recent function/event calls with filters |
-| [Transaction Activity](/herd-mcp/tools/transaction-activity) | Address tx history with filters |
-
-### Wallet Tools
-
-| Tool | Use For |
-|------|---------|
-| [Wallet Overview](/herd-mcp/tools/wallet-overview) | Wallet type, balances, tx count, signers |
-| [Token Activity](/herd-mcp/tools/token-activity) | Token transfer history for a given position |
-| [Deployed Contracts](/herd-mcp/tools/deployed-contracts) | Contracts deployed by an address |
-
-### Bookmark Tools
-
-| Tool | Use For |
-|------|---------|
-| [Bookmarks](/herd-mcp/tools/bookmarks) | List, add, edit, remove saved items |
-
-### HAL Tools
-
-| Tool | Use For |
-|------|---------|
-| [Actions & Adapters](/herd-mcp/tools/hal-actions-adapters) | Create, search, update, delete HAL actions and adapters |
-| [Code Blocks](/herd-mcp/tools/hal-code-blocks) | Create, update, execute TypeScript code blocks |
-| [Collections](/herd-mcp/tools/hal-collections) | Organize actions and adapters into collections |
-| [Evaluation](/herd-mcp/tools/hal-evaluation) | Simulate and test HAL expressions |
-| [Documentation](/herd-mcp/tools/documentation) | Read HAL and platform docs |
+- **All registered EVM chains** support RPC-backed transaction inspection, HAL reads and simulations, and chain-aware bookmarks.
+- **Fully indexed EVM chains** add historical activity search and aggregate wallet data. These chains are Base, Ethereum, and Monad.
+- Some contract and wallet features have narrower capability requirements. See [Supported Chains](/herd-mcp/supported-chains).
