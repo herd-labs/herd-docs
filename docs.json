@@ -27,7 +27,6 @@
               "herd-mcp/tools/query-transaction",
               "herd-mcp/tools/wallet-overview",
               "herd-mcp/tools/bookmarks",
-              "herd-mcp/tools/documentation",
               "herd-mcp/tools/agent-wallet-tools",
               "herd-mcp/tools/doubleclick",
               "herd-mcp/tools/hal-actions-adapters",
