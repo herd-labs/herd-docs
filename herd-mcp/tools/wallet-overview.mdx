@@ -1,204 +1,40 @@
 ---
-title: Wallet Overview
-description: "Wallet type detection, token balances, and activity metrics"
+title: Wallet Tools
+description: Analyze wallets and let agent wallets prepare governed transaction proposals.
 ---
 
-# Wallet Overview
-
-Returns wallet type, token balances, and activity data for any address.
-
-## Returns
-
-- **Wallet Type** - EOA, multisig, smart wallet, or delegated account
-- **Token Balances** - Holdings with USD values
-- **Activity** - Transaction count, deployed contracts
-- **Multisig Details** - Signers and pending transactions (for Safes)
-- **ERC-7702** - Implementation address for delegated EOAs
-
-## Example Queries
-
-```
-Give me an overview of vitalik.eth
-```
-
-```
-What tokens does 0x... hold?
-```
-
-```
-Is this wallet a multisig? Who are the signers?
-```
-
-## Parameters
-
-| Parameter | Required | Description |
-|-----------|----------|-------------|
-| `walletAddress` | Yes | The wallet address (0x...) |
-| `blockchain` | No | `ethereum` (default) or `base` |
-
-## Wallet Types Detected
-
-| Type | Description |
-|------|-------------|
-| **EOA** | Externally Owned Account (regular wallet) |
-| **ERC-7702** | EOA with delegated code (smart account features) |
-| **ERC-4337** | Smart contract wallet (Account Abstraction) |
-| **Multisig** | Safe or similar multi-signature wallet |
-| **Contract** | Other smart contract |
-
-## Example Output
-
-### Regular Wallet (EOA)
-
-```
-Wallet Overview: 0xUser...
-============================
-Type: EOA (Externally Owned Account)
-Chain: Ethereum
-
-Balances:
-┌──────────────┬─────────────────┬────────────────┐
-│ Token        │ Balance         │ USD Value      │
-├──────────────┼─────────────────┼────────────────┤
-│ ETH          │ 15.234          │ $48,234.56     │
-│ USDC         │ 25,000.00       │ $25,000.00     │
-│ WETH         │ 5.000           │ $15,825.00     │
-│ UNI          │ 1,500.00        │ $12,750.00     │
-│ AAVE         │ 100.00          │ $8,500.00      │
-└──────────────┴─────────────────┴────────────────┘
-
-Total Portfolio Value: ~$110,309.56
-
-Activity:
-- Transaction Count: 1,245
-- Contracts Deployed: 3
-- First Transaction: 2021-03-15
-```
-
-### Multisig Wallet (Safe)
-
-```
-Wallet Overview: 0xTreasury...
-==============================
-Type: Multisig (Gnosis Safe)
-Chain: Ethereum
-Threshold: 3 of 5 signers
-
-Signers:
-1. 0xSigner1... (EOA)
-2. 0xSigner2... (EOA)
-3. 0xSigner3... (EOA - also a contract signer)
-4. 0xSigner4... (EOA)
-5. 0xSigner5... (EOA)
-
-Pending Transactions: 2
-- Tx #45: Transfer 100 ETH to 0x... (2/3 signatures)
-- Tx #46: Upgrade contract 0x... (1/3 signatures)
-
-Balances:
-┌──────────────┬─────────────────┬────────────────┐
-│ Token        │ Balance         │ USD Value      │
-├──────────────┼─────────────────┼────────────────┤
-│ ETH          │ 5,000.00        │ $15.8M         │
-│ USDC         │ 10,000,000.00   │ $10.0M         │
-│ ...          │ ...             │ ...            │
-└──────────────┴─────────────────┴────────────────┘
-
-Total Portfolio Value: ~$45.2M
-```
-
-### Smart Wallet (ERC-4337)
-
-```
-Wallet Overview: 0xSmartWallet...
-=================================
-Type: ERC-4337 Smart Account
-Implementation: Biconomy Smart Account v2
-Chain: Ethereum
-
-Features:
-- Batch transactions
-- Gasless transactions (paymaster support)
-- Social recovery enabled
-
-Balances: [similar to above]
-```
-
-### Delegated EOA (ERC-7702)
-
-```
-Wallet Overview: 0xDelegated...
-===============================
-Type: ERC-7702 Delegated EOA
-Delegation: Active
-Implementation: 0xImpl... (Coinbase Smart Wallet)
-
-Delegated Functions:
-- execute(address,uint256,bytes)
-- executeBatch(...)
-- supportsInterface(bytes4)
-
-Balances: [similar to above]
-```
-
-## Use Cases
-
-| Task | Query |
-|------|-------|
-| Check control | "Is this wallet a multisig?" |
-| Portfolio value | "Total value of tokens in this wallet?" |
-| DAO treasury | "Details on the Uniswap governance treasury" |
-
-## Related Tools
-
-1. **Start with overview** → `getWalletOverviewTool`
-2. **Check specific tokens** → `getTokenActivityTool`
-3. **View transactions** → `getTransactionActivityTool`
-4. **Check deployments** → `getDeployedContractsTool`
-
-## Tips
-
-<Tip>
-ENS names work: "vitalik.eth" resolves automatically
-</Tip>
-
-<Tip>
-Be specific: "Is this a fresh wallet?" or "How active is this wallet?"
-</Tip>
-
-## Common Questions
-
-<AccordionGroup>
-  <Accordion title="What if the wallet has many tokens?">
-    The overview shows the most valuable holdings. Ask for "all tokens" to see the complete list.
-  </Accordion>
-
-  <Accordion title="How current are the balances?">
-    Balances reflect the latest indexed block, typically within seconds of real-time.
-  </Accordion>
-
-  <Accordion title="Can I see NFTs?">
-    Yes, NFT holdings are included with floor price estimates where available.
-  </Accordion>
-</AccordionGroup>
-
-## Limitations
+# Wallet Tools
 
 <Warning>
-**USD values are estimates.** Based on current market prices and may fluctuate.
+  Wallet Tools require an Enterprise plan. To get access, contact [andrew@herd.eco](mailto:andrew@herd.eco).
 </Warning>
 
-<Warning>
-**Some tokens may not have prices.** Low-liquidity or new tokens might show $0 value.
-</Warning>
+Wallet Tools cover two connected workflows:
 
-## Next Steps
+## Wallet intelligence
 
-<CardGroup cols={2}>
-  <Card title="Token Activity" icon="coins" href="/herd-mcp/tools/token-activity">
-    Track specific token movements
-  </Card>
-  <Card title="Transaction Activity" icon="list" href="/herd-mcp/tools/transaction-activity">
-    See full transaction history
-  </Card>
-</CardGroup>
+Analyze an EOA, smart account, delegated account, Safe, or contract address. Herd can summarize account type, token balances, historical activity, deployments, signers, pending Safe transactions, and ERC-7702 delegation details.
+
+Historical wallet activity and aggregate balances are available on fully indexed chains: Base, Ethereum, and Monad.
+
+## Agent wallet operations
+
+Create shared groups with quorum rules and Herd-managed agent wallets. Link an agent wallet to an MPC-controlled wallet, prepare a HAL action, simulate it, collect approvals, and propose the resulting calls for human signing and execution.
+
+For Safe integrations, Herd validates proposer access, proposal calls, simulation evidence, and group quorum. It can package multiple calls into one Safe transaction and track whether the proposal executes or becomes superseded.
+
+The agent proposes; the destination wallet's owners or policy sign and execute. Herd does not bypass the wallet's threshold or custody controls.
+
+## Typical flow
+
+1. Read the group, agent wallet, and destination wallet context.
+2. Reuse or create a HAL action.
+3. Publish and simulate the action as the destination wallet.
+4. Create a governed proposal from the simulated calls.
+5. Collect group approvals and push the proposal.
+6. Sign and execute in the Safe or MPC wallet.
+7. Reconcile the proposal with its onchain execution.
+
+<Info>
+  Safe proposal support is available on a subset of registered EVM chains. See [Supported Chains](/herd-mcp/supported-chains) for the current list.
+</Info>

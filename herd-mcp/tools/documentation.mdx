@@ -1,64 +1,26 @@
 ---
-title: Documentation
-description: "Read HAL and platform documentation from within your agent"
+title: Documentation Tool
+description: Let an agent read the current Herd and HAL reference at runtime.
 ---
 
-# Documentation
+# Documentation Tool
 
-Read internal Herd documentation by document ID. Supports fetching multiple documents in a single call.
+| Tool | Use it to |
+|---|---|
+| `readDocumentationTool` | List or read Herd's built-in documentation resources by document ID. |
 
-## Returns
+The documentation tool is the authoritative runtime reference for HAL syntax, modules, and worked examples. It can fetch one document or several documents in one call.
 
-- **Document content** — Full text of the requested documentation
-- **Available IDs** — If an unknown ID is provided, returns the list of available document IDs
+Important HAL document IDs include:
 
-## Example Queries
-
-```
-Show me the HAL syntax documentation
-```
-
-```
-Read the HAL examples and module docs
-```
-
-## Parameters
-
-| Parameter | Required | Description |
-|-----------|----------|-------------|
-| `documentId` | Yes | A single document ID string, or an array of document IDs |
-
-### Available Documents
-
-| Document ID | Content |
-|-------------|---------|
-| `hal://spec/syntax` | HAL grammar and special forms |
-| `hal://spec/modules/herd` | Blockchain functions (read, write, encode, swap, etc.) |
-| `hal://spec/examples` | Worked HAL expression examples |
-
-## Tips
+- `hal://spec/syntax`
+- `hal://spec/modules/herd`
+- `hal://spec/modules/object`
+- `hal://spec/modules/array`
+- `hal://spec/modules/math`
+- `hal://spec/modules/types`
+- `hal://spec/examples`
 
 <Tip>
-Fetch all three HAL docs at once by passing an array: `["hal://spec/syntax", "hal://spec/modules/herd", "hal://spec/examples"]`
+  Before an agent creates or changes HAL, have it read the syntax, Herd module, and examples documents in one request.
 </Tip>
-
-<Tip>
-Always read the HAL documentation before creating or editing HAL expressions — the syntax has non-obvious requirements.
-</Tip>
-
-## Related Tools
-
-- **Create actions** → [Actions & Adapters](/herd-mcp/tools/hal-actions-adapters)
-- **Test expressions** → [Evaluation](/herd-mcp/tools/hal-evaluation)
-- **HAL language reference** → [HAL Expression System](/herd-actions/overview)
-
-## Next Steps
-
-<CardGroup cols={2}>
-  <Card title="HAL Reference" icon="book" href="/herd-actions/overview">
-    Full HAL language documentation
-  </Card>
-  <Card title="Evaluation" icon="flask" href="/herd-mcp/tools/hal-evaluation">
-    Simulate HAL expressions
-  </Card>
-</CardGroup>

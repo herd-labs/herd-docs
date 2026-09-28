@@ -1,159 +1,37 @@
 ---
-title: Contract Metadata
-description: "Fetch contract info, ABI, deployment history, and token data"
+title: Contract Tools
+description: Inspect contract metadata, implementations, source code, and deployment history.
 ---
 
-# Contract Metadata
+# Contract Tools
 
-Returns contract information including ABI, proxy history, and token data.
+Herd combines verified source data, ABI analysis, proxy history, deployment records, and token metadata into agent-ready contract context.
 
-## Returns
+## Available tools
 
-- **Basic Info** - Contract name, compiler version, verification status
-- **ABI** - Complete Application Binary Interface with function signatures
-- **Proxy Information** - Implementation addresses for upgradeable contracts
-- **Deployment History** - When and how the contract was deployed
-- **Token Details** - If it's a token: price, volume, market cap, holders (via CoinGecko)
+| Tool | Use it to | Chain availability |
+|---|---|---|
+| `contractMetadataTool` | Read metadata, ABI signatures, function and event summaries, proxy history, deployment details, and token information. | Explorer-supported EVM chains |
+| `getContractCodeTool` | Search verified source with a natural-language query or explicit regex patterns, or return the full source. | Explorer-supported EVM chains |
+| `getDeployedContractsTool` | List contracts created by an EOA, factory, Safe, or another contract-based deployer. | Fully indexed chains |
 
-## Example Queries
+`contractMetadataTool` follows proxy implementations and returns the complete known implementation history. Use its ABI before searching activity or building a HAL action.
 
-```
-What is the contract at 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48?
-```
+`getContractCodeTool` accepts multiple addresses and can search implementation code, proxy code, or both. It only works when verified source is available.
 
-```
-Give me an overview of the Uniswap V3 Router contract
-```
+`getDeployedContractsTool` covers direct creates, factory deployments, Safe deployments, and other traced creation paths. Results are paginated.
 
-```
-What functions does AAVE's lending pool have?
-```
+## Recommended workflow
 
-## Parameters
+1. Read the contract metadata and ABI.
+2. Search the source for the behavior or permission you need.
+3. On a fully indexed chain, inspect recent calls and event emissions.
+4. Use the observed call patterns to build and simulate a HAL action.
 
-| Parameter | Required | Description |
-|-----------|----------|-------------|
-| `contractAddress` | Yes | The contract address (0x...) |
-| `blockchain` | No | `ethereum` (default) or `base` |
-
-## Sample Output
-
-For `0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2`:
-
-- Contract name: Wrapped Ether (WETH)
-- Verified: Yes
-- Compiler: Solidity 0.4.18
-- Functions: deposit, withdraw, approve, transfer
-- Token data: price, market cap, holders
-
-## What You Get Back
-
-### Contract Information
-
-```
-Name: Wrapped Ether
-Address: 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2
-Verified: true
-Compiler: v0.4.18+commit.9cf6e910
-```
-
-### ABI Summary
-
-The tool provides function and event summaries:
-
-**Functions:**
-| Name | Type | Description |
-|------|------|-------------|
-| deposit | write | Wrap ETH into WETH |
-| withdraw | write | Unwrap WETH to ETH |
-| transfer | write | Transfer WETH to another address |
-| approve | write | Approve spender allowance |
-| balanceOf | read | Check WETH balance |
-
-**Events:**
-| Name | Description |
-|------|-------------|
-| Transfer | Emitted on transfers |
-| Approval | Emitted on approvals |
-| Deposit | Emitted when ETH is wrapped |
-| Withdrawal | Emitted when WETH is unwrapped |
-
-### Token Data (if applicable)
-
-```
-Symbol: WETH
-Decimals: 18
-Price: $3,245.67
-Market Cap: $4.2B
-24h Volume: $1.8B
-Holders: 845,231
-```
-
-### Proxy Information
-
-For upgradeable contracts:
-
-```
-Proxy Type: TransparentUpgradeableProxy
-Current Implementation: 0x1234...
-Previous Implementations:
-  - 0xabcd... (upgraded at block 15000000)
-  - 0x5678... (original)
-```
-
-## Proxy Support
-
-For upgradeable contracts, the tool:
-
-1. Detects proxy type
-2. Identifies current implementation
-3. Returns implementation history
-4. Provides the implementation ABI
-
-## Related Tools
-
-1. **Get overview** → `contractMetadataTool`
-2. **Search code** → `regexCodeAnalysisTool` for specific functions
-3. **Check upgrades** → `diffContractVersions` for change history
-4. **See usage** → `getLatestTransactionsTool` for recent activity
-
-## Tips
+<Note>
+  Source-backed tools work on registered EVM chains with a configured code explorer. Polygon zkEVM, Sophon, and Swell are currently excluded.
+</Note>
 
 <Tip>
-Be specific: "what are the main functions" is better than "tell me about this contract"
+  For contracts on Base, Ethereum, or Monad, pair contract metadata with [Fully Indexed Activity](/herd-mcp/tools/latest-transactions) to see real parameter and approval patterns.
 </Tip>
-
-<Tip>
-Specify chain for non-Ethereum: "on Base"
-</Tip>
-
-## Common Use Cases
-
-<AccordionGroup>
-  <Accordion title="Before interacting with a new DeFi protocol">
-    "Give me an overview of [protocol] contract. What functions will I be calling to deposit/withdraw?"
-  </Accordion>
-
-  <Accordion title="Checking if a token is legitimate">
-    "Is this token contract verified? Does it have any unusual functions like blacklist or pause?"
-  </Accordion>
-
-  <Accordion title="Understanding an NFT contract">
-    "What's the minting function for this NFT? Are there any limits or requirements?"
-  </Accordion>
-
-  <Accordion title="Researching a protocol's architecture">
-    "What are all the contracts in the [protocol] system and how do they relate to each other?"
-  </Accordion>
-</AccordionGroup>
-
-## Next Steps
-
-<CardGroup cols={2}>
-  <Card title="Code Analysis" icon="magnifying-glass" href="/herd-mcp/tools/code-analysis">
-    Search within contract code
-  </Card>
-  <Card title="Version Diffs" icon="code-compare" href="/herd-mcp/tools/diff-versions">
-    Compare contract versions
-  </Card>
-</CardGroup>
