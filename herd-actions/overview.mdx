@@ -1,6 +1,6 @@
 ---
 title: HAL Overview
-description: Build reusable, typed blockchain reads and transaction plans with Herd Action Language.
+description: Build reusable, typed blockchain reads and transaction actions with Herd Action Language.
 ---
 
 # Herd Action Language
@@ -9,24 +9,24 @@ description: Build reusable, typed blockchain reads and transaction plans with H
   **Adapters** package reusable reads and call construction. **Actions** package transaction batches. Add them to **collections** so teams and agents can share, discover, and simulate complete workflows. Herd agent wallets can then propose action transactions to a Safe or another MPC wallet while the wallet keeps its signing and execution policy.
 </Info>
 
-HAL is a typed, JSON-based expression language for blockchain interactions. Its Scheme-inspired syntax is easy for agents to generate and safe for Herd to validate before execution.
+HAL is a typed, JSON-based expression language for blockchain interactions. Its Scheme-inspired syntax lets agents combine contract reads, calldata construction, conditional logic, code, and transaction batches in a format Herd can validate and simulate.
 
-Every HAL expression is valid JSON:
+Every HAL expression is valid JSON. An array normally represents a call:
 
 ```json
 ["add", 1, 2]
 ```
 
-Arrays represent calls or special forms. Objects evaluate their values recursively. Strings resolve to scoped variables when a binding exists and otherwise remain literal strings.
+Objects evaluate their values recursively. Strings resolve to scoped variables when a binding exists and otherwise remain literal strings.
 
 ## Building blocks
 
 <CardGroup cols={2}>
-  <Card title="Adapters" icon="puzzle-piece">
-    Reusable read logic, call encoding, and code-backed computation that other adapters or actions can import.
-  </Card>
   <Card title="Actions" icon="play">
-    One or more ordered transaction batches with a single typed `main` entry point.
+    Executable workflows with a typed `main` entry point and one or more ordered transaction batches.
+  </Card>
+  <Card title="Adapters" icon="puzzle-piece">
+    Reusable functions for reads, write-call construction, and code-backed computation.
   </Card>
   <Card title="Collections" icon="layer-group">
     Share an action with the read and code adapters that help users understand and simulate it.
@@ -36,32 +36,204 @@ Arrays represent calls or special forms. Objects evaluate their values recursive
   </Card>
 </CardGroup>
 
-## Core syntax
+## Actions
 
-| Form | Purpose |
+An action must export a function named `main`. Its parameters are the user inputs for the entire workflow. The body defines one or more batches with `meta.isBatch: true`.
+
+Each `write-function` plans one call. A batch controls when those calls are submitted together; it does not silently merge them.
+
+### Complete batched action
+
+This action sends a user-supplied amount of USDC on Base to every address in `recipients`:
+
+```json
+[
+  "do",
+  ["import", "herd", ["write-function", "encode-calldata", "decimals"]],
+  [
+    "export",
+    [
+      "define",
+      {
+        "name": "main",
+        "parameters": [
+          { "name": "recipients", "type": ["array", "address"] },
+          {
+            "name": "amount",
+            "type": ["union", "uint256", "int256", "float64"]
+          }
+        ],
+        "body": [
+          [
+            "define",
+            {
+              "name": "batch0",
+              "meta": {
+                "isBatch": true,
+                "batchLabel": "Send to every recipient"
+              },
+              "value": [
+                [
+                  "for-each",
+                  {
+                    "items": "recipients",
+                    "as": "recipient",
+                    "index": "i",
+                    "step": [
+                      "write-function",
+                      {
+                        "payable": false,
+                        "payableAmount": "0",
+                        "encodedCalldata": [
+                          "encode-calldata",
+                          {
+                            "blockchain": "base",
+                            "contractAddress": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                            "functionSignature": "0xa9059cbb",
+                            "args": {
+                              "to": "recipient",
+                              "amount": [
+                                "decimals",
+                                { "value": "amount", "decimals": 6 }
+                              ]
+                            },
+                            "inputAbi": [
+                              "quote",
+                              [
+                                { "name": "to", "type": "address" },
+                                { "name": "amount", "type": "uint256" }
+                              ]
+                            ],
+                            "functionName": ["quote", "transfer"]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      }
+    ]
+  ]
+]
+```
+
+Pass list inputs as JSON arrays. Three recipients plan three calls in one batch. An empty list plans no calls.
+
+`for-each` can also wrap its `write-function` in an `if` and return `null` when an element should not produce a transaction. It cannot contain another `for-each`.
+
+### How wallets submit a batch
+
+| Wallet | Batch behavior |
 |---|---|
-| `do` | Evaluate expressions in sequence and return the last result. |
-| `define` | Bind a value or define a typed function. |
-| `import` | Load functions from a standard module or a published action or adapter. |
-| `export` | Expose the entry point that callers can use. |
-| `if` | Evaluate one of two branches. |
-| `for-each` | Plan one inline batch step for each list element. |
-| `quote` | Keep literal arrays, such as ABI parameters, from being evaluated as calls. |
-| `coerce` | Validate and convert a result to a HAL type. |
+| Safe | Proposes one `execTransaction`; multiple calls use MultiSend. |
+| Atomic-capable EOA | Submits one atomic call bundle, such as EIP-5792 `wallet_sendCalls`. |
+| Plain EOA | Submits one transaction for every planned call. |
 
-HAL supports Solidity ABI types, tuples, arrays, unions, `any`, and `float64`. Integer values remain exact and are commonly represented as decimal strings at API boundaries.
+The action keeps one planned row per `write-function` even when a Safe or atomic wallet combines them into one onchain transaction.
 
-## Standard modules
+### Conditional writes
 
-- `herd` provides blockchain reads, storage access, calldata encoding, write planning, swaps, bridges, and transaction lookups.
-- `array` provides mapping, range mapping, reduction, indexing, concatenation, and length.
-- `object` provides key and path access.
-- `math` provides integer, floating-point, bitwise, comparison, and safe conversion functions.
-- `types` injects ABI type guards and coercion functions as globals.
+Read current state before changing it. An `if` can return `null` when no write is needed:
 
-## Minimal read adapter
+```json
+[
+  "if",
+  ["lt", "currentAllowance", "requiredAmount"],
+  ["write-function", "approveCall"],
+  null
+]
+```
 
-This adapter returns the native balance for an address:
+This pattern avoids replacing a larger approval with a smaller one and prevents unchanged state from producing unnecessary transactions.
+
+## Adapters
+
+Adapters package logic that other adapters and actions can import. An adapter exports exactly one function.
+
+Use an adapter for:
+
+- A reusable contract read
+- A reusable write-call payload
+- Typed computation from a code block
+
+Start with logic inside an action. Extract an adapter when the same behavior is useful in several workflows.
+
+### Write adapter
+
+A write adapter returns a typed call payload. The action passes that payload to `write-function` inside a batch.
+
+```json
+[
+  "do",
+  ["import", "herd", ["encode-calldata", "decimals"]],
+  [
+    "export",
+    [
+      "define",
+      {
+        "name": "transferUsdc",
+        "parameters": [
+          { "name": "to", "type": "address" },
+          {
+            "name": "amount",
+            "type": ["union", "uint256", "int256", "float64"]
+          }
+        ],
+        "body": [
+          "coerce",
+          {
+            "type": {
+              "payable": "bool",
+              "payableAmount": "uint256",
+              "encodedCalldata": {
+                "blockchain": "string",
+                "contractAddress": "address",
+                "functionSignature": "bytes4",
+                "calldata": "bytes"
+              }
+            },
+            "value": {
+              "payable": false,
+              "payableAmount": "0",
+              "encodedCalldata": [
+                "encode-calldata",
+                {
+                  "blockchain": "base",
+                  "contractAddress": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                  "functionSignature": "0xa9059cbb",
+                  "args": {
+                    "to": "to",
+                    "amount": [
+                      "decimals",
+                      { "value": "amount", "decimals": 6 }
+                    ]
+                  },
+                  "inputAbi": [
+                    "quote",
+                    [
+                      { "name": "to", "type": "address" },
+                      { "name": "amount", "type": "uint256" }
+                    ]
+                  ],
+                  "functionName": ["quote", "transfer"]
+                }
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  ]
+]
+```
+
+### Read adapter
+
+This adapter reads an account's native balance and returns an exact `uint256` value in wei:
 
 ```json
 [
@@ -93,17 +265,188 @@ This adapter returns the native balance for an address:
 ]
 ```
 
-## Action lifecycle
+### Code adapter
 
-1. Search for an existing action or adapter before creating one.
-2. Create a draft and validate its expression.
-3. Publish the version that other tools and imports should use.
-4. Simulate the action and inspect every resulting transaction.
-5. Plan the first mainnet batch for the chosen wallet.
-6. Submit the planned calls through that wallet, then record the hashes to advance the execution.
+A code adapter calls a published TypeScript code block and coerces its output to a HAL type:
 
-Mainnet and simulation are separate tracks on the same action execution. A simulation never broadcasts a transaction.
+```json
+[
+  "do",
+  ["import", "herd", ["code"]],
+  [
+    "export",
+    [
+      "define",
+      {
+        "name": "sumCalculator",
+        "parameters": [
+          { "name": "a", "type": "uint256" },
+          { "name": "b", "type": "uint256" }
+        ],
+        "body": [
+          "coerce",
+          {
+            "type": { "sum": "uint256" },
+            "value": [
+              "code",
+              {
+                "id": "definitionId:codeVersionId",
+                "args": { "a": "a", "b": "b" }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  ]
+]
+```
+
+## Imports and composition
+
+Import standard library functions by module:
+
+```json
+["import", "herd", ["read-function", "encode-calldata"]]
+```
+
+Import a published adapter or action export by its action and expression IDs:
+
+```json
+["import", "action:actionId:expressionId", ["transferUsdc"]]
+```
+
+User-defined functions take positional arguments:
+
+```json
+["transferUsdc", "recipient", "amount"]
+```
+
+Standard library functions generally take one named-argument object:
+
+```json
+["decimals", { "value": "amount", "decimals": 6 }]
+```
+
+Only published versions can be imported by ID. Version pins do not automatically move when the imported adapter publishes a newer version.
+
+## Collections
+
+Collections group a complete workflow for discovery and sharing. Add:
+
+- The executable action
+- Read adapters that show current position or protocol state
+- Code adapters that calculate inputs or expected outcomes
+
+Write adapters stay as implementation dependencies and cannot appear as collection items.
+
+Collections make it easier for an agent or teammate to find the action, inspect its supporting context, and simulate it before proposing transactions.
+
+## Core syntax
+
+| Form | Purpose |
+|---|---|
+| `do` | Evaluate expressions in sequence and return the last result. |
+| `define` | Bind a value or define a typed function. |
+| `import` | Load functions from a standard module or published expression. |
+| `export` | Expose a definition to callers and other expressions. |
+| `if` | Lazily evaluate one of two branches. |
+| `for-each` | Evaluate one inline batch step for every list element. |
+| `quote` | Keep a literal value from being evaluated. |
+| `eval` | Evaluate an expression, then evaluate its result. |
+| `coerce` | Validate and convert a value to a HAL type. |
+
+### Why ABI values must be quoted
+
+HAL recursively evaluates arrays and object values. Quote ABI arrays and function names so HAL treats them as literal data:
+
+```json
+{
+  "inputAbi": [
+    "quote",
+    [
+      { "name": "to", "type": "address" },
+      { "name": "amount", "type": "uint256" }
+    ]
+  ],
+  "functionName": ["quote", "transfer"]
+}
+```
+
+Without `quote`, a string such as `amount` or `decimals` can resolve to a scoped value or function instead of remaining ABI metadata.
+
+## Type system
+
+HAL supports:
+
+- Solidity ABI primitives such as `address`, `bool`, `bytes32`, `uint256`, and `int256`
+- `string`, `any`, and `float64`
+- Tuples such as `{ "balance": "uint256" }`
+- Arrays such as `["array", "address"]`
+- Fixed arrays such as `["array", "uint256", { "length": 3 }]`
+- Unions such as `["union", "uint256", "int256", "float64"]`
+
+Contract reads return ABI integers as exact big integers. At API boundaries, transaction amounts use decimal strings so they do not lose precision.
+
+Use integer math for raw token amounts. Use `fadd`, `fsub`, `fmul`, and `fdiv` for prices, ratios, or display values that must preserve fractions.
+
+`decimals` scales a human-readable value by a token's decimals and fails instead of rounding when the input has too many decimal places.
+
+## Standard modules
+
+| Module | Important functions |
+|---|---|
+| `herd` | `read-function`, `write-function`, `encode-calldata`, `encode-parameters`, `decodeAbiParameters`, `getNativeBalance`, `getStorageSlot`, `raw-call`, `swap`, `bridge`, `bridge-status`, `code`, transaction lookups |
+| `object` | `getKey`, `getPath` |
+| `array` | `concat`, `at`, `length`, `map`, `mapRange`, `reduce` |
+| `math` | Exact arithmetic, floating-point arithmetic, comparisons, bitwise operations, and safe number conversion |
+| `types` | ABI type guards and coercion functions injected as globals |
+
+## Action execution
+
+Actions have separate mainnet and simulation tracks on one execution.
+
+### Simulate
+
+Simulation runs every batch on a sandbox fork and never broadcasts a transaction. It returns a `tevmForkId` and simulated transaction hashes.
+
+```bash
+herd hal action-execution start \
+  --mode simulate \
+  --action-id <action-id> \
+  --wallet <wallet-address> \
+  --input 'main.recipients=["0x...","0x..."]' \
+  --input 'main.amount=1' \
+  --verbose
+```
+
+When iterating on an unpublished expression, pass the expression file instead of an action ID.
 
 <Warning>
-  Publishing and simulating are separate steps. Saved drafts cannot be imported, called, or started until their latest version is published.
+  `status: completed` means evaluation did not crash. It does not prove the action called the right contract or changed state as intended.
+</Warning>
+
+Verify every simulation:
+
+1. Check each encoded contract address and four-byte function selector.
+2. Check scaled amounts, including token decimals.
+3. Confirm the planned transaction count matches the inputs.
+4. Confirm each write reports a successful transaction status.
+5. Inspect gas use, calls, logs, transfers, and balance changes.
+6. Treat zero gas with no calls, logs, or transfers as evidence that nothing ran.
+
+### Plan and continue
+
+`mode: "plan"` returns the first batch without running it. Submit those calls through the chosen wallet, then continue the mainnet track with each operation ID paired to its transaction hash.
+
+Herd checks the onchain traces, records the results, and plans the next batch. Mainnet and simulation advance independently.
+
+## Agent wallet proposals
+
+For an agent-wallet proposal, simulate the action with the destination Safe or MPC wallet as the sender. The proposal uses the simulated calls as evidence.
+
+The agent wallet can collect group approvals and propose the calls. The destination wallet's owners or policy still sign and execute them.
+
+<Warning>
+  Saved actions and adapters start as drafts. Publish a version before importing it, calling it by ID, or starting an execution by ID.
 </Warning>
