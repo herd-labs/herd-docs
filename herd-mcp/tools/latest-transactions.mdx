@@ -13,16 +13,15 @@ These tools query Herd's historical activity indexes. They are available only on
 |---|---|
 | `getLatestFunctionTransactionsTool` | Find recent decoded function calls for a contract, optionally filtered by function name or four-byte selector. |
 | `getLatestEventTransactionsTool` | Find recent decoded event emissions, optionally filtered by event name, topic hash, and indexed topics. |
+| `getTransactionActivityTool` | Read enriched address activity with traces, balance changes, and contract creations. |
+| `getTokenActivityTool` | Read a holder's current token balance and paginated incoming or outgoing transfers. |
+| `getWalletOverviewTool` | Summarize account type, balances, transaction counts, deployments, delegation, and Safe details. |
 | `getDeployedContractsTool` | Find contracts created by an EOA, factory, Safe, or another contract. |
 
 Function and event searches return raw argument values. Use contract ABI metadata to interpret units and structure.
 
-Enterprise wallet analysis adds enriched address activity, token transfers, account classification, balances, deployments, delegation, and Safe details. Query both caller and callee directions when you need a complete account history.
+Address activity supports caller and callee views. Query both directions when you need a complete account history, then merge the results.
 
 <Tip>
   Before authoring an action, inspect recent function calls and events. Real transactions reveal approvals, parameter patterns, and multi-step flows that an ABI cannot show.
 </Tip>
-
-<Note>
-  Wallet functionality is summarized here to explain chain coverage. Access to the dedicated wallet tool set requires an Enterprise plan. See [Wallet Tools](/herd-mcp/tools/wallet-overview).
-</Note>

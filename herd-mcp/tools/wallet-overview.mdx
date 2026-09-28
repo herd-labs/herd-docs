@@ -1,29 +1,30 @@
 ---
-title: Wallet Tools
-description: Analyze wallets and let agent wallets prepare governed transaction proposals.
+title: Agent Wallet Tools
+description: Let agent wallets prepare governed transaction proposals for Safe and other MPC wallets.
 ---
 
-# Wallet Tools
+# Agent Wallet Tools
 
 <Warning>
-  Wallet Tools require an Enterprise plan. To get access, contact [andrew@herd.eco](mailto:andrew@herd.eco).
+  Agent Wallet Tools require an Enterprise plan. To get access, contact [andrew@herd.eco](mailto:andrew@herd.eco).
 </Warning>
 
-Wallet Tools cover two connected workflows:
+Agent Wallet Tools let agents prepare transactions without bypassing an organization's custody or approval controls.
 
-## Wallet intelligence
-
-Analyze an EOA, smart account, delegated account, Safe, or contract address. Herd can summarize account type, token balances, historical activity, deployments, signers, pending Safe transactions, and ERC-7702 delegation details.
-
-Historical wallet activity and aggregate balances are available on fully indexed chains: Base, Ethereum, and Monad.
-
-## Agent wallet operations
-
-Create shared groups with quorum rules and Herd-managed agent wallets. Link an agent wallet to an MPC-controlled wallet, prepare a HAL action, simulate it, collect approvals, and propose the resulting calls for human signing and execution.
+Create shared groups with quorum rules and Herd-managed agent wallets. Link an agent wallet to a Safe or another MPC-controlled wallet, prepare a HAL action, simulate it, collect approvals, and propose the resulting calls for human signing and execution.
 
 For Safe integrations, Herd validates proposer access, proposal calls, simulation evidence, and group quorum. It can package multiple calls into one Safe transaction and track whether the proposal executes or becomes superseded.
 
 The agent proposes; the destination wallet's owners or policy sign and execute. Herd does not bypass the wallet's threshold or custody controls.
+
+## Functionality
+
+- Create groups, membership rules, and approval quorums.
+- Provision agent wallets for those groups.
+- Connect agent wallets to Safe or other MPC wallet accounts.
+- Build and simulate proposed calls with HAL.
+- Collect group approvals before pushing a wallet proposal.
+- Reconcile proposals with their eventual onchain execution.
 
 ## Typical flow
 
