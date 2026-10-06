@@ -31,7 +31,7 @@ Contract and transaction bookmarks include a chain. Wallet bookmarks are chain-i
 
 ## Labels
 
-Contract, transaction, and wallet bookmarks carry a `userLabel`. When `createBookmark` gets no `userLabel`, or one that is only whitespace, Herd generates one from chain data. `updateBookmark` stores the `userLabel` you send, and `null` clears it.
+Contract, transaction, and wallet bookmarks carry a `userLabel`. When `createBookmark` gets no `userLabel`, or one that is only whitespace, Herd generates one from chain data. `updateBookmark` trims the `userLabel` you send, and `null` or a blank string clears it.
 
 ## Saved functions and events
 
