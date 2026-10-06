@@ -5,24 +5,38 @@ description: Save and organize Herd research objects across supported EVM chains
 
 # Bookmark Tools
 
-Bookmarks give an authenticated user or resource scope a reusable list of research objects.
+Bookmarks give an authenticated user or organization a reusable list of research objects.
 
 ## Available tools
 
 | Tool | Use it to |
 |---|---|
-| `getBookmarksTool` | List available bookmarks grouped by wallet, contract, transaction, action, collection, and protocol. |
-| `updateBookmarksTool` | Add or remove bookmarks, and edit labels for wallets, contracts, or transactions. |
+| `listBookmarks` | List bookmarks grouped by contract, transaction, wallet, action, collection, and protocol. Pass `objectTypes` to return only some groups. |
+| `createBookmark` | Save a contract, transaction, wallet, action, collection, or protocol. Saving the same object again updates the existing bookmark. |
+| `updateBookmark` | Change or clear the label on a contract, transaction, or wallet bookmark. |
+| `deleteBookmark` | Remove a bookmark of any type. Removing a bookmark that does not exist succeeds. |
 
-Contract and transaction bookmarks include a chain. Wallet bookmarks are chain-independent. Action and collection identifiers must be UUIDs.
+`createBookmark`, `updateBookmark`, and `deleteBookmark` take a `bookmark` object with an `objectType` field. The other fields identify the object:
 
-Supported object types:
+| `objectType` | Identifying fields |
+|---|---|
+| `contract` | `contractAddress`, `blockchain` |
+| `transaction` | `transactionHash`, `blockchain` |
+| `wallet` | `walletAddress` |
+| `action` | `actionId` (UUID) |
+| `collection` | `collectionId` (UUID) |
+| `protocol` | `protocolName` |
 
-- Wallets, contracts, and transactions
-- HAL actions and adapters
-- HAL collections
-- Protocols
+Contract and transaction bookmarks include a chain. Wallet bookmarks are chain-independent. `actionId` accepts both HAL actions and adapters.
+
+## Labels
+
+Contract, transaction, and wallet bookmarks carry a `userLabel`. When `createBookmark` gets no `userLabel`, or one that is only whitespace, Herd generates one from chain data. `updateBookmark` trims the `userLabel` you send, and `null` or a blank string clears it.
+
+## Saved functions and events
+
+A contract bookmark can store saved functions and events in `details`. `createBookmark` replaces the stored ones with the `details` you send, and omitting `details` stores none.
 
 <Tip>
-  Read bookmarks before adding one to avoid duplicates. When no custom label exists, Herd returns a useful fallback display name when available.
+  Call `listBookmarks` before `createBookmark` to see what is already saved. `createBookmark` fails with `BookmarkTargetNotFoundError` when the action or collection does not exist in your scope. `updateBookmark` fails with `BookmarkNotFoundError` when no matching bookmark exists.
 </Tip>
